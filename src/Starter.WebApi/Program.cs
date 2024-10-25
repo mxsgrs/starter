@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Starter.Domain.Authentication;
+using Starter.Infrastructure.Persistance;
 using System.Reflection;
 using System.Text;
 
@@ -24,7 +26,7 @@ string connectionString = builder.Configuration.GetConnectionString("SqlServer")
 
 // Register database context as a service
 // Connect to database with connection string
-builder.Services.AddDbContext<StarterContext>(options =>
+builder.Services.AddDbContext<StarterDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // AutoMapper for database models and DTOs mapping

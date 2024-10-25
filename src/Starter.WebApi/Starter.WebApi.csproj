@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Starter.Application\Starter.Application.csproj" />
+    <ProjectReference Include="..\Starter.Infrastructure\Starter.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

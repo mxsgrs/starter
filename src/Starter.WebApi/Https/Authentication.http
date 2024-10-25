@@ -1,5 +1,5 @@
 # Generate access token
-POST {{HostAddress}}/api/authentication/create-jwt-bearer
+POST {{HostAddress}}/api/authentication/token
 Content-Type: application/json
 
 {
