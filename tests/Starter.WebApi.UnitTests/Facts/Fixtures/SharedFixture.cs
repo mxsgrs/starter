@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
+using Starter.Domain.Authentication;
 
 namespace Starter.WebApi.UnitTests.Facts.Fixtures;
 

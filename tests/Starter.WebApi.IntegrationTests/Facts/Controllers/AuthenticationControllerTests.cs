@@ -1,4 +1,6 @@
-﻿namespace Starter.WebApi.IntegrationTests.Facts.Controllers;
+﻿using Starter.Domain.Authentication;
+
+namespace Starter.WebApi.IntegrationTests.Facts.Controllers;
 
 public class AuthenticationControllerTests(StarterWebApplicationFactory factory) 
     : IClassFixture<StarterWebApplicationFactory>

@@ -1,4 +1,6 @@
-﻿namespace Starter.WebApi.UnitTests.Facts.Controllers;
+﻿using Starter.Domain.Authentication;
+
+namespace Starter.WebApi.UnitTests.Facts.Controllers;
 
 public class AuthenticationControllerTests
 {

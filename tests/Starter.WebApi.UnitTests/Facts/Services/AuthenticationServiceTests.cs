@@ -1,4 +1,6 @@
-﻿namespace Starter.WebApi.UnitTests.Facts.Services;
+﻿using Starter.Domain.Authentication;
+
+namespace Starter.WebApi.UnitTests.Facts.Services;
 
 public class AuthenticationServiceTests(SharedFixture fixture) : IClassFixture<SharedFixture>
 {
