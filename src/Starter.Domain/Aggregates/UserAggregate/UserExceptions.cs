@@ -1,4 +1,6 @@
-﻿namespace Starter.Domain.Aggregates.UserAggregate;
+﻿using Starter.Domain.Exceptions;
+
+namespace Starter.Domain.Aggregates.UserAggregate;
 
 public class UserNotFoundException : NotFoundException
 {

@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using Starter.Domain.Aggregates.UserAggregate;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Starter.Application.UserFeatures;
 

@@ -22,7 +22,7 @@ builder.Configuration.AddJsonFile($"appsettings.{configurationName}.json");
 
 // Read database connection string from application settings
 string connectionString = builder.Configuration.GetConnectionString("SqlServer")
-    ?? throw new Exception("Connection string is missing");
+    ?? throw new Exception("Connection string for SQL Server is missing");
 
 // Register database context as a service
 // Connect to database with connection string

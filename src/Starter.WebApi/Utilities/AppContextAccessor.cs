@@ -1,7 +1,10 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Starter.Application.AppContextAccessor;
+using Starter.Domain.Authentication;
 using System.Security.Claims;
 
-namespace Starter.Application.AppContextAccessor;
+namespace Starter.WebApi.Utilities;
 
 public class AppContextAccessor(IHttpContextAccessor httpContext) : IAppContextAccessor
 {
@@ -16,7 +19,7 @@ public class AppContextAccessor(IHttpContextAccessor httpContext) : IAppContextA
 
             return new()
             {
-                Id = id
+                UserId = id
             };
         }
     }

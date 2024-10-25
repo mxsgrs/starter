@@ -1,5 +1,9 @@
-﻿using Microsoft.IdentityModel.JsonWebTokens;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Starter.Domain.Aggregates.UserAggregate;
+using Starter.Domain.Authentication;
 using System.Security.Claims;
 using System.Text;
 

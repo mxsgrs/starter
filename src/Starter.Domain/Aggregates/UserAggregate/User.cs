@@ -1,7 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Net;
-using System.Reflection;
+﻿using Starter.Domain.Validations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Starter.Domain.Aggregates.UserAggregate;
 
@@ -53,6 +51,4 @@ public class User : AggregateRoot
     private User() : this(Guid.NewGuid(), null!, null!, null!, null!, new DateOnly(),
         Gender.Male, Role.Admin, null!, null!)
     { }
-
-    public CreatedUserEvent RaiseCreatedEvent() => RaiseDomainEvent<CreatedUserEvent>(new(this));
 }

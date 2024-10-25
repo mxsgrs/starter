@@ -1,4 +1,6 @@
-﻿namespace Starter.Application.AppContextAccessor;
+﻿using Starter.Domain.Authentication;
+
+namespace Starter.Application.AppContextAccessor;
 
 public interface IAppContextAccessor
 {

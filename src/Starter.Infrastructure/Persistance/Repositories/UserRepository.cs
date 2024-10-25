@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Starter.Domain.Aggregates.UserAggregate;
 
 namespace Starter.Infrastructure.Persistance.Repositories;
@@ -12,15 +13,8 @@ public class UserRepository(ILogger<UserRepository> logger, StarterDbContext dbC
     {
         _logger.LogInformation("Creating user credentials {User}", user);
 
-        try
-        {
-            _dbContext.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            throw;
-        }
+        _dbContext.Users.Add(user);
+        await _dbContext.SaveChangesAsync();
 
         return user;
     }

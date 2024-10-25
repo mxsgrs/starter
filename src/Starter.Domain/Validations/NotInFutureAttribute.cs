@@ -1,4 +1,5 @@
-﻿using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
+﻿using System.ComponentModel.DataAnnotations;
+using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 
 namespace Starter.Domain.Validations;
 
