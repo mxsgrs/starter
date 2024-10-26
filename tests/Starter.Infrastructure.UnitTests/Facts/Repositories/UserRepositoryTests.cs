@@ -1,38 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Starter.Domain.Aggregates.UserAggregate;
-using Starter.Infrastructure.Persistance.Repositories;
-using Starter.Infrastructure.Persistance;
+﻿using Microsoft.Extensions.Logging;
 using Moq;
+using Starter.Domain.Aggregates.UserAggregate;
+using Starter.Infrastructure.Persistance;
+using Starter.Infrastructure.Persistance.Repositories;
+using Starter.Infrastructure.UnitTests.Facts.Fixtures;
 
 namespace Starter.Infrastructure.UnitTests.Facts.Repositories;
 
-public class UserRepositoryTests : IDisposable
+public class UserRepositoryTests(SharedFixture fixture) : IClassFixture<SharedFixture>
 {
-    private readonly StarterDbContext _context;
-    private readonly Mock<ILogger<UserRepository>> _loggerMock;
-    private readonly UserRepository _repository;
-
-    public UserRepositoryTests()
-    {
-        var options = new DbContextOptionsBuilder<StarterDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        _context = new StarterDbContext(options);
-        _loggerMock = new Mock<ILogger<UserRepository>>();
-        _repository = new UserRepository(_loggerMock.Object, _context);
-    }
-
-    public void Dispose()
-    {
-        _context.Dispose();
-    }
+    private readonly SharedFixture _fixture = fixture;
+    private readonly Mock<ILogger<UserRepository>> _logger = new();
 
     [Fact]
     public async Task CreateUser_ShouldAddUserToDatabase()
     {
         // Arrange
+        StarterDbContext dbContext = SharedFixture.CreateDatabaseContext();
         var user = new User(
             Guid.NewGuid(),
             "test@example.com",
@@ -46,11 +30,13 @@ public class UserRepositoryTests : IDisposable
             new Address("Street", "City", "State", "12345", "Country")
         );
 
+        UserRepository repository = new(_logger.Object, dbContext);
+
         // Act
-        var result = await _repository.CreateUser(user);
+        var result = await repository.CreateUser(user);
 
         // Assert
-        var storedUser = await _context.Users.FindAsync(user.Id);
+        var storedUser = await dbContext.Users.FindAsync(user.Id);
         Assert.NotNull(storedUser);
         Assert.Equal("test@example.com", storedUser.EmailAddress);
     }
@@ -59,6 +45,7 @@ public class UserRepositoryTests : IDisposable
     public async Task ReadUser_ById_ShouldReturnUser_WhenUserExists()
     {
         // Arrange
+        StarterDbContext dbContext = SharedFixture.CreateDatabaseContext();
         var user = new User(
             Guid.NewGuid(),
             "test@example.com",
@@ -72,11 +59,13 @@ public class UserRepositoryTests : IDisposable
             new Address("Street", "City", "State", "12345", "Country")
         );
 
-        await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
+        await dbContext.Users.AddAsync(user);
+        await dbContext.SaveChangesAsync();
+
+        UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        var result = await _repository.ReadUser(user.Id);
+        var result = await repository.ReadUser(user.Id);
 
         // Assert
         Assert.NotNull(result);
@@ -87,16 +76,21 @@ public class UserRepositoryTests : IDisposable
     public async Task ReadUser_ById_ShouldThrow_WhenUserDoesNotExist()
     {
         // Arrange
+        StarterDbContext dbContext = SharedFixture.CreateDatabaseContext();
+        UserRepository repository = new(_logger.Object, dbContext);
+
         var userId = Guid.NewGuid();
 
         // Act & Assert
-        await Assert.ThrowsAsync<UserNotFoundException>(() => _repository.ReadUser(userId));
+        await Assert.ThrowsAsync<UserNotFoundException>(() => repository.ReadUser(userId));
     }
 
     [Fact]
     public async Task ReadUser_ByEmailAndPassword_ShouldReturnUser_WhenUserExists()
     {
         // Arrange
+        StarterDbContext dbContext = SharedFixture.CreateDatabaseContext();
+
         var user = new User(
             Guid.NewGuid(),
             "test@example.com",
@@ -110,11 +104,13 @@ public class UserRepositoryTests : IDisposable
             new Address("Street", "City", "State", "12345", "Country")
         );
 
-        await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
+        await dbContext.Users.AddAsync(user);
+        await dbContext.SaveChangesAsync();
+
+        UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        var result = await _repository.ReadUser("test@example.com", "hashedPassword");
+        var result = await repository.ReadUser("test@example.com", "hashedPassword");
 
         // Assert
         Assert.NotNull(result);
@@ -125,17 +121,22 @@ public class UserRepositoryTests : IDisposable
     public async Task ReadUser_ByEmailAndPassword_ShouldThrow_WhenUserDoesNotExist()
     {
         // Arrange
-        var email = "nonexistent@example.com";
-        var password = "wrongPassword";
+        StarterDbContext dbContext = SharedFixture.CreateDatabaseContext();
+        UserRepository repository = new(_logger.Object, dbContext);
+
+        string email = "nonexistent@example.com";
+        string password = "wrongPassword";
 
         // Act & Assert
-        await Assert.ThrowsAsync<UserNotFoundException>(() => _repository.ReadUser(email, password));
+        await Assert.ThrowsAsync<UserNotFoundException>(() => repository.ReadUser(email, password));
     }
 
     [Fact]
     public async Task UpdateUser_ShouldUpdateUserDetails()
     {
         // Arrange
+        StarterDbContext dbContext = SharedFixture.CreateDatabaseContext();
+
         var user = new User(
             Guid.NewGuid(),
             "test@example.com",
@@ -149,8 +150,8 @@ public class UserRepositoryTests : IDisposable
             new Address("Street", "City", "State", "12345", "Country")
         );
 
-        await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
+        await dbContext.Users.AddAsync(user);
+        await dbContext.SaveChangesAsync();
 
         var updatedUser = new User(
             user.Id,
@@ -165,8 +166,10 @@ public class UserRepositoryTests : IDisposable
             new Address("New Street", "New City", "New State", "54321", "New Country")
         );
 
+        UserRepository repository = new(_logger.Object, dbContext);
+
         // Act
-        var result = await _repository.UpdateUser(user.Id, updatedUser);
+        var result = await repository.UpdateUser(user.Id, updatedUser);
 
         // Assert
         Assert.Equal("updated@example.com", result.EmailAddress);
