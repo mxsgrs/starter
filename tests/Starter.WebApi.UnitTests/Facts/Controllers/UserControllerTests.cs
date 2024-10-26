@@ -1,7 +1,4 @@
-﻿using Starter.Application.Features.UserFeatures;
-using Starter.Domain.Aggregates.UserAggregate;
-
-namespace Starter.WebApi.UnitTests.Facts.Controllers;
+﻿namespace Starter.WebApi.UnitTests.Facts.Controllers;
 
 public class UserControllerTests
 {
@@ -51,11 +48,24 @@ public class UserControllerTests
     }
 
     [Fact]
+    public async Task ReadUser_ShouldReturnNotFoundResult_WhenUserDoesNotExist()
+    {
+        // Arrange
+        Guid userId = Guid.NewGuid();
+        _userServiceMock.Setup(s => s.ReadUser(userId)).ThrowsAsync(new UserNotFoundException(userId));
+
+        // Act & Assert
+        UserNotFoundException? exception = await Assert.ThrowsAsync<UserNotFoundException>(() => _userController.ReadUser(userId));
+        Assert.Equal($"User {userId} was not found.", exception.Message);
+        _userServiceMock.Verify(s => s.ReadUser(It.Is<Guid>(id => id == userId)), Times.Once);
+    }
+
+    [Fact]
     public async Task ReadUser_ShouldReturnOkResult_WhenUserExists()
     {
         // Arrange
         Guid userId = Guid.NewGuid();
-        UserDto userDto = new() 
+        UserDto userDto = new()
         {
             Id = userId,
             EmailAddress = "test@example.com",
@@ -84,19 +94,6 @@ public class UserControllerTests
         OkObjectResult? okResult = Assert.IsType<OkObjectResult>(result);
         UserDto? returnedUserDto = Assert.IsType<UserDto>(okResult.Value);
         Assert.Equal(userDto, returnedUserDto);
-        _userServiceMock.Verify(s => s.ReadUser(It.Is<Guid>(id => id == userId)), Times.Once);
-    }
-
-    [Fact]
-    public async Task ReadUser_ShouldReturnNotFoundResult_WhenUserDoesNotExist()
-    {
-        // Arrange
-        Guid userId = Guid.NewGuid();
-        _userServiceMock.Setup(s => s.ReadUser(userId)).ThrowsAsync(new UserNotFoundException(userId));
-
-        // Act & Assert
-        UserNotFoundException? exception = await Assert.ThrowsAsync<UserNotFoundException>(() => _userController.ReadUser(userId));
-        Assert.Equal($"User {userId} was not found.", exception.Message);
         _userServiceMock.Verify(s => s.ReadUser(It.Is<Guid>(id => id == userId)), Times.Once);
     }
 }

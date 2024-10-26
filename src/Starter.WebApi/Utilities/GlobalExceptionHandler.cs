@@ -39,6 +39,12 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
                 problemDetails.Title = "Bad request";
                 break;
 
+            // 401
+            case UnauthorizedException:
+                problemDetails.Status = StatusCodes.Status401Unauthorized;
+                problemDetails.Title = "Unauthorized";
+                break;
+
             // 404
             case NotFoundException:
                 problemDetails.Status = StatusCodes.Status404NotFound;

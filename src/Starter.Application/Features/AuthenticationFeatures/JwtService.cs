@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Starter.Domain.Aggregates.UserAggregate;
 using Starter.Domain.Authentication;
+using Starter.Domain.Exceptions;
 using System.Security.Claims;
 using System.Text;
 
@@ -65,9 +66,16 @@ public class JwtService(ILogger<JwtService> logger, IConfiguration configuration
     /// </summary>
     private async Task<Guid> ValidateUser(HashedLoginRequest hashedLoginRequest)
     {
-        User result = await _userService.ReadUser(hashedLoginRequest.EmailAddress,
-            hashedLoginRequest.HashedPassword);
+        try
+        {
+            User result = await _userService.ReadUser(hashedLoginRequest.EmailAddress,
+                hashedLoginRequest.HashedPassword);
 
-        return result.Id;
+            return result.Id;
+        }
+        catch (Exception)
+        {
+            throw new UnauthorizedException();
+        }
     }
 }
