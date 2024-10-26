@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using Starter.Domain.Exceptions;
 using System.Net;
 
 namespace Starter.WebApi.Utilities;

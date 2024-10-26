@@ -1,8 +1,4 @@
-﻿using Starter.Domain.Aggregates.UserAggregate;
-using Starter.Domain.Authentication;
-using Starter.Infrastructure.Persistance;
-
-namespace Starter.WebApi.IntegrationTests.Facts.Controllers;
+﻿namespace Starter.WebApi.IntegrationTests.Facts.Controllers;
 
 public class AuthenticationControllerTests(StarterWebApplicationFactory factory) 
     : IClassFixture<StarterWebApplicationFactory>

@@ -30,7 +30,7 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
         HttpClient httpClient = CreateClient();
 
         // Expiration date is around 2034
-        string jwt = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiM2UzZjAyYS0xNzU2LTQ1NzUtODNjZS04MGI2NjE2M2QzYmUiLCJzdWIiOiIxIiwiZW1haWwiOiJqb2huLmRvZUBnbWFpbC5jb20iLCJhdWQiOiJodHRwczovL3N0YXJ0ZXJ3ZWJhcGkuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdGFydGVyd2ViYXBpLmNvbSIsImV4cCI6MjAzOTI3MDA1Mn0.aeUd-y_mUKKEXSLh4JQrXV7fRw2oqcAPmcrjnXfYxpeV1f6afMCSCPrIlUJ-v8fJg4TX-r8zBQK9yyyIFTo4BA";
+        string jwt = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL3N0YXJ0ZXJ3ZWJhcGkuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdGFydGVyd2ViYXBpLmNvbSIsImV4cCI6MjA0NTUwNzU1NiwianRpIjoiN2FkYjM1M2ItMWMyMC00NGVmLWI5MjMtMDU3Mzg2ZTdhZWMyIiwic3ViIjoiNWYxYzNmMTMtZDhlZS00NGMzLTIzNjktMDhkY2Y1ZmQ1MmIxIiwiZW1haWwiOiJqb2huLmRvZUBleGFtcGxlLmNvbSJ9.0DqU6uyHcOw8mZm8CXXwv6t7PRDajU2kwqJrMMCJTEVor8WPs1iOz9Vq-2KZ6Ew3-uKmrEhdG7K2woDokBf-Rg";
         httpClient.DefaultRequestHeaders.Authorization = new("Bearer", jwt);
 
         return httpClient;

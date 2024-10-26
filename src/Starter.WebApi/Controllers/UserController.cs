@@ -1,6 +1,4 @@
-﻿using Starter.Application.Features.UserFeatures;
-
-namespace Starter.WebApi.Controllers;
+﻿namespace Starter.WebApi.Controllers;
 
 public class UserController(IUserService userService) : StarterControllerBase
 {

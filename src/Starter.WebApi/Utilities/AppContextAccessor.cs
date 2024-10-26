@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Starter.Application;
-using Starter.Domain.Authentication;
+﻿using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 
 namespace Starter.WebApi.Utilities;

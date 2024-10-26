@@ -1,6 +1,4 @@
-﻿using Starter.Application.Features.AuthenticationFeatures;
-
-namespace Starter.WebApi.Controllers;
+﻿namespace Starter.WebApi.Controllers;
 
 public class AuthenticationController(IJwtService jwtService) : StarterControllerBase
 {
