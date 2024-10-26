@@ -30,6 +30,7 @@ public class User : AggregateRoot
     public string Phone { get; private set; } = "";
 
     public Address Address { get; private set; }
+
     public User(Guid id, string emailAddress, string hashedPassword, string firstName,
         string lastName, DateOnly birthday, Gender gender, Role role, string phone, Address address)
     {
