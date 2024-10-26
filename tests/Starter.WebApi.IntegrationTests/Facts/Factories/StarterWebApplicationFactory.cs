@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Starter.Infrastructure.Persistance;
 using Testcontainers.MsSql;
 
 namespace Starter.WebApi.IntegrationTests.Facts.Factories;
@@ -16,10 +17,10 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     {
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveAll(typeof(DbContextOptions<StarterContext>));
+            services.RemoveAll(typeof(DbContextOptions<StarterDbContext>));
 
             string connectionString = _dbContainer.GetConnectionString();
-            services.AddDbContext<StarterContext>(options => options
+            services.AddDbContext<StarterDbContext>(options => options
                 .UseSqlServer(connectionString));
         });
     }
@@ -35,10 +36,10 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
         return httpClient;
     }
 
-    public StarterContext MigrateDbContext()
+    public StarterDbContext MigrateDbContext()
     {
         IServiceScope scope = Services.CreateScope();
-        StarterContext dbContext = scope.ServiceProvider.GetRequiredService<StarterContext>();
+        StarterDbContext dbContext = scope.ServiceProvider.GetRequiredService<StarterDbContext>();
         dbContext.Database.Migrate();
 
         return dbContext;
