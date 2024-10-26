@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Starter.Application.Features.UserFeatures;
-using Starter.Domain.Authentication;
-using Starter.Infrastructure.Persistance;
 using System.Reflection;
 using System.Text;
 
@@ -88,32 +84,14 @@ builder.Services.AddAuthentication()
         };
     });
 
-// Read version number from application settings
-string version = builder.Configuration.GetValue<string>("Version")
-    ?? throw new Exception("Version number is missing");
+builder.AddCustomSwaggerGen();
 
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc(version, new OpenApiInfo
-    {
-        Version = version,
-        Title = "Starter.WebApi",
-        Description = "Get your starter web API."
-    });
-});
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 WebApplication app = builder.Build();
 
-app.UseSwagger(options =>
-{
-    options.RouteTemplate = "swagger/{documentname}/swagger.json";
-});
-
-app.UseSwaggerUI(options =>
-{
-    options.SwaggerEndpoint($"/swagger/{version}/swagger.json", version);
-    options.RoutePrefix = "swagger";
-});
+app.UseCustomSwagger();
 
 app.UseHttpsRedirection();
 

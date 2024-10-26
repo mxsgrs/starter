@@ -2,6 +2,10 @@
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
+global using Starter.Account.WebApi.Misc;
+global using Starter.Application.Features.UserFeatures;
+global using Starter.Domain.Authentication;
+global using Starter.Infrastructure.Persistance;
 global using Starter.WebApi;
 global using Starter.WebApi.Controllers.Abstracts;
 global using Starter.WebApi.Utilities;
