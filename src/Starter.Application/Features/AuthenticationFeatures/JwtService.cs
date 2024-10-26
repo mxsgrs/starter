@@ -61,9 +61,6 @@ public class JwtService(ILogger<JwtService> logger, IConfiguration configuration
         return loginResponse;
     }
 
-    /// <summary>
-    /// Verify the user exists in the database
-    /// </summary>
     private async Task<Guid> ValidateUser(HashedLoginRequest hashedLoginRequest)
     {
         try

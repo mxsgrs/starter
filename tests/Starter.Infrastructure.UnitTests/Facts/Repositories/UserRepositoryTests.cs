@@ -10,7 +10,7 @@ public class UserRepositoryTests(SharedFixture fixture) : IClassFixture<SharedFi
     {
         // Arrange
         StarterDbContext dbContext = SharedFixture.CreateDatabaseContext();
-        var user = new User(
+        User user = new(
             Guid.NewGuid(),
             "test@example.com",
             "hashedPassword",
