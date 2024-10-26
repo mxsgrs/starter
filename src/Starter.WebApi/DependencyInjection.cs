@@ -1,6 +1,6 @@
-﻿using Starter.Application.AppContextAccessor;
-using Starter.Application.AuthenticationFeatures;
-using Starter.Application.UserFeatures;
+﻿using Starter.Application;
+using Starter.Application.Features.AuthenticationFeatures;
+using Starter.Application.Features.UserFeatures;
 using Starter.Domain.Aggregates.UserAggregate;
 using Starter.Infrastructure.Persistance.Repositories;
 

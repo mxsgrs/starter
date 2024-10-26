@@ -1,4 +1,4 @@
-﻿namespace Starter.Application.UserFeatures;
+﻿namespace Starter.Application.Features.UserFeatures;
 
 public interface IUserService
 {

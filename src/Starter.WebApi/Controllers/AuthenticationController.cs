@@ -1,4 +1,4 @@
-﻿using Starter.Application.AuthenticationFeatures;
+﻿using Starter.Application.Features.AuthenticationFeatures;
 using Starter.Domain.Authentication;
 
 namespace Starter.WebApi.Controllers;

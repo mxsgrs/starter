@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Starter.Application.Features.UserFeatures;
 using Starter.Domain.Authentication;
 using Starter.Infrastructure.Persistance;
 using System.Reflection;
@@ -30,8 +31,7 @@ builder.Services.AddDbContext<StarterDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // AutoMapper for database models and DTOs mapping
-Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-builder.Services.AddAutoMapper(assemblies);
+builder.Services.AddAutoMapper(typeof(UserMapping));
 
 // Add controllers and serialization
 builder.Services.AddControllers(options =>
@@ -72,8 +72,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthentication()
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
-        Jwt jwt = builder.Configuration.GetRequiredSection("Jwt").Get<Jwt>()
-            ?? throw new Exception("JWT settings are not configured");
+        JsonWebTokenParameters jwt = builder.Configuration
+            .GetRequiredSection("JsonWebTokenParameters")
+            .Get<JsonWebTokenParameters>()
+                ?? throw new Exception("JWT settings are not configured");
 
         byte[] encodedKey = Encoding.ASCII.GetBytes(jwt.Key);
         SymmetricSecurityKey symmetricSecurityKey = new(encodedKey);

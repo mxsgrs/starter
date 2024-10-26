@@ -1,6 +1,6 @@
 ﻿using Starter.Domain.Authentication;
 
-namespace Starter.Application.AuthenticationFeatures;
+namespace Starter.Application.Features.AuthenticationFeatures;
 
 public interface IJwtService
 {

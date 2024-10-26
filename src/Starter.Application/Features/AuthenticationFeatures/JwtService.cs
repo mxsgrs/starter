@@ -7,7 +7,7 @@ using Starter.Domain.Authentication;
 using System.Security.Claims;
 using System.Text;
 
-namespace Starter.Application.AuthenticationFeatures;
+namespace Starter.Application.Features.AuthenticationFeatures;
 
 public class JwtService(ILogger<JwtService> logger, IConfiguration configuration,
     IUserRepository userService) : IJwtService

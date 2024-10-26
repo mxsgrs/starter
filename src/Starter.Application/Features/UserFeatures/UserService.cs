@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Starter.Domain.Aggregates.UserAggregate;
 
-namespace Starter.Application.UserFeatures;
+namespace Starter.Application.Features.UserFeatures;
 
 public class UserService(ILogger<UserService> logger, IMapper mapper,
     IUserRepository userRepository) : IUserService

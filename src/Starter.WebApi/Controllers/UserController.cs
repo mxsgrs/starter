@@ -1,4 +1,4 @@
-﻿using Starter.Application.UserFeatures;
+﻿using Starter.Application.Features.UserFeatures;
 
 namespace Starter.WebApi.Controllers;
 

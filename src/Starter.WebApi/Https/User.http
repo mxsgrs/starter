@@ -1,46 +1,30 @@
 ﻿
-# Create a new user
-POST {{HostAddress}}/api/user-profile/create-or-update
+# Register new user
+POST {{HostAddress}}/api/user
 Content-Type: application/json
-Authorization: Bearer {{Jwt}}
 
 {
+  "emailAddress": "john.doe@example.com",
+  "hashedPassword": "TWF0cml4UmVsb2FkZWQh",
   "firstName": "John",
   "lastName": "Doe",
-  "birthday": "1985-07-15",
+  "birthday": "1990-05-15",
   "gender": "Male",
-  "position": "Software Engineer",
-  "personalPhone": "+1234567890",
-  "professionalPhone": "+0987654321",
-  "postalAddress": "123 Elm Street",
-  "addressSupplement": "Apt 4B",
-  "city": "Metropolis",
-  "zipCode": "12345",
-  "stateProvince": "CA",
-  "country": "USA"
+  "role": "Admin",
+  "phone": "+1234567890",
+  "address": {
+    "addressLine": "123 Main St",
+    "addressSupplement": "Apt 4B",
+    "city": "New York",
+    "zipCode": "12345",
+    "stateProvince": "CA",
+    "country": "USA"
+  }
 }
 
-###
-
-# Read token user
-GET {{HostAddress}}/api/user-profile/read
-Authorization: Bearer {{Jwt}}
 
 ###
 
-# Create or update user credentials
-POST {{HostAddress}}/api/user-credentials/create-or-update
-Content-Type: application/json
-Authorization: Bearer {{Jwt}}
-
-{
-  "emailAddress": "john.doe@gmail.com",
-  "hashedPassword": "TWF0cml4UmVsb2FkZWQh",
-  "userRole": "admin"
-}
-
-###
-
-# Read user credentials
-GET {{HostAddress}}/api/user-credentials/read
+# Read user information
+GET {{HostAddress}}/api/user/a954a648-d3d0-41a9-6d2f-08dcf5b80b91
 Authorization: Bearer {{Jwt}}
