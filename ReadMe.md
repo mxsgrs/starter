@@ -39,13 +39,14 @@ controller was not accessible from another controller, we can now **share it eve
 In this project services are declared in **DependencyInjectionSetup.cs**
 
 ```csharp
-public static class DependencyInjectionSetup
+public static class DependencyInjection
 {
     public static void AddStarterServices(this IServiceCollection services)
     {
-        services.AddScoped<IUserCredentialsService, UserCredentialsService>();
-        services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddScoped<IUserProfileService, UserProfileService>();
+        services.AddScoped<IAppContextAccessor, AppContextAccessor>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IJwtService, JwtService>();
     }
 }
 ```
@@ -54,11 +55,10 @@ This method is called in **Program.cs** like this `builder.Services.AddStarterSe
 **available in all controllers and services constructor** like in the following examples.
 
 ```csharp
-public class AuthenticationController(IAuthenticationService authenticationService, IMapper mapper)
-    : StarterControllerBase(mapper)
+public class AuthenticationController(IJwtService jwtService) : StarterControllerBase
 
-public class AuthenticationService(ILogger<AuthenticationService> logger, IConfiguration configuration,
-    IUserCredentialsService userCredentialsService) : IAuthenticationService
+public class JwtService(ILogger<JwtService> logger, IConfiguration configuration,
+    IUserRepository userService) : IJwtService
 ```
 
 ### JWT authentication
@@ -73,8 +73,10 @@ JWT authentication is declared in **Program.cs** as follows.
 builder.Services.AddAuthentication()
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
-        Jwt jwt = builder.Configuration.GetRequiredSection("Jwt").Get<Jwt>()
-            ?? throw new Exception("JWT settings are not configured");
+        JsonWebTokenParameters jwt = builder.Configuration
+            .GetRequiredSection("JsonWebTokenParameters")
+            .Get<JsonWebTokenParameters>()
+                ?? throw new Exception("JWT settings are not configured");
 
         byte[] encodedKey = Encoding.ASCII.GetBytes(jwt.Key);
         SymmetricSecurityKey symmetricSecurityKey = new(encodedKey);
@@ -106,50 +108,6 @@ string configurationName = Assembly.GetExecutingAssembly()
         ?? throw new Exception("Can not read configuration name");
 
 builder.Configuration.AddJsonFile($"appsettings.{configurationName}.json");
-```
-
-### Result pattern
-
-As **throwing exception is not right way** to handle an unexpected behaviour, we prefer to return a result instead. Previously an object was 
-returned in case of success and an exception was raised in case of failure but now with the **result pattern** we proceed as follows:
-- In case of success, we return a result which boolean property ```IsSuccess``` is true and also contains the data in the ```Value``` property. 
-- In case of failure, a boolean property ```IsFailed``` is true and an error message can be added to the result.
-
-This project uses the **FluentResults** nuget package to implement this pattern. Here is an **example**.
-
-```csharp
-public async Task<Result<UserCredentials>> Read(long id)
-{
-    UserCredentials? userCredentials = await _dbContext.UserCredentials
-        .FirstOrDefaultAsync(item => item.Id == id);
-
-    if (userCredentials is null)
-    {
-        return Result.Fail("User credentials does not exist.");
-    }
-
-    return Result.Ok(userCredentials);
-}
-```
-
-Another positive aspect is to **avoid returning null objects** which make the application prone to **null exceptions**.
-
-Now that the service is returning a result, the controller must return a HTTP response. It is a good thing to
-create a method that handle this in an **abstract controller**, so it can be reused in every controller. 
-Thanks to this method, the controller always return the **HTTP response status** that matches the **service result**.
-
-```csharp
-[NonAction]
-[ApiExplorerSettings(IgnoreApi = true)]
-public IActionResult CorrespondingStatus<T>(Result<T> result)
-{
-    if (result.IsFailed)
-    {
-        return BadRequest(result.Errors);
-    }
-
-    return Ok(result.Value);
-}
 ```
 
 ### Endpoints URL convention
@@ -187,7 +145,7 @@ builder.Services.AddControllers(options =>
 Every endpoint URL will now use the kebab case by default.
 
 ```
-/api/authentication/create-jwt-bearer
+/api/authentication/token
 ```
 
 ### HTTP files
@@ -338,13 +296,13 @@ With the new feature `global using`, namespaces can be included for the whole pr
 maintainability and save time on repetitive tasks. Implementation can be found in **GlobalUsing.cs** file, inside each project root folder.
 
 ```csharp
+global using AutoMapper;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
 global using Starter.WebApi;
 global using Starter.WebApi.Controllers.Abstracts;
-global using Starter.WebApi.Models.Authentication;
-global using Starter.WebApi.Models.Database;
-global using Starter.WebApi.Models.DataTransferObjects;
-global using Starter.WebApi.Services;
-global using Starter.WebApi.Services.Interfaces;
+global using Starter.WebApi.Utilities;
 ```
 
 ## Opening
