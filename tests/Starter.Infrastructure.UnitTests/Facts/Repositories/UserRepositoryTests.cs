@@ -1,8 +1,7 @@
 ﻿namespace Starter.Infrastructure.UnitTests.Facts.Repositories;
 
-public class UserRepositoryTests(SharedFixture fixture) : IClassFixture<SharedFixture>
+public class UserRepositoryTests
 {
-    private readonly SharedFixture _fixture = fixture;
     private readonly Mock<ILogger<UserRepository>> _logger = new();
 
     [Fact]
