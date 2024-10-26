@@ -1,11 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Configuration;
-using Starter.Application;
-using Starter.Domain.Authentication;
-using Starter.Infrastructure.Persistance;
-
-namespace Starter.Infrastructure.UnitTests.Facts.Fixtures;
+﻿namespace Starter.Infrastructure.UnitTests.Facts.Fixtures;
 
 public class SharedFixture
 {
@@ -24,7 +17,7 @@ public class SharedFixture
     {
         public UserClaims UserClaims { get; set; } = new()
         {
-            UserId = 1
+            UserId = Guid.NewGuid()
         };
     }
 
