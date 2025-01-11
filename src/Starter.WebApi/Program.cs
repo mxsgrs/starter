@@ -23,7 +23,9 @@ builder.Services.AddScoped<IAppContextAccessor, AppContextAccessor>();
 
 builder.Services.AddInfrastructureServices(builder.Configuration, builder.Environment);
 
-if (builder.Environment.IsDevelopment())
+string? aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+if (builder.Environment.IsDevelopment() && aspNetCoreEnvironment is not null)
 {
     builder.AddServiceDefaults();
     builder.AddSqlServerDbContext<StarterDbContext>("startersqldb");

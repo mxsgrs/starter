@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Starter.Infrastructure.Persistance;
 using Testcontainers.MsSql;
 
 namespace Starter.WebApi.IntegrationTests.Facts.Factories;

@@ -11,7 +11,7 @@ public partial class StarterDbContext : DbContext
     {
         string? aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-        if (aspNetCoreEnvironment == "Development" || aspNetCoreEnvironment == "Integration")
+        if (aspNetCoreEnvironment == "Development")
         {
             Database.Migrate();
         }

@@ -17,7 +17,7 @@ public static class InfrastructureDependencies
         string? aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
         // Database context
-        if (environment.IsProduction() || aspNetCoreEnvironment == "Integration")
+        if (environment.IsProduction())
         {
             string connectionString = configuration.GetConnectionString("SqlServer")
                 ?? throw new Exception("Connection string for SQL Server is missing");
