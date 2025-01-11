@@ -8,6 +8,8 @@ using System.Text;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 // Add specific configuration file for the current build configuration
@@ -17,17 +19,8 @@ string configurationName = Assembly.GetExecutingAssembly()
 
 builder.Configuration.AddJsonFile($"appsettings.{configurationName}.json");
 
-// Read database connection string from application settings
-string connectionString = builder.Configuration.GetConnectionString("SqlServer")
-    ?? throw new Exception("Connection string for SQL Server is missing");
-
-// Register database context as a service
-// Connect to database with connection string
-builder.Services.AddDbContext<StarterDbContext>(options =>
-    options.UseSqlServer(connectionString));
-
-// AutoMapper for database models and DTOs mapping
-builder.Services.AddAutoMapper(typeof(UserMapping));
+builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices();
 
 // Add controllers and serialization
 builder.Services.AddControllers(options =>
@@ -60,7 +53,9 @@ builder.Services.AddControllers(options =>
 
 // Add services to the container
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddStarterServices();
+builder.Services.AddScoped<IAppContextAccessor, AppContextAccessor>();
+
+builder.Services.AddInfrastructureServices();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -90,6 +85,8 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 WebApplication app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.UseCustomSwagger();
 
