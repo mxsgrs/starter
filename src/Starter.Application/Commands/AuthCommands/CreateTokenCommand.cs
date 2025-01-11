@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using Starter.Application.Features.AuthenticationFeatures;
 using Starter.Domain.Authentication;
 using Starter.Domain.Exceptions;
 using System.Security.Claims;
@@ -12,16 +11,16 @@ namespace Starter.Application.Commands.AuthCommands;
 
 public record CreateTokenCommand(string EmailAddress, string HashedPassword) : IRequest<LoginResponseDto>;
 
-public class CreateTokenCommandHandler(ILogger<JwtService> logger, IConfiguration configuration, 
+public class CreateTokenCommandHandler(ILogger<CreateTokenCommandHandler> logger, IConfiguration configuration, 
     IUserRepository userService) : IRequestHandler<CreateTokenCommand, LoginResponseDto>
 {
-    private readonly ILogger<JwtService> _logger = logger;
+    private readonly ILogger<CreateTokenCommandHandler> _logger = logger;
     private readonly IConfiguration _configuration = configuration;
     private readonly IUserRepository _userService = userService;
 
     public async Task<LoginResponseDto> Handle(CreateTokenCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogDebug("Processing login request for {EmailAddress}", request.EmailAddress);
+        _logger.LogDebug("Processing login request for {emailAddress}", request.EmailAddress);
 
         // Validate user
         Guid userId = await ValidateUser(request.EmailAddress, request.HashedPassword);

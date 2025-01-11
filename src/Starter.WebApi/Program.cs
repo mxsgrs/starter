@@ -8,8 +8,6 @@ using System.Text;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
-
 JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 // Add specific configuration file for the current build configuration
