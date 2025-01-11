@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Starter.Application.Features.UserFeatures;
+using Starter.Application.Dtos;
 
 namespace Starter.Application.UnitTests.Facts.Features.UserFeatures;
 

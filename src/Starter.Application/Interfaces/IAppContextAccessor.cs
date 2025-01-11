@@ -1,6 +1,6 @@
 ﻿using Starter.Domain.Authentication;
 
-namespace Starter.Application;
+namespace Starter.Application.Interfaces;
 
 public interface IAppContextAccessor
 {

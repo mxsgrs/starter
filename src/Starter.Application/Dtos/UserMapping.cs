@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Starter.Domain.Aggregates.UserAggregate;
 
-namespace Starter.Application.Features.UserFeatures;
+namespace Starter.Application.Dtos;
 
 public class UserMapping : Profile
 {

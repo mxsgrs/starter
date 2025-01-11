@@ -1,4 +1,6 @@
-﻿namespace Starter.WebApi.UnitTests.Facts.Controllers;
+﻿using Starter.Application.Dtos;
+
+namespace Starter.WebApi.UnitTests.Facts.Controllers;
 
 public class UserControllerTests
 {

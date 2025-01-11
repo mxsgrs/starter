@@ -1,6 +1,9 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddProject<Projects.Starter_WebApi>("starter-webapi");
+var startersql = builder.AddSqlServer("startersql");
+var startersqldb = startersql.AddDatabase("startersqldb");
+
+builder.AddProject<Projects.Starter_WebApi>("starter-webapi").WithReference(startersqldb);
 
 builder.AddProject<Projects.Starter_MockWebApi>("starter-mockwebapi");
 

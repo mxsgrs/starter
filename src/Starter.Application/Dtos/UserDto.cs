@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Starter.Application.Features.UserFeatures;
+namespace Starter.Application.Dtos;
 
 public record UserDto
 {

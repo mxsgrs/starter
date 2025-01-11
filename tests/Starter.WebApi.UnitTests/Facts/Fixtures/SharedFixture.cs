@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
-using Starter.Application;
+using Starter.Application.Interfaces;
 using Starter.Domain.Authentication;
 using Starter.Infrastructure.Persistance;
 
