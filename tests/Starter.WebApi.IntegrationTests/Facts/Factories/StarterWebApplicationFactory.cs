@@ -17,7 +17,7 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     {
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveAll(typeof(DbContextOptions<StarterDbContext>));
+            services.RemoveAll<DbContextOptions<StarterDbContext>>();
 
             string connectionString = _dbContainer.GetConnectionString();
             services.AddDbContext<StarterDbContext>(options => options

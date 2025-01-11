@@ -1,4 +1,6 @@
-﻿namespace Starter.WebApi.IntegrationTests.Facts.Controllers;
+﻿using Starter.Application.Dtos;
+
+namespace Starter.WebApi.IntegrationTests.Facts.Controllers;
 
 public class AuthenticationControllerTests(StarterWebApplicationFactory factory) 
     : IClassFixture<StarterWebApplicationFactory>
@@ -28,7 +30,7 @@ public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
         dbContext.SaveChanges();
 
         HttpClient client = _factory.CreateClient();
-        HashedLoginRequest hashedLoginRequest = new()
+        HashedLoginRequestDto hashedLoginRequest = new()
         {
             EmailAddress = "test@example.com",
             HashedPassword = "hashedPassword"
@@ -56,7 +58,7 @@ public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
         // Arrange
         _factory.MigrateDbContext();
         HttpClient client = _factory.CreateClient();
-        HashedLoginRequest hashedLoginRequest = new()
+        HashedLoginRequestDto hashedLoginRequest = new()
         {
             EmailAddress = "testuser@gmail.com",
             HashedPassword = "testpasswordhash"

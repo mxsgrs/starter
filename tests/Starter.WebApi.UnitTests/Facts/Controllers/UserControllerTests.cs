@@ -1,101 +1,100 @@
-﻿using Starter.Application.Dtos;
+﻿using MediatR;
+using Starter.Application.Commands.UserCommands;
+using Starter.Application.Dtos;
+using Starter.Application.Queries.UserQueries;
+using Starter.Domain.Aggregates.UserAggregate;
 
 namespace Starter.WebApi.UnitTests.Facts.Controllers;
 
 public class UserControllerTests
 {
-    private readonly Mock<IUserService> _userServiceMock;
-    private readonly UserController _userController;
+    private readonly Mock<ISender> _senderMock;
+    private readonly UserController _controller;
 
     public UserControllerTests()
     {
-        _userServiceMock = new Mock<IUserService>();
-        _userController = new UserController(_userServiceMock.Object);
+        _senderMock = new Mock<ISender>();
+        _controller = new UserController(_senderMock.Object);
     }
 
     [Fact]
-    public async Task CreateUser_ShouldReturnOkResult_WhenUserIsCreated()
+    public async Task CreateUser_ReturnsOkResult_WithCreatedUserDto()
     {
         // Arrange
-        UserDto userDto = new()
+        var userDto = new UserDto
         {
             Id = Guid.NewGuid(),
             EmailAddress = "test@example.com",
-            HashedPassword = "hashedpassword",
+            HashedPassword = "hashed_password",
             FirstName = "John",
             LastName = "Doe",
             Birthday = new DateOnly(1990, 1, 1),
             Gender = Gender.Male,
             Role = Role.User,
             Phone = "+1234567890",
-            Address = new()
+            Address = new UserAddressDto
             {
                 AddressLine = "123 Test St",
-                City = "TestCity",
+                City = "Test City",
                 ZipCode = "12345",
-                Country = "TestCountry"
+                Country = "Test Country"
             }
         };
 
-        _userServiceMock.Setup(s => s.CreateUser(It.IsAny<UserDto>())).ReturnsAsync(userDto);
+        var createUserCommand = new CreateUserCommand { UserDto = userDto };
+
+        _senderMock.Setup(s => s.Send(It.IsAny<CreateUserCommand>(), default))
+            .ReturnsAsync(userDto);
 
         // Act
-        IActionResult result = await _userController.CreateUser(userDto);
+        var result = await _controller.CreateUser(userDto);
 
         // Assert
-        OkObjectResult? okResult = Assert.IsType<OkObjectResult>(result);
-        UserDto? returnedUserDto = Assert.IsType<UserDto>(okResult.Value);
-        Assert.Equal(userDto, returnedUserDto);
-        _userServiceMock.Verify(s => s.CreateUser(It.Is<UserDto>(u => u == userDto)), Times.Once);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.NotNull(okResult.Value);
+        Assert.IsType<UserDto>(okResult.Value);
+        Assert.Equal(userDto, okResult.Value);
+
+        _senderMock.Verify(s => s.Send(It.Is<CreateUserCommand>(c => c.UserDto == userDto), default), Times.Once);
     }
 
     [Fact]
-    public async Task ReadUser_ShouldReturnNotFoundResult_WhenUserDoesNotExist()
+    public async Task ReadUser_ReturnsOkResult_WithUserDto()
     {
         // Arrange
-        Guid userId = Guid.NewGuid();
-        _userServiceMock.Setup(s => s.ReadUser(userId)).ThrowsAsync(new UserNotFoundException(userId));
-
-        // Act & Assert
-        UserNotFoundException? exception = await Assert.ThrowsAsync<UserNotFoundException>(() => _userController.ReadUser(userId));
-        Assert.Equal($"User {userId} was not found.", exception.Message);
-        _userServiceMock.Verify(s => s.ReadUser(It.Is<Guid>(id => id == userId)), Times.Once);
-    }
-
-    [Fact]
-    public async Task ReadUser_ShouldReturnOkResult_WhenUserExists()
-    {
-        // Arrange
-        Guid userId = Guid.NewGuid();
-        UserDto userDto = new()
+        var userId = Guid.NewGuid();
+        var userDto = new UserDto
         {
             Id = userId,
             EmailAddress = "test@example.com",
-            HashedPassword = "hashedpassword",
+            HashedPassword = "hashed_password",
             FirstName = "John",
             LastName = "Doe",
             Birthday = new DateOnly(1990, 1, 1),
             Gender = Gender.Male,
             Role = Role.User,
             Phone = "+1234567890",
-            Address = new()
+            Address = new UserAddressDto
             {
                 AddressLine = "123 Test St",
-                City = "TestCity",
+                City = "Test City",
                 ZipCode = "12345",
-                Country = "TestCountry"
+                Country = "Test Country"
             }
         };
 
-        _userServiceMock.Setup(s => s.ReadUser(userId)).ReturnsAsync(userDto);
+        _senderMock.Setup(s => s.Send(It.IsAny<ReadUserQuery>(), default))
+            .ReturnsAsync(userDto);
 
         // Act
-        IActionResult result = await _userController.ReadUser(userId);
+        var result = await _controller.ReadUser(userId);
 
         // Assert
-        OkObjectResult? okResult = Assert.IsType<OkObjectResult>(result);
-        UserDto? returnedUserDto = Assert.IsType<UserDto>(okResult.Value);
-        Assert.Equal(userDto, returnedUserDto);
-        _userServiceMock.Verify(s => s.ReadUser(It.Is<Guid>(id => id == userId)), Times.Once);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.NotNull(okResult.Value);
+        Assert.IsType<UserDto>(okResult.Value);
+        Assert.Equal(userDto, okResult.Value);
+
+        _senderMock.Verify(s => s.Send(It.Is<ReadUserQuery>(q => q.Id == userId), default), Times.Once);
     }
 }
