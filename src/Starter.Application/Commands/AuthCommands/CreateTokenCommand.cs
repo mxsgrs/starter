@@ -82,4 +82,3 @@ public class CreateTokenCommandHandler(ILogger<CreateTokenCommandHandler> logger
         return handler.CreateToken(tokenDescriptor);
     }
 }
-
