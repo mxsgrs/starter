@@ -4,7 +4,7 @@ using Starter.Application.Features.UserFeatures;
 
 namespace Starter.Application;
 
-public static class DependencyInjection
+public static class ApplicationDependencies
 {
     public static void AddApplicationServices(this IServiceCollection services)
     {

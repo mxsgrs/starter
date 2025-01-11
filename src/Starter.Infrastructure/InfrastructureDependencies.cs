@@ -7,7 +7,7 @@ using Starter.Infrastructure.Persistance.Repositories;
 
 namespace Starter.Infrastructure;
 
-public static class DependencyInjection
+public static class InfrastructureDependencies
 {
     public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
