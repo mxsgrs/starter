@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Starter.Infrastructure.Persistance;
 using System.Reflection;
 using System.Text;
 
@@ -23,7 +24,14 @@ builder.Configuration.AddJsonFile($"appsettings.{configurationName}.json");
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAppContextAccessor, AppContextAccessor>();
 
-builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddInfrastructureServices(builder.Configuration, builder.Environment);
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.AddServiceDefaults();
+    builder.AddSqlServerDbContext<StarterDbContext>("startersqldb");
+}
+
 builder.Services.AddApplicationServices();
 
 // Add controllers and serialization

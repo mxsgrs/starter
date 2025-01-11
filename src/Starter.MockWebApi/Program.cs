@@ -1,6 +1,24 @@
+using MassTransit;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+// Message bus
+builder.Services.AddMassTransit(registration =>
+{
+    //egistration.AddConsumer<CheckUserExistsConsumer>();
+
+    registration.UsingAzureServiceBus((context, configurator) =>
+    {
+        string connectionString = builder.Configuration.GetConnectionString("AzureServiceBus")
+            ?? throw new Exception("Azure Service Bus connection string is missing");
+
+        configurator.Host(connectionString);
+
+        configurator.ConfigureEndpoints(context);
+    });
+});
 
 builder.Services.AddOpenApi();
 
