@@ -17,17 +17,21 @@ string configurationName = Assembly.GetExecutingAssembly()
 
 builder.Configuration.AddJsonFile($"appsettings.{configurationName}.json");
 
-// Read database connection string from application settings
-string connectionString = builder.Configuration.GetConnectionString("SqlServer")
-    ?? throw new Exception("Connection string for SQL Server is missing");
+// Add services to the container
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IAppContextAccessor, AppContextAccessor>();
 
-// Register database context as a service
-// Connect to database with connection string
-builder.Services.AddDbContext<StarterDbContext>(options =>
-    options.UseSqlServer(connectionString));
+builder.Services.AddInfrastructureServices(builder.Configuration, builder.Environment);
 
-// AutoMapper for database models and DTOs mapping
-builder.Services.AddAutoMapper(typeof(UserMapping));
+string? aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+if (builder.Environment.IsDevelopment() && aspNetCoreEnvironment is not null)
+{
+    builder.AddServiceDefaults();
+    builder.AddSqlServerDbContext<StarterDbContext>("startersqldb");
+}
+
+builder.Services.AddApplicationServices();
 
 // Add controllers and serialization
 builder.Services.AddControllers(options =>
@@ -57,12 +61,7 @@ builder.Services.AddControllers(options =>
         };
     });
 
-
-// Add services to the container
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddStarterServices();
-
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddOpenApi();
 
 // Configure JWT authentication
 builder.Services.AddAuthentication()
@@ -84,14 +83,15 @@ builder.Services.AddAuthentication()
         };
     });
 
-builder.AddCustomSwaggerGen();
-
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 WebApplication app = builder.Build();
 
-app.UseCustomSwagger();
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
 
 app.UseHttpsRedirection();
 

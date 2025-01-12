@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.JsonWebTokens;
+using Starter.Application.Interfaces;
 using System.Security.Claims;
 
 namespace Starter.WebApi.Utilities;

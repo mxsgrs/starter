@@ -11,7 +11,7 @@ public class UserRepository(ILogger<UserRepository> logger, StarterDbContext dbC
 
     public async Task<User> CreateUser(User user)
     {
-        _logger.LogInformation("Creating user credentials {User}", user);
+        _logger.LogInformation("Creating user credentials {user}", user);
 
         _dbContext.Users.Add(user);
         await _dbContext.SaveChangesAsync();
@@ -44,7 +44,7 @@ public class UserRepository(ILogger<UserRepository> logger, StarterDbContext dbC
                 && item.HashedPassword == user.HashedPassword)
                     ?? throw new UserNotFoundException(user.EmailAddress);
 
-        _logger.LogInformation("Updating user credentials {Existing}", existing);
+        _logger.LogInformation("Updating user credentials {existing}", existing);
 
         _dbContext.Entry(existing).CurrentValues.SetValues(user);
 

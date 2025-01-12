@@ -1,14 +1,19 @@
 ﻿namespace Starter.WebApi.Controllers;
 
-public class UserController(IUserService userService) : StarterControllerBase
+public class UserController(ISender sender) : StarterControllerBase
 {
-    private readonly IUserService _userService = userService;
+    private readonly ISender _sender = sender;
 
     [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> CreateUser(UserDto userDto)
     {
-        UserDto resultDto = await _userService.CreateUser(userDto);
+        CreateUserCommand command = new()
+        {
+            UserDto = userDto
+        };
+
+        UserDto resultDto = await _sender.Send(command);
 
         return Ok(resultDto);
     }
@@ -16,7 +21,12 @@ public class UserController(IUserService userService) : StarterControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> ReadUser(Guid id)
     {
-        UserDto resultDto = await _userService.ReadUser(id);
+        ReadUserQuery query = new()
+        {
+            Id = id
+        };
+
+        UserDto resultDto = await _sender.Send(query);
 
         return Ok(resultDto);
     }

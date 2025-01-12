@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Starter.Infrastructure.Persistance;
 using Testcontainers.MsSql;
 
 namespace Starter.WebApi.IntegrationTests.Facts.Factories;
@@ -17,7 +16,7 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     {
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveAll(typeof(DbContextOptions<StarterDbContext>));
+            services.RemoveAll<DbContextOptions<StarterDbContext>>();
 
             string connectionString = _dbContainer.GetConnectionString();
             services.AddDbContext<StarterDbContext>(options => options

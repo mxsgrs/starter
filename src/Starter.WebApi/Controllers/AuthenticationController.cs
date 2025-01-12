@@ -1,14 +1,16 @@
 ﻿namespace Starter.WebApi.Controllers;
 
-public class AuthenticationController(IJwtService jwtService) : StarterControllerBase
+public class AuthenticationController(ISender sender) : StarterControllerBase
 {
-    private readonly IJwtService _jwtService = jwtService;
+    private readonly ISender _sender = sender;
 
     [AllowAnonymous]
     [HttpPost("token")]
-    public async Task<IActionResult> Token(HashedLoginRequest hashedLoginRequest)
+    public async Task<IActionResult> Token(HashedLoginRequestDto hashedLoginRequest)
     {
-        LoginResponse result = await _jwtService.CreateToken(hashedLoginRequest);
+        CreateTokenCommand command = new(hashedLoginRequest.EmailAddress, hashedLoginRequest.HashedPassword);
+
+        LoginResponseDto result = await _sender.Send(command);
 
         return Ok(result);
     }

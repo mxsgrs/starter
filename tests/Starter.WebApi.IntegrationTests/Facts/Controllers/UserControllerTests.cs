@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using Starter.Application.Dtos;
+using System.Net.Http.Json;
 
 namespace Starter.WebApi.IntegrationTests.Facts.Controllers;
 
