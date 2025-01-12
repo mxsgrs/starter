@@ -36,5 +36,5 @@ Content-Type: application/json
 ###
 
 # Read user information
-GET {{HostAddress}}/api/user/44040953-ba3b-4d79-28da-08dd32846976
+GET {{HostAddress}}/api/user/08414006-8dea-497b-a078-08dd32efc084
 Authorization: Bearer {{Jwt}}

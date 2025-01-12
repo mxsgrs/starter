@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Starter.Domain.Aggregates.UserAggregate;
+using Starter.Infrastructure.Messages;
 using Starter.Infrastructure.Persistance;
 using Starter.Infrastructure.Persistance.Repositories;
 
@@ -38,6 +39,8 @@ public static class InfrastructureDependencies
                 configurator.ConfigureEndpoints(context);
             });
         });
+
+        services.AddScoped<ICheckUserAddressService, CheckUserAddressService>();
 
         // Repositories
         services.AddScoped<IUserRepository, UserRepository>();

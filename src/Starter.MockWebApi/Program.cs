@@ -1,4 +1,5 @@
 using MassTransit;
+using Starter.Infrastructure.Messages;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +8,7 @@ builder.AddServiceDefaults();
 // Message bus
 builder.Services.AddMassTransit(registration =>
 {
-    registration.AddConsumer<CheckUserExistsConsumer>();
+    registration.AddConsumer<CheckUserAddressConsumer>();
 
     registration.UsingAzureServiceBus((context, configurator) =>
     {
@@ -38,6 +39,7 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
+// Fake endpoint
 app.MapGet("/weatherforecast", () =>
 {
     var forecast =  Enumerable.Range(1, 5).Select(index =>
@@ -57,17 +59,4 @@ app.Run();
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
-
-// Message bus consumer
-public class CheckUserExistsConsumer() : IConsumer<CheckUserExists>
-{
-    public Task Consume(ConsumeContext<CheckUserExists> context)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public class CheckUserExists
-{
 }
