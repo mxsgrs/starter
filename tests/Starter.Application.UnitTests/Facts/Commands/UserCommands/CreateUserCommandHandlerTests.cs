@@ -8,13 +8,15 @@ public class CreateUserCommandHandlerTests
 {
     private readonly Mock<IMapper> _mockMapper;
     private readonly Mock<IUserRepository> _mockUserRepository;
+    private readonly Mock<ICheckUserAddressService> _mockCheckUserAddressService;
     private readonly CreateUserCommandHandler _handler;
 
     public CreateUserCommandHandlerTests()
     {
         _mockMapper = new Mock<IMapper>();
         _mockUserRepository = new Mock<IUserRepository>();
-        _handler = new CreateUserCommandHandler(_mockMapper.Object, _mockUserRepository.Object);
+        _mockCheckUserAddressService = new Mock<ICheckUserAddressService>();
+        _handler = new CreateUserCommandHandler(_mockMapper.Object, _mockUserRepository.Object, _mockCheckUserAddressService.Object);
     }
 
     [Fact]
