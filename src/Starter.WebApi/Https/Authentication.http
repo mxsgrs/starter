@@ -1,0 +1,40 @@
+
+# Register new user
+POST {{HostAddress}}/api/user
+Content-Type: application/json
+
+{
+  "emailAddress": "john.doe@example.com",
+  "hashedPassword": "TWF0cml4UmVsb2FkZWQh",
+  "firstName": "John",
+  "lastName": "Doe",
+  "birthday": "1990-05-15",
+  "gender": "Male",
+  "role": "Admin",
+  "phone": "+1234567890",
+  "address": {
+    "addressLine": "123 Main St",
+    "addressSupplement": "Apt 4B",
+    "city": "New York",
+    "zipCode": "12345",
+    "stateProvince": "CA",
+    "country": "USA"
+  }
+}
+
+###
+
+# Generate access token
+POST {{HostAddress}}/api/authentication/token
+Content-Type: application/json
+
+{
+  "emailAddress": "john.doe@example.com",
+  "hashedPassword": "TWF0cml4UmVsb2FkZWQh"
+}
+
+###
+
+# Read user information
+GET {{HostAddress}}/api/user/08414006-8dea-497b-a078-08dd32efc084
+Authorization: Bearer {{Jwt}}
