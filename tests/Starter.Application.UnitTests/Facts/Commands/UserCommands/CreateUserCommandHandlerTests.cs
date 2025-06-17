@@ -23,7 +23,7 @@ public class CreateUserCommandHandlerTests
     public async Task Handle_ShouldCreateUser_WhenValidInput()
     {
         // Arrange
-        var userDto = new UserDto
+        UserDto userDto = new()
         {
             Id = Guid.NewGuid(),
             EmailAddress = "test@example.com",
@@ -43,7 +43,7 @@ public class CreateUserCommandHandlerTests
             }
         };
 
-        var user = new User(
+        User user = new(
             Guid.NewGuid(),
             userDto.EmailAddress,
             userDto.HashedPassword,
@@ -53,19 +53,33 @@ public class CreateUserCommandHandlerTests
             userDto.Gender,
             userDto.Role,
             userDto.Phone,
-            new Address(userDto.Address.AddressLine, userDto.Address.City, userDto.Address.ZipCode, userDto.Address.Country)
+            new Address
+            (
+                userDto.Address.AddressLine, 
+                userDto.Address.City,
+                userDto.Address.ZipCode,
+                userDto.Address.Country
+            )
         );
 
-        var createdUser = user;
+        User createdUser = user;
 
-        _mockMapper.Setup(m => m.Map<User>(userDto)).Returns(user);
-        _mockUserRepository.Setup(repo => repo.CreateUser(It.IsAny<User>())).ReturnsAsync(createdUser);
-        _mockMapper.Setup(m => m.Map<UserDto>(createdUser)).Returns(userDto);
+        _mockMapper.Setup(m => m.Map<User>(userDto))
+            .Returns(user);
 
-        var command = new CreateUserCommand { UserDto = userDto };
+        _mockUserRepository.Setup(repo => repo.CreateUser(It.IsAny<User>()))
+            .ReturnsAsync(createdUser);
+
+        _mockMapper.Setup(m => m.Map<UserDto>(createdUser))
+            .Returns(userDto);
+
+        _mockCheckUserAddressService.Setup(m => m.Check(userDto.Address.AddressLine, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        CreateUserCommand command = new() { UserDto = userDto };
 
         // Act
-        var result = await _handler.Handle(command, default);
+        UserDto result = await _handler.Handle(command, default);
 
         // Assert
         Assert.NotNull(result);
@@ -74,7 +88,9 @@ public class CreateUserCommandHandlerTests
         Assert.Equal(userDto.FirstName, result.FirstName);
 
         _mockMapper.Verify(m => m.Map<User>(userDto), Times.Once);
+
         _mockUserRepository.Verify(repo => repo.CreateUser(It.Is<User>(u => u.EmailAddress == userDto.EmailAddress)), Times.Once);
+
         _mockMapper.Verify(m => m.Map<UserDto>(createdUser), Times.Once);
     }
 
@@ -82,7 +98,7 @@ public class CreateUserCommandHandlerTests
     public async Task Handle_ShouldThrowException_WhenUserRepositoryFails()
     {
         // Arrange
-        var userDto = new UserDto
+        UserDto userDto = new()
         {
             Id = Guid.NewGuid(),
             EmailAddress = "test@example.com",
@@ -90,14 +106,20 @@ public class CreateUserCommandHandlerTests
             LastName = "Doe"
         };
 
-        var command = new CreateUserCommand { UserDto = userDto };
+        CreateUserCommand command = new() 
+        {
+            UserDto = userDto
+        };
 
-        _mockMapper.Setup(m => m.Map<User>(userDto)).Throws<InvalidOperationException>();
+        _mockMapper.Setup(m => m.Map<User>(userDto))
+            .Throws<InvalidOperationException>();
 
-        // Act & Assert
+        // Act
         await Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(command, default));
 
+        // Assert
         _mockMapper.Verify(m => m.Map<User>(userDto), Times.Once);
+
         _mockUserRepository.Verify(repo => repo.CreateUser(It.IsAny<User>()), Times.Never);
     }
 }

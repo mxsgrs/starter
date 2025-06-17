@@ -13,8 +13,25 @@ public class UserTests
 
         // Act & Assert
         ValidationException exception = Assert.Throws<ValidationException>(() =>
-            new User(Guid.NewGuid(), "test@example.com", "hashedPassword123", "John", "Doe", futureDate,
-                Gender.Male, Role.User, "+1234567890", new Address("123 Main St", "City", "State", "PostalCode", "Country")));
+            new User(
+                Guid.NewGuid(),
+                "test@example.com",
+                "hashedPassword123",
+                "John",
+                "Doe",
+                futureDate,
+                Gender.Male,
+                Role.User,
+                "+1234567890",
+                new Address(
+                    "123 Main St",
+                    "City",
+                    "State",
+                    "PostalCode",
+                    "Country"
+                )
+            )
+        );
 
         Assert.Equal("User is not valid: Birthday date can't be in the future.", exception.Message);
     }
@@ -27,8 +44,25 @@ public class UserTests
 
         // Act & Assert
         ValidationException exception = Assert.Throws<ValidationException>(() =>
-            new User(Guid.NewGuid(), invalidEmail, "hashedPassword123", "John", "Doe", new DateOnly(1990, 1, 1),
-                Gender.Male, Role.User, "+1234567890", new Address("123 Main St", "City", "State", "PostalCode", "Country")));
+            new User(
+                Guid.NewGuid(),
+                invalidEmail,
+                "hashedPassword123",
+                "John",
+                "Doe",
+                new DateOnly(1990, 1, 1),
+                Gender.Male,
+                Role.User,
+                "+1234567890",
+                new Address(
+                    "123 Main St",
+                    "City",
+                    "State",
+                    "PostalCode",
+                    "Country"
+                )
+            )
+        );
 
         Assert.Equal("User is not valid: Invalid email address.", exception.Message);
     }
@@ -41,8 +75,25 @@ public class UserTests
 
         // Act & Assert
         ValidationException exception = Assert.Throws<ValidationException>(() =>
-            new User(Guid.NewGuid(), "test@example.com", "hashedPassword123", "John", "Doe", new DateOnly(1990, 1, 1),
-                Gender.Male, Role.User, invalidPhone, new Address("123 Main St", "City", "State", "PostalCode", "Country")));
+            new User(
+                Guid.NewGuid(),
+                "test@example.com",
+                "hashedPassword123",
+                "John",
+                "Doe",
+                new DateOnly(1990, 1, 1),
+                Gender.Male,
+                Role.User,
+                invalidPhone,
+                new Address(
+                    "123 Main St",
+                    "City",
+                    "State",
+                    "PostalCode",
+                    "Country"
+                )
+            )
+        );
 
         Assert.Equal("User is not valid: The phone number must be between 10 and 15 digits and may include a leading +.", exception.Message);
     }
@@ -55,8 +106,25 @@ public class UserTests
 
         // Act & Assert
         ValidationException exception = Assert.Throws<ValidationException>(() =>
-            new User(Guid.NewGuid(), "test@example.com", "hashedPassword123", longFirstName, "Doe", new DateOnly(1990, 1, 1),
-                Gender.Male, Role.User, "+1234567890", new Address("123 Main St", "City", "State", "PostalCode", "Country")));
+            new User(
+                Guid.NewGuid(),
+                "test@example.com",
+                "hashedPassword123",
+                longFirstName,
+                "Doe",
+                new DateOnly(1990, 1, 1),
+                Gender.Male,
+                Role.User,
+                "+1234567890",
+                new Address(
+                    "123 Main St",
+                    "City",
+                    "State",
+                    "PostalCode",
+                    "Country"
+                )
+            )
+        );
 
         Assert.Equal("User is not valid: The field FirstName must be a string or array type with a maximum length of '128'.", exception.Message);
     }

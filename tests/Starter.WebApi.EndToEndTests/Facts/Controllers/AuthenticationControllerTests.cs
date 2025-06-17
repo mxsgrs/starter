@@ -1,5 +1,4 @@
 ﻿using Starter.Application.Dtos;
-using Starter.WebApi.EndToEndTests.Facts.Factories;
 
 namespace Starter.WebApi.EndToEndTests.Facts.Controllers;
 
@@ -24,7 +23,14 @@ public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
             Gender.Male,
             Role.User,
             "+1234567890",
-            new Address("Street", "City", "State", "12345", "Country")
+            new Address
+            (
+                "Street",
+                "City",
+                "State",
+                "12345",
+                "Country"
+            )
         );
 
         dbContext.Users.Add(user);

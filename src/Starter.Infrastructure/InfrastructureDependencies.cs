@@ -30,13 +30,14 @@ public static class InfrastructureDependencies
         // Message bus
         services.AddMassTransit(registration =>
         {
-            registration.UsingAzureServiceBus((context, configurator) =>
+            registration.UsingRabbitMq((context, rabbitMqConfiguration) =>
             {
-                string connectionString = configuration.GetConnectionString("AzureServiceBus")
-                    ?? throw new Exception("Azure Service Bus connection string is missing");
+                string connectionString = configuration.GetConnectionString("RabbitMq")
+                    ?? throw new Exception("Connection string for RabbitMQ is missing");
 
-                configurator.Host(connectionString);
-                configurator.ConfigureEndpoints(context);
+                rabbitMqConfiguration.Host(new Uri(connectionString));
+
+                rabbitMqConfiguration.ConfigureEndpoints(context);
             });
         });
 

@@ -16,14 +16,14 @@ public class CreateUserCommandHandler(IMapper mapper, IUserRepository userReposi
     {
         User user = _mapper.Map<User>(request.UserDto);
 
-        //string userAddress = user.Address.AddressLine;
+        string userAddress = user.Address.AddressLine;
 
-        //bool isAddressValid = await _checkAddressService.Check(userAddress, cancellationToken);
+        bool isAddressValid = await _checkAddressService.Check(userAddress, cancellationToken);
 
-        //if (!isAddressValid)
-        //{
-        //    throw new InvalidUserAddressException(userAddress);
-        //}
+        if (!isAddressValid)
+        {
+            throw new InvalidUserAddressException(userAddress);
+        }
 
         User createdUser = await _userRepository.CreateUser(user);
 

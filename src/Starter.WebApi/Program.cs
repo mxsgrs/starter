@@ -28,7 +28,7 @@ string? aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_E
 if (builder.Environment.IsDevelopment() && aspNetCoreEnvironment is not null)
 {
     builder.AddServiceDefaults();
-    builder.AddSqlServerDbContext<StarterDbContext>("startersqldb");
+    builder.AddSqlServerDbContext<StarterDbContext>("UserDatabase");
 }
 
 builder.Services.AddApplicationServices();

@@ -10,14 +10,14 @@ builder.Services.AddMassTransit(registration =>
 {
     registration.AddConsumer<CheckUserAddressConsumer>();
 
-    registration.UsingAzureServiceBus((context, configurator) =>
+    registration.UsingRabbitMq((context, rabbitMqConfiguration) =>
     {
-        string connectionString = builder.Configuration.GetConnectionString("AzureServiceBus")
-            ?? throw new Exception("Azure Service Bus connection string is missing");
+        string connectionString = builder.Configuration.GetConnectionString("RabbitMq")
+            ?? throw new Exception("Connection string for RabbitMQ is missing");
 
-        configurator.Host(connectionString);
+        rabbitMqConfiguration.Host(new Uri(connectionString));
 
-        configurator.ConfigureEndpoints(context);
+        rabbitMqConfiguration.ConfigureEndpoints(context);
     });
 });
 

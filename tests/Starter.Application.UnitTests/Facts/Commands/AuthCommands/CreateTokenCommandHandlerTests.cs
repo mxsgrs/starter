@@ -1,4 +1,5 @@
 ﻿using Starter.Application.Commands.AuthCommands;
+using Starter.Application.Dtos;
 using Starter.Application.UnitTests.Facts.Fixtures;
 
 namespace Starter.Application.UnitTests.Facts.Commands.AuthCommands;
@@ -25,14 +26,14 @@ public class CreateTokenCommandHandlerTests : IClassFixture<SharedFixture>
     public async Task Handle_InvalidUser_ThrowsUnauthorizedException()
     {
         // Arrange
-        var emailAddress = "invalid@example.com";
-        var hashedPassword = "wrongPassword";
+        string emailAddress = "invalid@example.com";
+        string hashedPassword = "wrongPassword";
 
         _mockUserRepository
             .Setup(repo => repo.ReadUser(emailAddress, hashedPassword))
             .ThrowsAsync(new UnauthorizedException());
 
-        var command = new CreateTokenCommand(emailAddress, hashedPassword);
+        CreateTokenCommand command = new(emailAddress, hashedPassword);
 
         // Act & Assert
         await Assert.ThrowsAsync<UnauthorizedException>(async () =>
@@ -43,10 +44,10 @@ public class CreateTokenCommandHandlerTests : IClassFixture<SharedFixture>
     public async Task Handle_ValidUser_ReturnsAccessToken()
     {
         // Arrange
-        var emailAddress = "test@example.com";
-        var hashedPassword = "hashedPassword123";
-        var userId = Guid.NewGuid();
-        var user = new User(
+        string emailAddress = "test@example.com";
+        string hashedPassword = "hashedPassword123";
+        Guid userId = Guid.NewGuid();
+        User user = new(
             userId,
             emailAddress,
             hashedPassword,
@@ -56,10 +57,16 @@ public class CreateTokenCommandHandlerTests : IClassFixture<SharedFixture>
             Gender.Male,
             Role.User,
             "+1234567890",
-            new Address("Street", "City", "State", "PostalCode", "Country")
+            new Address(
+                "Street", 
+                "City",
+                "State",
+                "PostalCode",
+                "Country"
+            )
         );
 
-        var jwtParameters = new JsonWebTokenParameters
+        JsonWebTokenParameters jwtParameters = new()
         {
             Key = "test_secret_key_1234567890",
             Issuer = "testIssuer",
@@ -70,10 +77,10 @@ public class CreateTokenCommandHandlerTests : IClassFixture<SharedFixture>
             .Setup(repo => repo.ReadUser(emailAddress, hashedPassword))
             .ReturnsAsync(user);
 
-        var command = new CreateTokenCommand(emailAddress, hashedPassword);
+        CreateTokenCommand command = new(emailAddress, hashedPassword);
 
         // Act
-        var result = await _handler.Handle(command, CancellationToken.None);
+        LoginResponseDto result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
