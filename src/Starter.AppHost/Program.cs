@@ -1,7 +1,8 @@
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
 IResourceBuilder<RabbitMQServerResource> messaging = builder
-    .AddRabbitMQ("RabbitMq");
+    .AddRabbitMQ("RabbitMq")
+    .WithManagementPlugin();
 
 IResourceBuilder<SqlServerDatabaseResource> startersqldb = builder
     .AddSqlServer("SqlServer")

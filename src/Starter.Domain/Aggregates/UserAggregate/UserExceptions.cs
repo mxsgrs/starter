@@ -8,7 +8,6 @@ public class UserNotFoundException : NotFoundException
     public UserNotFoundException(string emailAddress) : base($"User {emailAddress} was not found.") { }
 }
 
-public class InvalidUserAddressException : BadRequestException
-{
-    public InvalidUserAddressException(string address) : base($"User's address {address} is not valid.") { }
-}
+public class InvalidUserAddressException(string address) : BadRequestException($"User's address {address} is not valid.") { }
+
+public class AlreadyExistingUserException(string emailAddress) : BadRequestException($"User with email address {emailAddress} already exists.") { }

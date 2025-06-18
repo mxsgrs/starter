@@ -13,6 +13,15 @@ public class UserRepository(ILogger<UserRepository> logger, StarterDbContext dbC
     {
         _logger.LogInformation("Creating user credentials {user}", user);
 
+        bool userExists = await _dbContext.Users.AnyAsync(item => item.EmailAddress == user.EmailAddress);
+
+        if (userExists)
+        {
+            _logger.LogWarning("User with email {email} already exists", user.EmailAddress);
+
+            throw new AlreadyExistingUserException(user.EmailAddress);
+        }
+
         _dbContext.Users.Add(user);
         await _dbContext.SaveChangesAsync();
 
