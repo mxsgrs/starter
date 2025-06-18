@@ -11,7 +11,7 @@ IResourceBuilder<SqlServerDatabaseResource> userDatabase = sqlServer
     .AddDatabase("UserDatabase");
 
 builder
-    .AddProject<Projects.Starter_WebApi>("UserService")
+    .AddProject<Projects.UserService_WebApi>("UserService")
     .WithReference(rabbitMq)
     .WithReference(userDatabase);
 

@@ -1,5 +1,5 @@
 using MassTransit;
-using Starter.Infrastructure.Messages;
+using UserService.Infrastructure.Messages;
 
 var builder = WebApplication.CreateBuilder(args);
 

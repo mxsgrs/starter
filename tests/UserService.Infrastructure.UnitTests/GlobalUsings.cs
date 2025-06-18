@@ -1,0 +1,11 @@
+﻿global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Diagnostics;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.Logging;
+global using Moq;
+global using UserService.Application.Interfaces;
+global using UserService.Domain.Aggregates.UserAggregate;
+global using UserService.Domain.Authentication;
+global using UserService.Infrastructure.Persistance;
+global using UserService.Infrastructure.Persistance.Repositories;
+global using UserService.Infrastructure.UnitTests.Facts.Fixtures;

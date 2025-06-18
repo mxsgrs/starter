@@ -1,6 +1,6 @@
 ﻿using MassTransit;
 
-namespace Starter.Infrastructure.Messages;
+namespace UserService.Infrastructure.Messages;
 
 public class CheckUserAddress
 {

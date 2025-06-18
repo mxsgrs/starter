@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AddressService.WebApi\AddressService.WebApi.csproj" />
-    <ProjectReference Include="..\Starter.WebApi\Starter.WebApi.csproj" />
+    <ProjectReference Include="..\UserService.WebApi\UserService.WebApi.csproj" />
   </ItemGroup>
 
 </Project>
