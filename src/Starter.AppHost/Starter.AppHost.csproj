@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Starter.MockWebApi\Starter.MockWebApi.csproj" />
+    <ProjectReference Include="..\AddressService.WebApi\AddressService.WebApi.csproj" />
     <ProjectReference Include="..\Starter.WebApi\Starter.WebApi.csproj" />
   </ItemGroup>
 

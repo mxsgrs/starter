@@ -3,54 +3,52 @@ using System.Net;
 
 namespace Starter.WebApi.Utilities;
 
-public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
+public sealed class GlobalExceptionHandler() : IExceptionHandler
 {
-    private readonly ILogger<GlobalExceptionHandler> _logger = logger;
-
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext,
         Exception exception, CancellationToken cancellationToken)
     {
-        _logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
+        ProblemDetails? problemDetails = CreateProblemDetailFromException(exception);
 
-        ProblemDetails problemDetails = CreateProblemDetailFromException(exception);
+        if (problemDetails is null)
+        {
+            return false; // Not handled by this handler
+        }
 
-        httpContext.Response.StatusCode = problemDetails.Status ?? (int)HttpStatusCode.BadRequest;
+        httpContext.Response.StatusCode = problemDetails.Status ?? (int)HttpStatusCode.InternalServerError;
 
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
         return true;
     }
 
-    private static ProblemDetails CreateProblemDetailFromException(Exception exception)
+    private static ProblemDetails? CreateProblemDetailFromException(Exception exception)
     {
-        ProblemDetails problemDetails = new()
-        {
-            Status = StatusCodes.Status500InternalServerError,
-            Title = "Server error",
-            Detail = exception.Message
-        };
-
-        switch (exception)
+        return exception switch
         {
             // 400
-            case BadRequestException:
-                problemDetails.Status = StatusCodes.Status400BadRequest;
-                problemDetails.Title = "Bad request";
-                break;
-
+            BadRequestException => new ProblemDetails()
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Bad request",
+                Detail = exception.Message
+            },
             // 401
-            case UnauthorizedException:
-                problemDetails.Status = StatusCodes.Status401Unauthorized;
-                problemDetails.Title = "Unauthorized";
-                break;
-
+            UnauthorizedException => new ProblemDetails()
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                Title = "Unauthorized",
+                Detail = exception.Message
+            },
             // 404
-            case NotFoundException:
-                problemDetails.Status = StatusCodes.Status404NotFound;
-                problemDetails.Title = "Not found";
-                break;
-        }
-
-        return problemDetails;
+            NotFoundException => new ProblemDetails()
+            {
+                Status = StatusCodes.Status404NotFound,
+                Title = "Not found",
+                Detail = exception.Message
+            },
+            // 500
+            _ => null,
+        };
     }
 }

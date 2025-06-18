@@ -1,21 +1,23 @@
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
-IResourceBuilder<RabbitMQServerResource> messaging = builder
+IResourceBuilder<RabbitMQServerResource> rabbitMq = builder
     .AddRabbitMQ("RabbitMq")
     .WithManagementPlugin();
 
-IResourceBuilder<SqlServerDatabaseResource> startersqldb = builder
-    .AddSqlServer("SqlServer")
+IResourceBuilder<SqlServerServerResource> sqlServer = builder
+    .AddSqlServer("SqlServer");
+
+IResourceBuilder<SqlServerDatabaseResource> userDatabase = sqlServer
     .AddDatabase("UserDatabase");
 
 builder
     .AddProject<Projects.Starter_WebApi>("UserService")
-    .WithReference(messaging)
-    .WithReference(startersqldb);
+    .WithReference(rabbitMq)
+    .WithReference(userDatabase);
 
 builder
-    .AddProject<Projects.Starter_MockWebApi>("AddressService")
-    .WithReference(messaging);
+    .AddProject<Projects.AddressService_WebApi>("AddressService")
+    .WithReference(rabbitMq);
 
 builder
     .Build()

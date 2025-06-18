@@ -1,7 +1,7 @@
 using MassTransit;
 using Starter.Infrastructure.Messages;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
@@ -23,10 +23,11 @@ builder.Services.AddMassTransit(registration =>
 
 builder.Services.AddOpenApi();
 
-WebApplication app = builder.Build();
+var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -39,7 +40,6 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-// Fake endpoint
 app.MapGet("/weatherforecast", () =>
 {
     var forecast =  Enumerable.Range(1, 5).Select(index =>

@@ -18,6 +18,7 @@ public class CreateUserCommandHandler(IMapper mapper, IUserRepository userReposi
 
         string userAddress = user.Address.AddressLine;
 
+        // Call address service for validation
         bool isAddressValid = await _checkAddressService.Check(userAddress, cancellationToken);
 
         if (!isAddressValid)

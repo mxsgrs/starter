@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>73b19442-c445-407f-82ff-d01e0eda418e</UserSecretsId>
+    <UserSecretsId>ad88feb2-cb24-4809-a4cb-27186fc73959</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
@@ -13,7 +13,7 @@
     <PackageReference Include="MassTransit" Version="8.4.1" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="8.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1-Preview.1" />
   </ItemGroup>
 
   <ItemGroup>
