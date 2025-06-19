@@ -14,7 +14,7 @@ public class CreateUserCommandHandler(IMapper mapper, IUserRepository userReposi
 
     public async Task<Result<UserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        Result<User> user = _mapper.MapWithResult<User, UserDto>(request.UserDto);
+        Result<User> user = _mapper.TryMap<User, UserDto>(request.UserDto);
 
         if (user.IsFailed)
         {
@@ -38,7 +38,7 @@ public class CreateUserCommandHandler(IMapper mapper, IUserRepository userReposi
             return Result.Fail(createdUser.Errors);
         }
 
-        UserDto result = _mapper.Map<UserDto>(createdUser);
+        UserDto result = _mapper.Map<UserDto>(createdUser.Value);
 
         return Result.Ok(result);
     }

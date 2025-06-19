@@ -2,7 +2,7 @@
 
 public static class AutoMapperExtensions
 {
-    public static Result<TEntity> MapWithResult<TEntity, TDto>(this IMapper mapper, TDto dto)
+    public static Result<TEntity> TryMap<TEntity, TDto>(this IMapper mapper, TDto dto)
     {
 		try
 		{

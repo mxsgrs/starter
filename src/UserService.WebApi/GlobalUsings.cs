@@ -9,7 +9,6 @@ global using UserService.Application.Dtos;
 global using UserService.Application.Interfaces;
 global using UserService.Application.Queries.UserQueries;
 global using UserService.Domain.Authentication;
-global using UserService.Domain.Exceptions;
 global using UserService.Infrastructure;
 global using UserService.Infrastructure.Persistance;
 global using UserService.WebApi.Controllers.Abstracts;

@@ -20,7 +20,7 @@ public class ReadUserQueryHandler(IMapper mapper, IUserRepository userRepository
             return Result.Fail(user.Errors);
         }
 
-        UserDto result = _mapper.Map<UserDto>(user);
+        UserDto result = _mapper.Map<UserDto>(user.Value);
 
         return Result.Ok(result);
     }
