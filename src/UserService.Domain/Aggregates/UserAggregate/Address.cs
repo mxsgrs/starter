@@ -22,6 +22,9 @@ public class Address : ValueObject<Address>
         Validate(this);
     }
 
+    /// <summary>
+    /// Two value objects are equal if all their properties are equal.
+    /// </summary>
     public override IEnumerable<object> GetEqualityComponents()
     {
         yield return AddressLine;

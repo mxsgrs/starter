@@ -23,7 +23,7 @@ public class CreateTokenCommandHandlerTests : IClassFixture<SharedFixture>
     }
 
     [Fact]
-    public async Task Handle_InvalidUser_ThrowsUnauthorizedException()
+    public async Task Handle_InvalidUser_ReturnsFailure()
     {
         // Arrange
         string emailAddress = "invalid@example.com";
@@ -31,13 +31,15 @@ public class CreateTokenCommandHandlerTests : IClassFixture<SharedFixture>
 
         _mockUserRepository
             .Setup(repo => repo.ReadUser(emailAddress, hashedPassword))
-            .ThrowsAsync(new UnauthorizedException());
+            .ReturnsAsync(Result.Fail("User not found"));
 
         CreateTokenCommand command = new(emailAddress, hashedPassword);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<UnauthorizedException>(async () =>
-            await _handler.Handle(command, CancellationToken.None));
+        // Act
+        Result<LoginResponseDto> result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        Assert.True(result.IsFailed);
     }
 
     [Fact]
@@ -80,11 +82,12 @@ public class CreateTokenCommandHandlerTests : IClassFixture<SharedFixture>
         CreateTokenCommand command = new(emailAddress, hashedPassword);
 
         // Act
-        LoginResponseDto result = await _handler.Handle(command, CancellationToken.None);
+        Result<LoginResponseDto> result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.False(string.IsNullOrEmpty(result.AccessToken));
+        Assert.True(result.IsSuccess);
+        Assert.NotNull(result.Value.AccessToken);
+        Assert.NotEmpty(result.Value.AccessToken);
     }
 }
 

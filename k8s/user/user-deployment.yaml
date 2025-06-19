@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: account-deployment
+  name: user-deployment
   labels:
-    app: account-webapi
+    app: user-webapi
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: account-webapi
+      app: user-webapi
   template:
     metadata:
       labels:
-        app: account-webapi
+        app: user-webapi
     spec:
       containers:
-      - name: account-webapi
-        image: starterdev.azurecr.io/starteraccountwebapi:latest
+      - name: user-webapi
+        image: starterdev.azurecr.io/userservicewebapi:latest
         ports:
         - containerPort: 8080

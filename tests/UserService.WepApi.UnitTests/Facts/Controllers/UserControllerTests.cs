@@ -1,5 +1,4 @@
-﻿using MediatR;
-using UserService.Application.Commands.UserCommands;
+﻿using UserService.Application.Commands.UserCommands;
 using UserService.Application.Dtos;
 using UserService.Application.Queries.UserQueries;
 using UserService.Domain.Aggregates.UserAggregate;

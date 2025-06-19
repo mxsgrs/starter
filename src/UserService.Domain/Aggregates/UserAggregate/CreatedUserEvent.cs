@@ -1,6 +1,4 @@
-﻿using UserService.Domain;
-
-namespace UserService.Domain.Aggregates.UserAggregate;
+﻿namespace UserService.Domain.Aggregates.UserAggregate;
 
 public sealed class CreatedUserEvent(User user) : DomainEvent
 {

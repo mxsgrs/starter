@@ -57,15 +57,15 @@ public class UserRepositoryTests
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        User result = await repository.ReadUser(user.Id);
+        Result<User> result = await repository.ReadUser(user.Id);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(user.EmailAddress, result.EmailAddress);
+        Assert.True(result.IsSuccess);
+        Assert.Equal(user.EmailAddress, result.Value.EmailAddress);
     }
 
     [Fact]
-    public async Task ReadUser_ById_ShouldThrow_WhenUserDoesNotExist()
+    public async Task ReadUser_ById_ShouldReturnsFailure_WhenUserDoesNotExist()
     {
         // Arrange
         UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
@@ -73,8 +73,12 @@ public class UserRepositoryTests
 
         Guid userId = Guid.NewGuid();
 
-        // Act & Assert
-        await Assert.ThrowsAsync<UserNotFoundException>(() => repository.ReadUser(userId));
+        // Act
+        Result<User> result = await repository.ReadUser(userId);
+
+        // Assert
+        Assert.True(result.IsFailed);
+        Assert.Equal("User not found", result.Errors[0].Message);
     }
 
     [Fact]
@@ -102,11 +106,11 @@ public class UserRepositoryTests
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        var result = await repository.ReadUser("test@example.com", "hashedPassword");
+        Result<User> result = await repository.ReadUser("test@example.com", "hashedPassword");
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(user.Id, result.Id);
+        Assert.Equal(user.Id, result.Value.Id);
     }
 
     [Fact]
@@ -119,8 +123,12 @@ public class UserRepositoryTests
         string email = "nonexistent@example.com";
         string password = "wrongPassword";
 
-        // Act & Assert
-        await Assert.ThrowsAsync<UserNotFoundException>(() => repository.ReadUser(email, password));
+        // Act
+        Result<User> result = await repository.ReadUser(email, password);
+
+        // Assert
+        Assert.True(result.IsFailed);
+        Assert.Equal("User not found", result.Errors[0].Message);
     }
 
     [Fact]
@@ -161,10 +169,11 @@ public class UserRepositoryTests
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        User result = await repository.UpdateUser(user.Id, updatedUser);
+        Result<User> result = await repository.UpdateUser(user.Id, updatedUser);
 
         // Assert
-        Assert.Equal("Jane", result.FirstName);
-        Assert.Equal("New Street", result.Address.AddressLine);
+        Assert.True(result.IsSuccess);
+        Assert.Equal("Jane", result.Value.FirstName);
+        Assert.Equal("New Street", result.Value.Address.AddressLine);
     }
 }

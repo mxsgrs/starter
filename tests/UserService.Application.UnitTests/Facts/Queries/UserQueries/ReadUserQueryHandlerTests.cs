@@ -57,16 +57,19 @@ public class ReadUserQueryHandlerTests
         _mockUserRepository.Setup(repo => repo.ReadUser(userId)).ReturnsAsync(user);
         _mockMapper.Setup(m => m.Map<UserDto>(user)).Returns(userDto);
 
-        var query = new ReadUserQuery { Id = userId };
+        ReadUserQuery query = new()
+        { 
+            Id = userId
+        };
 
         // Act
-        var result = await _handler.Handle(query, default);
+        Result<UserDto> result = await _handler.Handle(query, default);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(userId, result.Id);
-        Assert.Equal(userDto.EmailAddress, result.EmailAddress);
-        Assert.Equal(userDto.FirstName, result.FirstName);
+        Assert.Equal(userId, result.Value.Id);
+        Assert.Equal(userDto.EmailAddress, result.Value.EmailAddress);
+        Assert.Equal(userDto.FirstName, result.Value.FirstName);
 
         _mockUserRepository.Verify(repo => repo.ReadUser(userId), Times.Once);
         _mockMapper.Verify(m => m.Map<UserDto>(user), Times.Once);

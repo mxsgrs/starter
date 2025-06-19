@@ -5,7 +5,7 @@ namespace UserService.Domain.Validations;
 
 public class NotInFutureAttribute : ValidationAttribute
 {
-    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+    protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
     {
         bool isInTheFuture = value is DateTime dateTime && dateTime > DateTime.Now ||
             value is DateOnly dateOnly && dateOnly > DateOnly.FromDateTime(DateTime.Now);
@@ -15,6 +15,6 @@ public class NotInFutureAttribute : ValidationAttribute
                 return new($"{validationContext.MemberName} date can't be in the future.");
         }
 
-        return ValidationResult.Success;
+        return ValidationResult.Success!;
     }
 }
