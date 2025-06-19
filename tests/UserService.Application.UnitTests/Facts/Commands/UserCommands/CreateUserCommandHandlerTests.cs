@@ -95,7 +95,7 @@ public class CreateUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_WhenUserRepositoryFails()
+    public async Task Handle_ReturnFailure_WhenUserRepositoryFails()
     {
         // Arrange
         UserDto userDto = new()
@@ -115,9 +115,11 @@ public class CreateUserCommandHandlerTests
             .Throws<InvalidOperationException>();
 
         // Act
-        await Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(command, default));
+        Result<UserDto> result = await _handler.Handle(command, default);
 
         // Assert
+        Assert.True(result.IsFailed);
+
         _mockMapper.Verify(m => m.Map<User>(userDto), Times.Once);
 
         _mockUserRepository.Verify(repo => repo.CreateUser(It.IsAny<User>()), Times.Never);
