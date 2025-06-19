@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using UserService.Application.Dtos;
 
 namespace UserService.Application;
 

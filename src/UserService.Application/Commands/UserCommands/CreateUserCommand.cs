@@ -1,35 +1,45 @@
 ﻿namespace UserService.Application.Commands.UserCommands;
 
-public record CreateUserCommand : IRequest<UserDto>
+public record CreateUserCommand : IRequest<Result<UserDto>>
 {
     public UserDto UserDto { get; set; } = new();
 }
 
 public class CreateUserCommandHandler(IMapper mapper, IUserRepository userRepository, 
-    ICheckUserAddressService checkAddressService) : IRequestHandler<CreateUserCommand, UserDto>
+    ICheckUserAddressService checkAddressService) : IRequestHandler<CreateUserCommand, Result<UserDto>>
 {
     private readonly IMapper _mapper = mapper;
     private readonly IUserRepository _userRepository = userRepository;
     private readonly ICheckUserAddressService _checkAddressService = checkAddressService;
 
-    public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<UserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        User user = _mapper.Map<User>(request.UserDto);
+        Result<User> user = _mapper.MapWithResult<User, UserDto>(request.UserDto);
 
-        string userAddress = user.Address.AddressLine;
+        if (user.IsFailed)
+        {
+            return Result.Fail(user.Errors);
+        }
+
+        string userAddress = user.Value.Address.AddressLine;
 
         // Call address service for validation
         bool isAddressValid = await _checkAddressService.Check(userAddress, cancellationToken);
 
         if (!isAddressValid)
         {
-            throw new InvalidUserAddressException(userAddress);
+            return Result.Fail("Invalid address provided.");
         }
 
-        User createdUser = await _userRepository.CreateUser(user);
+        Result<User> createdUser = await _userRepository.CreateUser(user.Value);
+
+        if (createdUser.IsFailed)
+        {
+            return Result.Fail(createdUser.Errors);
+        }
 
         UserDto result = _mapper.Map<UserDto>(createdUser);
 
-        return result;
+        return Result.Ok(result);
     }
 }

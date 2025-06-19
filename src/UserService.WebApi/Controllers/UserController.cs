@@ -1,8 +1,6 @@
-﻿using UserService.WebApi.Controllers.Abstracts;
+﻿namespace UserService.WebApi.Controllers;
 
-namespace UserService.WebApi.Controllers;
-
-public class UserController(ISender sender) : StarterControllerBase
+public class UserController(ISender sender) : UserServiceControllerBase
 {
     private readonly ISender _sender = sender;
 
@@ -15,9 +13,9 @@ public class UserController(ISender sender) : StarterControllerBase
             UserDto = userDto
         };
 
-        UserDto resultDto = await _sender.Send(command);
+        Result<UserDto> resultDto = await _sender.Send(command);
 
-        return Ok(resultDto);
+        return CorrespondingStatus(resultDto);
     }
 
     [HttpGet("{id}")]
@@ -28,8 +26,8 @@ public class UserController(ISender sender) : StarterControllerBase
             Id = id
         };
 
-        UserDto resultDto = await _sender.Send(query);
+        Result<UserDto> resultDto = await _sender.Send(query);
 
-        return Ok(resultDto);
+        return CorrespondingStatus(resultDto);
     }
 }

@@ -79,13 +79,13 @@ public class CreateUserCommandHandlerTests
         CreateUserCommand command = new() { UserDto = userDto };
 
         // Act
-        UserDto result = await _handler.Handle(command, default);
+        Result<UserDto> result = await _handler.Handle(command, default);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(userDto.Id, result.Id);
-        Assert.Equal(userDto.EmailAddress, result.EmailAddress);
-        Assert.Equal(userDto.FirstName, result.FirstName);
+        Assert.True(result.IsSuccess);
+        Assert.Equal(userDto.Id, result.Value.Id);
+        Assert.Equal(userDto.EmailAddress, result.Value.EmailAddress);
+        Assert.Equal(userDto.FirstName, result.Value.FirstName);
 
         _mockMapper.Verify(m => m.Map<User>(userDto), Times.Once);
 

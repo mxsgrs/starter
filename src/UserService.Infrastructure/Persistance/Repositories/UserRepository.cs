@@ -9,7 +9,7 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
     private readonly ILogger<UserRepository> _logger = logger;
     private readonly UserDbContext _dbContext = dbContext;
 
-    public async Task<User> CreateUser(User user)
+    public async Task<Result<User>> CreateUser(User user)
     {
         _logger.LogInformation("Creating user credentials {user}", user);
 
@@ -19,41 +19,58 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
         {
             _logger.LogWarning("User with email {email} already exists", user.EmailAddress);
 
-            throw new AlreadyExistingUserException(user.EmailAddress);
+            return Result.Fail<User>($"User with email {user.EmailAddress} already exists");
         }
 
         _dbContext.Users.Add(user);
+
         await _dbContext.SaveChangesAsync();
 
         return user;
     }
 
-    public async Task<User> ReadUser(Guid id)
+    public async Task<Result<User>> ReadUser(Guid id)
     {
-        User user = await _dbContext.Users.FindAsync(id)
-            ?? throw new UserNotFoundException(id);
+        User? user = await _dbContext.Users.FindAsync(id);
 
-        return user;
+        if (user is null)
+        {
+            _logger.LogWarning("User with id {id} was not found", id);
+
+            return Result.Fail("User not found");
+        }
+
+        return Result.Ok(user);
     }
 
-    public async Task<User> ReadUser(string emailAddress, string hashedPassword)
+    public async Task<Result<User>> ReadUser(string emailAddress, string hashedPassword)
     {
-        User user = await _dbContext.Users
+        User? user = await _dbContext.Users
             .FirstOrDefaultAsync(item => item.EmailAddress == emailAddress
-                && item.HashedPassword == hashedPassword)
-                    ?? throw new UserNotFoundException(emailAddress);
+                && item.HashedPassword == hashedPassword);
 
-        return user;
+        if (user is null)
+        {
+            _logger.LogWarning("User with email {email} and password was not found", emailAddress);
+
+            return Result.Fail("User not found");   
+        }
+
+        return Result.Ok(user);
     }
 
-    public async Task<User> UpdateUser(Guid id, User user)
+    public async Task<Result<User>> UpdateUser(Guid id, User user)
     {
-        User existing = await _dbContext.Users
+        User? existing = await _dbContext.Users
             .FirstOrDefaultAsync(item => item.EmailAddress == user.EmailAddress
-                && item.HashedPassword == user.HashedPassword)
-                    ?? throw new UserNotFoundException(user.EmailAddress);
+                && item.HashedPassword == user.HashedPassword);
 
-        _logger.LogInformation("Updating user credentials {existing}", existing);
+        if (existing is null)
+        {
+            _logger.LogWarning("User with id {id} was not found", id);
+
+            return Result.Fail("User not found");
+        }
 
         _dbContext.Entry(existing).CurrentValues.SetValues(user);
 
@@ -65,6 +82,6 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
 
         await _dbContext.SaveChangesAsync();
 
-        return existing;
+        return Result.Ok(existing);
     }
 }

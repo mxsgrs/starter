@@ -1,8 +1,6 @@
-﻿using UserService.WebApi.Controllers.Abstracts;
+﻿namespace UserService.WebApi.Controllers;
 
-namespace UserService.WebApi.Controllers;
-
-public class AuthenticationController(ISender sender) : StarterControllerBase
+public class AuthenticationController(ISender sender) : UserServiceControllerBase
 {
     private readonly ISender _sender = sender;
 
@@ -12,8 +10,8 @@ public class AuthenticationController(ISender sender) : StarterControllerBase
     {
         CreateTokenCommand command = new(hashedLoginRequest.EmailAddress, hashedLoginRequest.HashedPassword);
 
-        LoginResponseDto result = await _sender.Send(command);
+        Result<LoginResponseDto> result = await _sender.Send(command);
 
-        return Ok(result);
+        return CorrespondingStatus(result);
     }
 }

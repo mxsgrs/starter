@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using UserService.Domain.Aggregates.UserAggregate;
-
-namespace UserService.Application.Dtos;
+﻿namespace UserService.Application.Dtos;
 
 public class UserMapping : Profile
 {

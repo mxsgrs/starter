@@ -2,8 +2,8 @@
 
 public interface IUserRepository
 {
-    Task<User> CreateUser(User user);
-    Task<User> ReadUser(Guid id);
-    Task<User> ReadUser(string emailAddress, string hashedPassword);
-    Task<User> UpdateUser(Guid id, User user);
+    Task<Result<User>> CreateUser(User user);
+    Task<Result<User>> ReadUser(Guid id);
+    Task<Result<User>> ReadUser(string emailAddress, string hashedPassword);
+    Task<Result<User>> UpdateUser(Guid id, User user);
 }

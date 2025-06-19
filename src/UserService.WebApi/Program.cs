@@ -83,9 +83,6 @@ builder.Services.AddAuthentication()
         };
     });
 
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.AddProblemDetails();
-
 WebApplication app = builder.Build();
 
 app.MapDefaultEndpoints();
@@ -101,8 +98,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers(); 
-
-app.UseExceptionHandler();
 
 app.Run();
 

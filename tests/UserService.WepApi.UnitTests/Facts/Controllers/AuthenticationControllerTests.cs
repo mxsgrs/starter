@@ -1,5 +1,4 @@
-﻿using MediatR;
-using UserService.Application.Commands.AuthCommands;
+﻿using UserService.Application.Commands.AuthCommands;
 using UserService.Application.Dtos;
 
 namespace UserService.WepApi.UnitTests.Facts.Controllers;

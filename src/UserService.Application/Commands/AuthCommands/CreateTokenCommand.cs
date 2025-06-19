@@ -2,56 +2,50 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using UserService.Domain.Authentication;
-using UserService.Domain.Exceptions;
 using System.Security.Claims;
 using System.Text;
+using UserService.Domain.Authentication;
 
 namespace UserService.Application.Commands.AuthCommands;
 
-public record CreateTokenCommand(string EmailAddress, string HashedPassword) : IRequest<LoginResponseDto>;
+public record CreateTokenCommand(string EmailAddress, string HashedPassword) : IRequest<Result<LoginResponseDto>>;
 
 public class CreateTokenCommandHandler(ILogger<CreateTokenCommandHandler> logger, IConfiguration configuration, 
-    IUserRepository userService) : IRequestHandler<CreateTokenCommand, LoginResponseDto>
+    IUserRepository userService) : IRequestHandler<CreateTokenCommand, Result<LoginResponseDto>>
 {
     private readonly ILogger<CreateTokenCommandHandler> _logger = logger;
     private readonly IConfiguration _configuration = configuration;
     private readonly IUserRepository _userService = userService;
 
-    public async Task<LoginResponseDto> Handle(CreateTokenCommand request, CancellationToken cancellationToken)
+    public async Task<Result<LoginResponseDto>> Handle(CreateTokenCommand request, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Processing login request for {emailAddress}", request.EmailAddress);
 
-        // Validate user
-        Guid userId = await ValidateUser(request.EmailAddress, request.HashedPassword);
+        Result<User> user = await ValidateUser(request.EmailAddress, request.HashedPassword);
 
-        // Retrieve JWT parameters
-        JsonWebTokenParameters jwtParameters = _configuration
+        if(user.IsFailed)
+        {
+            return Result.Fail($"Login {request.EmailAddress} doesn't exists");
+        }
+
+        JsonWebTokenParameters? jwtParameters = _configuration
             .GetRequiredSection("JsonWebTokenParameters")
             .Get<JsonWebTokenParameters>()
                 ?? throw new Exception("JWT settings are not configured");
 
-        // Generate token
-        string accessToken = GenerateToken(userId, request.EmailAddress, jwtParameters);
+        string accessToken = GenerateToken(user.Value.Id, request.EmailAddress, jwtParameters);
 
-        // Create response
-        return new LoginResponseDto
+        LoginResponseDto dto = new()
         {
             AccessToken = accessToken
         };
+
+        return Result.Ok(dto);
     }
 
-    private async Task<Guid> ValidateUser(string emailAddress, string hashedPassword)
+    private async Task<Result<User>> ValidateUser(string emailAddress, string hashedPassword)
     {
-        try
-        {
-            User user = await _userService.ReadUser(emailAddress, hashedPassword);
-            return user.Id;
-        }
-        catch (Exception)
-        {
-            throw new UnauthorizedException();
-        }
+        return await _userService.ReadUser(emailAddress, hashedPassword);
     }
 
     private static string GenerateToken(Guid userId, string emailAddress, JsonWebTokenParameters jwtParameters)

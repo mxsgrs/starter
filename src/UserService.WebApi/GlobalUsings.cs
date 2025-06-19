@@ -14,3 +14,4 @@ global using UserService.Infrastructure;
 global using UserService.Infrastructure.Persistance;
 global using UserService.WebApi.Controllers.Abstracts;
 global using UserService.WebApi.Utilities;
+global using FluentResults;
