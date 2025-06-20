@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using UserService.Domain.Validations;
 
 namespace UserService.Application.Dtos;
 
@@ -13,6 +14,8 @@ public record UserDto
     public string HashedPassword { get; init; } = "";
     public string FirstName { get; init; } = "";
     public string LastName { get; init; } = "";
+
+    [NotInFuture]
     public DateOnly Birthday { get; init; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

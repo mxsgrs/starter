@@ -1,5 +1,5 @@
-﻿using UserService.Domain.Validations;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using UserService.Domain.Validations;
 
 namespace UserService.Domain.Aggregates.UserAggregate;
 
@@ -31,6 +31,34 @@ public class User : AggregateRoot
 
     public Address Address { get; private set; }
 
+    #region Constructors
+    /// <summary>
+    /// Standard constructor for creating a new user
+    /// </summary>
+    public Result<User> Create(Guid id, string emailAddress, string hashedPassword, string firstName,
+        string lastName, DateOnly birthday, Gender gender, Role role, string phone, Address address)
+    {
+        Id = id;
+        EmailAddress = emailAddress;
+        HashedPassword = hashedPassword;
+        FirstName = firstName;
+        LastName = lastName;
+        Birthday = birthday;
+        Gender = gender;
+        Role = role;
+        Phone = phone;
+        Address = address;
+
+        Result validationResult = Validate(this);
+
+        return validationResult.IsSuccess
+            ? Result.Ok(this)
+            : Result.Fail<User>(validationResult.Errors);
+    }
+
+    /// <summary>
+    /// Public constructor for automatic mapping
+    /// </summary>
     public User(Guid id, string emailAddress, string hashedPassword, string firstName,
         string lastName, DateOnly birthday, Gender gender, Role role, string phone, Address address)
     {
@@ -45,11 +73,14 @@ public class User : AggregateRoot
         Phone = phone;
         Address = address;
 
-        Validate(this);
+        ThrowIfInvalid(this);
     }
 
-    // Constructor for EF migration
+    /// <summary>
+    /// Constructor for EF migration
+    /// </summary>
     private User() : this(Guid.NewGuid(), null!, null!, null!, null!, new DateOnly(),
         Gender.Male, Role.Admin, null!, null!)
-    { }
+    { } 
+    #endregion
 }

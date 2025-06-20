@@ -6,29 +6,42 @@ public interface IAggregateRoot { }
 
 public abstract class AggregateRoot : IAggregateRoot
 {
-    // Events
-    public static IReadOnlyCollection<IDomainEvent> DomainEvents => [.. _events];
-
-    private static readonly List<IDomainEvent> _events = [];
-
-    public void ClearDomainEvents() => _events.Clear();
-
-    protected TDomainEvent RaiseDomainEvent<TDomainEvent>(TDomainEvent domainEvent)
-        where TDomainEvent : IDomainEvent
+    #region Validation
+    protected static Result Validate(object instance)
     {
-        _events.Add(domainEvent);
-        return domainEvent;
+        List<ValidationResult> validationResults = GetValidationResults(instance);
+
+        if (validationResults.Count != 0)
+        {
+            IEnumerable<string> errors = validationResults
+                .Where(vr => !string.IsNullOrEmpty(vr.ErrorMessage))
+                .Select(vr => vr.ErrorMessage!);
+
+            return Result.Fail(errors);
+        }
+
+        return Result.Ok();
     }
 
-    // Self validation
-    protected void Validate(object instance)
+    protected static void ThrowIfInvalid(object instance)
+    {
+        List<ValidationResult> validationResults = GetValidationResults(instance);
+
+        if (validationResults.Count > 0)
+        {
+            throw new ValidationException($"{instance.GetType().Name} is not valid: " +
+                string.Join(", ", validationResults.Select(vr => vr.ErrorMessage)));
+        }
+    }
+
+    private static List<ValidationResult> GetValidationResults(object instance)
     {
         ValidationContext validationContext = new(instance);
         List<ValidationResult> validationResults = [];
 
-        if (!Validator.TryValidateObject(instance, validationContext, validationResults, true))
-        {
-            throw new ValidationException($"{instance.GetType().Name} is not valid: " + string.Join(", ", validationResults));
-        }
+        Validator.TryValidateObject(instance, validationContext, validationResults, true);
+
+        return validationResults;
     }
+    #endregion
 }
