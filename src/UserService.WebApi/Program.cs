@@ -25,9 +25,10 @@ builder.Services.AddInfrastructureServices(builder.Configuration, builder.Enviro
 
 string? aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
+builder.AddServiceDefaults();
+
 if (builder.Environment.IsDevelopment() && aspNetCoreEnvironment is not null)
 {
-    builder.AddServiceDefaults();
     builder.AddSqlServerDbContext<UserDbContext>("UserDatabase");
 }
 

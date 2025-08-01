@@ -2,15 +2,29 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Testcontainers.MsSql;
+using Testcontainers.RabbitMq;
 
-namespace UserService.WepApi.EndToEndTests.Facts.Factories;
+namespace UserService.WhiteE2eTests.Facts.Factories;
 
 public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly MsSqlContainer _dbContainer = new MsSqlBuilder().Build();
+    private readonly MsSqlContainer _dbContainer = new MsSqlBuilder()
+        .Build();
+
+    private const string _rabbitMqUsername = "guest";
+    private const string _rabbitMqPassword = "1MRt58rcy4NtfpcMcxsMJb";
+    private const int _rabbitMqContainerPort = 5672;
+    private const int _rabbitMqHostPort = 5673;
+
+    private readonly RabbitMqContainer _rabbitMqContainer = new RabbitMqBuilder()
+        .WithUsername(_rabbitMqUsername)
+        .WithPassword(_rabbitMqPassword)
+        .WithPortBinding(_rabbitMqHostPort, _rabbitMqContainerPort)
+        .Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -21,6 +35,18 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
             string connectionString = _dbContainer.GetConnectionString();
             services.AddDbContext<UserDbContext>(options => options
                 .UseSqlServer(connectionString));
+        });
+
+        builder.ConfigureAppConfiguration((hostingContext, config) =>
+        {
+            string rabbitMqConnectionString = $"amqp://{_rabbitMqUsername}:{_rabbitMqPassword}@{_rabbitMqContainer.Hostname}:{_rabbitMqHostPort}";
+
+            IEnumerable<KeyValuePair<string, string?>> settings = 
+            [
+                new("ConnectionStrings:RabbitMq", rabbitMqConnectionString)
+            ];
+
+            config.AddInMemoryCollection(settings);
         });
     }
 

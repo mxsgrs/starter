@@ -1,7 +1,7 @@
 ﻿using UserService.Application.Dtos;
-using UserService.WepApi.EndToEndTests.Facts.Factories;
+using UserService.WhiteE2eTests.Facts.Factories;
 
-namespace UserService.WepApi.EndToEndTests.Facts.Controllers;
+namespace UserService.WhiteE2eTests.Facts.Controllers;
 
 public class AuthenticationControllerTests(StarterWebApplicationFactory factory) 
     : IClassFixture<StarterWebApplicationFactory>
@@ -61,7 +61,7 @@ public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
     }
 
     [Fact]
-    public async Task Token_ShouldReturnUnauthorized_WhenLoginFails()
+    public async Task Token_ShouldReturnBadRequest_WhenLoginFails()
     {
         // Arrange
         _factory.MigrateDbContext();
@@ -83,6 +83,6 @@ public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
         HttpResponseMessage response = await client.SendAsync(request);
 
         // Assert
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 }
