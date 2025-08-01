@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using UserService.Domain;
 using UserService.Domain.Aggregates.UserAggregate;
 using UserService.Infrastructure.Messages;
 using UserService.Infrastructure.Persistance;
@@ -42,6 +43,7 @@ public static class InfrastructureDependencies
         });
 
         services.AddScoped<ICheckUserAddressService, CheckUserAddressService>();
+        services.AddScoped<IDomainEventPublisher<UserCreatedEvent>, UserCreatedEventPublisher>();
 
         // Repositories
         services.AddScoped<IUserRepository, UserRepository>();

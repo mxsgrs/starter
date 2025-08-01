@@ -6,7 +6,7 @@ public interface IDomainEvent
     public Guid Id { get; }
 }
 
-public abstract class DomainEvent : IDomainEvent
+public abstract record DomainEvent : IDomainEvent
 {
     public DateTime OccurredOn { get; } = DateTime.Now;
     public Guid Id { get; } = Guid.NewGuid();

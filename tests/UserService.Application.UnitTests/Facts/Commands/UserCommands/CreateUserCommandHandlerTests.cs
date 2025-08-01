@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using UserService.Application.Commands.UserCommands;
 using UserService.Application.Dtos;
+using UserService.Domain;
 
 namespace UserService.Application.UnitTests.Facts.Commands.UserCommands;
 
@@ -9,6 +10,7 @@ public class CreateUserCommandHandlerTests
     private readonly Mock<IMapper> _mockMapper;
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<ICheckUserAddressService> _mockCheckUserAddressService;
+    private readonly Mock<IDomainEventPublisher<UserCreatedEvent>> _mockUserCreatedEventPublisher;
     private readonly CreateUserCommandHandler _handler;
 
     public CreateUserCommandHandlerTests()
@@ -16,7 +18,12 @@ public class CreateUserCommandHandlerTests
         _mockMapper = new Mock<IMapper>();
         _mockUserRepository = new Mock<IUserRepository>();
         _mockCheckUserAddressService = new Mock<ICheckUserAddressService>();
-        _handler = new CreateUserCommandHandler(_mockMapper.Object, _mockUserRepository.Object, _mockCheckUserAddressService.Object);
+        _mockUserCreatedEventPublisher = new Mock<IDomainEventPublisher<UserCreatedEvent>>();
+        _handler = new CreateUserCommandHandler(
+            _mockMapper.Object,
+            _mockUserRepository.Object,
+            _mockCheckUserAddressService.Object,
+            _mockUserCreatedEventPublisher.Object);
     }
 
     [Fact]

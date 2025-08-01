@@ -1,12 +1,18 @@
-﻿namespace UserService.Application.Commands.UserCommands;
+﻿using UserService.Domain;
+
+namespace UserService.Application.Commands.UserCommands;
 
 public record CreateUserCommand : IRequest<Result<UserDto>>
 {
     public UserDto UserDto { get; set; } = new();
 }
 
-public class CreateUserCommandHandler(IMapper mapper, IUserRepository userRepository, 
-    ICheckUserAddressService checkAddressService) : IRequestHandler<CreateUserCommand, Result<UserDto>>
+public class CreateUserCommandHandler(
+    IMapper mapper, 
+    IUserRepository userRepository, 
+    ICheckUserAddressService checkAddressService,
+    IDomainEventPublisher<UserCreatedEvent> userCreatedEventPublisher
+) : IRequestHandler<CreateUserCommand, Result<UserDto>>
 {
     private readonly IMapper _mapper = mapper;
     private readonly IUserRepository _userRepository = userRepository;
@@ -37,6 +43,14 @@ public class CreateUserCommandHandler(IMapper mapper, IUserRepository userReposi
         {
             return Result.Fail(createdUser.Errors);
         }
+
+        UserCreatedEvent userCreatedEvent = new()
+        {
+            UserId = user.Value.Id,
+        };
+
+        // Publish an user created event so other services know
+        await userCreatedEventPublisher.PublishAsync(userCreatedEvent);
 
         UserDto result = _mapper.Map<UserDto>(createdUser.Value);
 
