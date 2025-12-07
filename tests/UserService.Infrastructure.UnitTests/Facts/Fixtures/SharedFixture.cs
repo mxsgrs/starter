@@ -1,4 +1,6 @@
-﻿namespace UserService.Infrastructure.UnitTests.Facts.Fixtures;
+﻿using UserService.Application.Shared.Interfaces;
+
+namespace UserService.Infrastructure.UnitTests.Facts.Fixtures;
 
 public class SharedFixture
 {

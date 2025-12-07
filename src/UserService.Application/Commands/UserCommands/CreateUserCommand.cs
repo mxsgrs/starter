@@ -1,5 +1,4 @@
-﻿using UserService.Application.Cqrs;
-using UserService.Application.Events;
+﻿using UserService.Application.Dtos.UserDtos;
 
 namespace UserService.Application.Commands.UserCommands;
 
@@ -42,4 +41,8 @@ public class CreateUserCommandHandler(
         // Publish an user created event so other services know
         await eventPublisher.PublishAsync(userCreatedEvent);
     }
+}
+public record UserCreatedEvent : IntegrationEvent
+{
+    public Guid UserId { get; set; }
 }

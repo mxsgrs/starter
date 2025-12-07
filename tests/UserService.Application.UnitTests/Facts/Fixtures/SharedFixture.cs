@@ -1,4 +1,4 @@
-﻿using UserService.Application.Interfaces;
+﻿using UserService.Application.Shared.Interfaces;
 
 namespace UserService.Application.UnitTests.Facts.Fixtures;
 

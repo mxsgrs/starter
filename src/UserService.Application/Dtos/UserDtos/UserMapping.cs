@@ -1,4 +1,4 @@
-﻿namespace UserService.Application.Dtos;
+﻿namespace UserService.Application.Dtos.UserDtos;
 
 public class UserMapping : Profile
 {

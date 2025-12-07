@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using UserService.Application.Dtos;
+using UserService.Application.Dtos.UserDtos;
 using UserService.Application.Queries.UserQueries;
 
 namespace UserService.Application.UnitTests.Facts.Queries.UserQueries;

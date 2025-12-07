@@ -4,7 +4,7 @@ global using Microsoft.EntityFrameworkCore.Diagnostics;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Logging;
 global using Moq;
-global using UserService.Application.Interfaces;
+global using UserService.Application.Shared.Interfaces;
 global using UserService.Domain.Aggregates.UserAggregate;
 global using UserService.Domain.Authentication;
 global using UserService.Infrastructure.Persistance;

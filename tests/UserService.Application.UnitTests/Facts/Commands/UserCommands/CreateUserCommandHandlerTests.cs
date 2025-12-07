@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using UserService.Application.Commands.UserCommands;
-using UserService.Application.Dtos;
-using UserService.Application.Events;
+using UserService.Application.Dtos.UserDtos;
+using UserService.Application.Shared.Events;
 
 namespace UserService.Application.UnitTests.Facts.Commands.UserCommands;
 

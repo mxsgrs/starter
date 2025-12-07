@@ -1,4 +1,6 @@
-﻿namespace UserService.WebApi.Controllers;
+﻿using UserService.Application.Dtos.UserDtos;
+
+namespace UserService.WebApi.Controllers;
 
 public class UserController : UserServiceControllerBase
 {

@@ -1,4 +1,4 @@
-﻿using UserService.Application.Cqrs;
+﻿using UserService.Application.Dtos.UserDtos;
 
 namespace UserService.Application.Queries.UserQueries;
 

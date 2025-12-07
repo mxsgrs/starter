@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
+using UserService.Application.Shared;
+using UserService.Application.Shared.Interfaces;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

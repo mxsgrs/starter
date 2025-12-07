@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Json;
-using UserService.Application.Dtos;
+using UserService.Application.Dtos.UserDtos;
 using UserService.WhiteBoxE2eTests.Facts.Factories;
 
 namespace UserService.WhiteBoxE2eTests.Facts.Controllers;

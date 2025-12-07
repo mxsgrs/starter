@@ -1,4 +1,4 @@
-﻿namespace UserService.Application.Events;
+﻿namespace UserService.Application.Shared.Events;
 
 public interface IIntegrationEvent
 {

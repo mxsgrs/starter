@@ -1,6 +1,6 @@
 ﻿using UserService.Domain.Authentication;
 
-namespace UserService.Application.Interfaces;
+namespace UserService.Application.Shared.Interfaces;
 
 public interface IAppContextAccessor
 {

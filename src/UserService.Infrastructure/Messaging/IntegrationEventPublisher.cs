@@ -1,5 +1,5 @@
 ﻿using MassTransit;
-using UserService.Application.Events;
+using UserService.Application.Shared.Events;
 
 namespace UserService.Infrastructure.Messages;
 

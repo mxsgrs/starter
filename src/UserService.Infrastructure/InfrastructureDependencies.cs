@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using UserService.Application.Events;
+using UserService.Application.Shared.Events;
 using UserService.Domain.Aggregates.UserAggregate;
 using UserService.Infrastructure.Messages;
 using UserService.Infrastructure.Messaging;

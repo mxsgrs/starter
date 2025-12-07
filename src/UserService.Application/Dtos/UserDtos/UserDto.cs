@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using UserService.Domain.Validations;
 
-namespace UserService.Application.Dtos;
+namespace UserService.Application.Dtos.UserDtos;
 
 public record UserDto
 {

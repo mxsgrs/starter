@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
+using UserService.Application.Shared.Interfaces;
 
 namespace UserService.WebApi.Utilities;
 

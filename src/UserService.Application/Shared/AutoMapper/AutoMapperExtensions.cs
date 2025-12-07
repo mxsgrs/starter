@@ -1,4 +1,4 @@
-﻿namespace UserService.Application;
+﻿namespace UserService.Application.Shared.AutoMapper;
 
 public static class AutoMapperExtensions
 {
