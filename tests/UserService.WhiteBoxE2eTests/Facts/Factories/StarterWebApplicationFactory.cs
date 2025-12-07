@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Testcontainers.MsSql;
 using Testcontainers.RabbitMq;
 
-namespace UserService.WhiteE2eTests.Facts.Factories;
+namespace UserService.WhiteBoxE2eTests.Facts.Factories;
 
 public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {

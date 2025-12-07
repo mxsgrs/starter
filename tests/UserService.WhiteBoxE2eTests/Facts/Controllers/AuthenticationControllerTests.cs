@@ -1,7 +1,7 @@
 ﻿using UserService.Application.Dtos;
-using UserService.WhiteE2eTests.Facts.Factories;
+using UserService.WhiteBoxE2eTests.Facts.Factories;
 
-namespace UserService.WhiteE2eTests.Facts.Controllers;
+namespace UserService.WhiteBoxE2eTests.Facts.Controllers;
 
 public class AuthenticationControllerTests(StarterWebApplicationFactory factory) 
     : IClassFixture<StarterWebApplicationFactory>

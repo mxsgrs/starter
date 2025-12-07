@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Json;
 using UserService.Application.Dtos;
-using UserService.WhiteE2eTests.Facts.Factories;
+using UserService.WhiteBoxE2eTests.Facts.Factories;
 
-namespace UserService.WhiteE2eTests.Facts.Controllers;
+namespace UserService.WhiteBoxE2eTests.Facts.Controllers;
 
 public class UserControllerTests(StarterWebApplicationFactory factory)
     : IClassFixture<StarterWebApplicationFactory>
