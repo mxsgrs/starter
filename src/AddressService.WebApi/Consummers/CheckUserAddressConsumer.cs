@@ -16,7 +16,10 @@ public class CheckUserAddressConsumer(ILogger<CheckUserAddressConsumer> logger) 
 {
     public async Task Consume(ConsumeContext<CheckUserAddress> context)
     {
-        logger.LogInformation("Checking the user address {Address}", context.Message.Address);
+        if (logger.IsEnabled(LogLevel.Information))
+        {
+            logger.LogInformation("Checking the user address {Address}", context.Message.Address);
+        }
 
         CheckUserAddressResult result = new()
         {

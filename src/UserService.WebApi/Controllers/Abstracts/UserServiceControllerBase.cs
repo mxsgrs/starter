@@ -12,7 +12,7 @@ public class UserServiceControllerBase() : ControllerBase
     {
         if (result.IsFailed)
         {
-            return BadRequest(result.Errors.FirstOrDefault()?.Message ?? "An error occurred.");
+            return BadRequest(result.Errors.Select(error => error.Message).FirstOrDefault() ?? "An error occurred.");
         }
 
         return Ok(result.Value);

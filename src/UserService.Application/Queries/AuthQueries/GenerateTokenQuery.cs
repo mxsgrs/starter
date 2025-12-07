@@ -7,7 +7,7 @@ using System.Text;
 using UserService.Application.Cqrs;
 using UserService.Domain.Authentication;
 
-namespace UserService.Application.Queries.AuthCommands;
+namespace UserService.Application.Queries.AuthQueries;
 
 public record GenerateTokenQuery(string EmailAddress, string HashedPassword) : IQuery<Result<LoginResponseDto>>;
 

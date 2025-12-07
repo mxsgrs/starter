@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using UserService.Application.Commands.UserCommands;
-using UserService.Application.Queries.AuthCommands;
+using UserService.Application.Queries.AuthQueries;
 using UserService.Application.Queries.UserQueries;
 
 namespace UserService.Application;

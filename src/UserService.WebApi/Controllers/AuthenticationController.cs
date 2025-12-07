@@ -1,4 +1,4 @@
-﻿using UserService.Application.Queries.AuthCommands;
+﻿using UserService.Application.Queries.AuthQueries;
 
 namespace UserService.WebApi.Controllers;
 

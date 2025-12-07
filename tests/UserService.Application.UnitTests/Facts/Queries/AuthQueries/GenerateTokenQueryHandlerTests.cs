@@ -1,16 +1,16 @@
 ﻿using UserService.Application.Dtos;
-using UserService.Application.Queries.AuthCommands;
+using UserService.Application.Queries.AuthQueries;
 using UserService.Application.UnitTests.Facts.Fixtures;
 
-namespace UserService.Application.UnitTests.Facts.Commands.AuthCommands;
+namespace UserService.Application.UnitTests.Facts.Queries.AuthQueries;
 
-public class CreateTokenCommandHandlerTests : IClassFixture<SharedFixture>
+public class GenerateTokenQueryHandlerTests : IClassFixture<SharedFixture>
 {
     private readonly Mock<ILogger<GenerateTokenQueryHandler>> _mockLogger;
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly GenerateTokenQueryHandler _handler;
 
-    public CreateTokenCommandHandlerTests(SharedFixture fixture)
+    public GenerateTokenQueryHandlerTests(SharedFixture fixture)
     {
         _mockLogger = new Mock<ILogger<GenerateTokenQueryHandler>>();
         _mockUserRepository = new Mock<IUserRepository>();
