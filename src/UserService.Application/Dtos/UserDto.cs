@@ -27,7 +27,7 @@ public record UserDto
     [RegularExpression(@"^\+?\d{10,15}$", ErrorMessage = "The phone number must be between 10 and 15 digits and may include a leading +.")]
     public string Phone { get; init; } = "";
 
-    public UserAddressDto Address { get; init; }
+    public UserAddressDto? Address { get; init; }
 }
 
 public record UserAddressDto

@@ -1,12 +1,12 @@
-﻿namespace UserService.Domain;
+﻿namespace UserService.Application.Events;
 
-public interface IDomainEvent
+public interface IIntegrationEvent
 {
     public DateTime OccurredOn { get; }
     public Guid Id { get; }
 }
 
-public abstract record DomainEvent : IDomainEvent
+public abstract record IntegrationEvent : IIntegrationEvent
 {
     public DateTime OccurredOn { get; } = DateTime.Now;
     public Guid Id { get; } = Guid.NewGuid();

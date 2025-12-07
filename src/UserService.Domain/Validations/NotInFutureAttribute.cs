@@ -10,10 +10,7 @@ public class NotInFutureAttribute : ValidationAttribute
         bool isInTheFuture = value is DateTime dateTime && dateTime > DateTime.Now ||
             value is DateOnly dateOnly && dateOnly > DateOnly.FromDateTime(DateTime.Now);
 
-        if (isInTheFuture)
-        {
-                return new($"{validationContext.MemberName} date can't be in the future.");
-        }
+        if (isInTheFuture) return new($"{validationContext.MemberName} date can't be in the future.");
 
         return ValidationResult.Success!;
     }

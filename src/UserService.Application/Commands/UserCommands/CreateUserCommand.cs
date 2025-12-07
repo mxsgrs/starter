@@ -1,48 +1,38 @@
-﻿using UserService.Domain;
+﻿using UserService.Application.Cqrs;
+using UserService.Application.Events;
 
 namespace UserService.Application.Commands.UserCommands;
 
-public record CreateUserCommand : IRequest<Result<UserDto>>
+public record CreateUserCommand : ICommand
 {
-    public UserDto UserDto { get; set; } = new();
+    public required UserDto UserDto { get; init; }
 }
 
+public interface ICreateUserCommandHandler : ICommandHandler<CreateUserCommand> { }
+
 public class CreateUserCommandHandler(
-    IMapper mapper, 
-    IUserRepository userRepository, 
+    IMapper mapper,
+    IUserRepository userRepository,
     ICheckUserAddressService checkAddressService,
-    IDomainEventPublisher<UserCreatedEvent> userCreatedEventPublisher
-) : IRequestHandler<CreateUserCommand, Result<UserDto>>
+    IIntegrationEventPublisher eventPublisher
+) : ICreateUserCommandHandler
 {
-    private readonly IMapper _mapper = mapper;
-    private readonly IUserRepository _userRepository = userRepository;
-    private readonly ICheckUserAddressService _checkAddressService = checkAddressService;
-
-    public async Task<Result<UserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task HandleAsync(CreateUserCommand request, CancellationToken cancellationToken = default)
     {
-        Result<User> user = _mapper.TryMap<User, UserDto>(request.UserDto);
+        Result<User> user = mapper.TryMap<User, UserDto>(request.UserDto);
 
-        if (user.IsFailed)
-        {
-            return Result.Fail(user.Errors);
-        }
+        if (user.IsFailed) return;
 
         string userAddress = user.Value.Address.AddressLine;
 
         // Call address service for validation
-        bool isAddressValid = await _checkAddressService.Check(userAddress, cancellationToken);
+        bool isAddressValid = await checkAddressService.Check(userAddress, cancellationToken);
 
-        if (!isAddressValid)
-        {
-            return Result.Fail("Invalid address provided.");
-        }
+        if (!isAddressValid) return;
 
-        Result<User> createdUser = await _userRepository.CreateUser(user.Value);
+        Result<User> createdUser = await userRepository.CreateUser(user.Value);
 
-        if (createdUser.IsFailed)
-        {
-            return Result.Fail(createdUser.Errors);
-        }
+        if (createdUser.IsFailed) return;
 
         UserCreatedEvent userCreatedEvent = new()
         {
@@ -50,10 +40,6 @@ public class CreateUserCommandHandler(
         };
 
         // Publish an user created event so other services know
-        await userCreatedEventPublisher.PublishAsync(userCreatedEvent);
-
-        UserDto result = _mapper.Map<UserDto>(createdUser.Value);
-
-        return Result.Ok(result);
+        await eventPublisher.PublishAsync(userCreatedEvent);
     }
 }

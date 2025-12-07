@@ -1,32 +1,31 @@
 ﻿namespace UserService.WebApi.Controllers;
 
-public class UserController(ISender sender) : UserServiceControllerBase
+public class UserController : UserServiceControllerBase
 {
-    private readonly ISender _sender = sender;
-
     [AllowAnonymous]
     [HttpPost]
-    public async Task<IActionResult> CreateUser(UserDto userDto)
+    public async Task<IActionResult> CreateUser(
+        [FromServices] ICreateUserCommandHandler createUserCommandHandler,
+        UserDto userDto
+    )
     {
         CreateUserCommand command = new()
         {
             UserDto = userDto
         };
 
-        Result<UserDto> resultDto = await _sender.Send(command);
+        await createUserCommandHandler.HandleAsync(command);
 
-        return CorrespondingStatus(resultDto);
+        return Ok();
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> ReadUser(Guid id)
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> ReadUser(
+        Guid id,
+        [FromServices] IReadUserQueryHandler readUserQueryHandler
+    )
     {
-        ReadUserQuery query = new()
-        {
-            Id = id
-        };
-
-        Result<UserDto> resultDto = await _sender.Send(query);
+        Result<UserDto> resultDto = await readUserQueryHandler.HandleAsync(id);
 
         return CorrespondingStatus(resultDto);
     }

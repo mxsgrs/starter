@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using UserService.Domain.Aggregates.UserAggregate;
 
-namespace UserService.Infrastructure.Messages;
+namespace UserService.Infrastructure.Messaging;
 
 public class CheckUserAddress
 {

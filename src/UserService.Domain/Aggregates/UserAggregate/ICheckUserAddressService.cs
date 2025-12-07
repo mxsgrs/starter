@@ -1,7 +1,6 @@
-﻿namespace UserService.Domain.Aggregates.UserAggregate
+﻿namespace UserService.Domain.Aggregates.UserAggregate;
+
+public interface ICheckUserAddressService
 {
-    public interface ICheckUserAddressService
-    {
-        Task<bool> Check(string address, CancellationToken cancellationToken = default);
-    }
+    Task<bool> Check(string address, CancellationToken cancellationToken = default);
 }

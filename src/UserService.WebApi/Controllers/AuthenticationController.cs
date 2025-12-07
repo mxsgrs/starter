@@ -1,16 +1,16 @@
-﻿namespace UserService.WebApi.Controllers;
+﻿using UserService.Application.Queries.AuthCommands;
 
-public class AuthenticationController(ISender sender) : UserServiceControllerBase
+namespace UserService.WebApi.Controllers;
+
+public class AuthenticationController(IGenerateTokenQueryHandler generateTokenQueryHandler) : UserServiceControllerBase
 {
-    private readonly ISender _sender = sender;
-
     [AllowAnonymous]
     [HttpPost("token")]
     public async Task<IActionResult> Token(HashedLoginRequestDto hashedLoginRequest)
     {
-        CreateTokenCommand command = new(hashedLoginRequest.EmailAddress, hashedLoginRequest.HashedPassword);
+        GenerateTokenQuery command = new(hashedLoginRequest.EmailAddress, hashedLoginRequest.HashedPassword);
 
-        Result<LoginResponseDto> result = await _sender.Send(command);
+        Result<LoginResponseDto> result = await generateTokenQueryHandler.HandleAsync(command);
 
         return CorrespondingStatus(result);
     }

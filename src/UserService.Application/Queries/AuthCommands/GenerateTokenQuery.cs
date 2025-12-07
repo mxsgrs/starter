@@ -4,36 +4,38 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using UserService.Application.Cqrs;
 using UserService.Domain.Authentication;
 
-namespace UserService.Application.Commands.AuthCommands;
+namespace UserService.Application.Queries.AuthCommands;
 
-public record CreateTokenCommand(string EmailAddress, string HashedPassword) : IRequest<Result<LoginResponseDto>>;
+public record GenerateTokenQuery(string EmailAddress, string HashedPassword) : IQuery<Result<LoginResponseDto>>;
 
-public class CreateTokenCommandHandler(ILogger<CreateTokenCommandHandler> logger, IConfiguration configuration, 
-    IUserRepository userService) : IRequestHandler<CreateTokenCommand, Result<LoginResponseDto>>
+public interface IGenerateTokenQueryHandler : IQueryHandler<GenerateTokenQuery, Result<LoginResponseDto>> { }
+
+public class GenerateTokenQueryHandler(
+    ILogger<GenerateTokenQueryHandler> logger,
+    IConfiguration configuration,
+    IUserRepository userService
+) : IGenerateTokenQueryHandler
 {
-    private readonly ILogger<CreateTokenCommandHandler> _logger = logger;
-    private readonly IConfiguration _configuration = configuration;
-    private readonly IUserRepository _userService = userService;
-
-    public async Task<Result<LoginResponseDto>> Handle(CreateTokenCommand request, CancellationToken cancellationToken)
+    public async Task<Result<LoginResponseDto>> HandleAsync(GenerateTokenQuery query, CancellationToken cancellationToken = default)
     {
-        _logger.LogDebug("Processing login request for {emailAddress}", request.EmailAddress);
+        logger.LogDebug("Processing login request for {emailAddress}", query.EmailAddress);
 
-        Result<User> user = await ValidateUser(request.EmailAddress, request.HashedPassword);
+        Result<User> user = await ValidateUser(query.EmailAddress, query.HashedPassword);
 
-        if(user.IsFailed)
+        if (user.IsFailed)
         {
-            return Result.Fail($"Login {request.EmailAddress} doesn't exists");
+            return Result.Fail($"Login {query.EmailAddress} doesn't exists");
         }
 
-        JsonWebTokenParameters? jwtParameters = _configuration
+        JsonWebTokenParameters? jwtParameters = configuration
             .GetRequiredSection("JsonWebTokenParameters")
             .Get<JsonWebTokenParameters>()
                 ?? throw new Exception("JWT settings are not configured");
 
-        string accessToken = GenerateToken(user.Value.Id, request.EmailAddress, jwtParameters);
+        string accessToken = GenerateToken(user.Value.Id, query.EmailAddress, jwtParameters);
 
         LoginResponseDto dto = new()
         {
@@ -45,7 +47,7 @@ public class CreateTokenCommandHandler(ILogger<CreateTokenCommandHandler> logger
 
     private async Task<Result<User>> ValidateUser(string emailAddress, string hashedPassword)
     {
-        return await _userService.ReadUser(emailAddress, hashedPassword);
+        return await userService.ReadUser(emailAddress, hashedPassword);
     }
 
     private static string GenerateToken(Guid userId, string emailAddress, JsonWebTokenParameters jwtParameters)

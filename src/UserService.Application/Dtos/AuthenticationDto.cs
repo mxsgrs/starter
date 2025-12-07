@@ -1,19 +1,19 @@
 ﻿namespace UserService.Application.Dtos;
 
-public class HashedLoginRequestDto
+public record HashedLoginRequestDto
 {
-    public string EmailAddress { get; set; } = "";
-    public string HashedPassword { get; set; } = "";
+    public string EmailAddress { get; init; } = "";
+    public string HashedPassword { get; init; } = "";
 }
 
-public class PlainLoginRequestDto
+public record PlainLoginRequestDto
 {
-    public string EmailAddress { get; set; } = "";
-    public string PlainPassword { get; set; } = "";
-    public bool RememberMe { get; set; } = false;
+    public string EmailAddress { get; init; } = "";
+    public string PlainPassword { get; init; } = "";
+    public bool RememberMe { get; init; } = false;
 }
 
-public class LoginResponseDto
+public record LoginResponseDto
 {
-    public string AccessToken { get; set; } = "";
+    public string AccessToken { get; init; } = "";
 }

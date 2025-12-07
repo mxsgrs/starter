@@ -1,26 +1,18 @@
-﻿namespace UserService.Application.Queries.UserQueries;
+﻿using UserService.Application.Cqrs;
 
-public record ReadUserQuery : IRequest<Result<UserDto>>
+namespace UserService.Application.Queries.UserQueries;
+
+public interface IReadUserQueryHandler : IQueryByIdHandler<Result<UserDto>> { }
+
+public class ReadUserQueryHandler(IMapper mapper, IUserRepository userRepository) : IReadUserQueryHandler
 {
-    public Guid Id { get; set; }
-}
-
-public class ReadUserQueryHandler(IMapper mapper, IUserRepository userRepository)
-    : IRequestHandler<ReadUserQuery, Result<UserDto>>
-{
-    private readonly IMapper _mapper = mapper;
-    private readonly IUserRepository _userRepository = userRepository;
-
-    public async Task<Result<UserDto>> Handle(ReadUserQuery request, CancellationToken cancellationToken)
+    public async Task<Result<UserDto>> HandleAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        Result<User> user = await _userRepository.ReadUser(request.Id);
+        Result<User> user = await userRepository.ReadUser(id);
 
-        if (user.IsFailed)
-        {
-            return Result.Fail(user.Errors);
-        }
+        if (user.IsFailed) return Result.Fail(user.Errors);
 
-        UserDto result = _mapper.Map<UserDto>(user.Value);
+        UserDto result = mapper.Map<UserDto>(user.Value);
 
         return Result.Ok(result);
     }

@@ -1,9 +1,8 @@
 ﻿global using AutoMapper;
-global using MediatR;
+global using FluentResults;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using UserService.Application;
-global using UserService.Application.Commands.AuthCommands;
 global using UserService.Application.Commands.UserCommands;
 global using UserService.Application.Dtos;
 global using UserService.Application.Interfaces;
@@ -13,4 +12,3 @@ global using UserService.Infrastructure;
 global using UserService.Infrastructure.Persistance;
 global using UserService.WebApi.Controllers.Abstracts;
 global using UserService.WebApi.Utilities;
-global using FluentResults;
