@@ -1,6 +1,6 @@
 ﻿using MassTransit;
 
-namespace UserService.Domain.Aggregates.UserAggregate;
+namespace UserService.Application.Events;
 
 public record UserCreatedEvent : IntegrationEvent
 {
