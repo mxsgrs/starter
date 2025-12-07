@@ -44,5 +44,5 @@ public class CreateUserCommandHandler(
 }
 public record UserCreatedEvent : IntegrationEvent
 {
-    public Guid UserId { get; set; }
+    public Guid UserId { get; init; }
 }

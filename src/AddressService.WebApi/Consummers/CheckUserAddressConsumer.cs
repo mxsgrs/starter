@@ -2,14 +2,14 @@
 
 namespace UserService.Infrastructure.Messaging;
 
-public class CheckUserAddress
+public record CheckUserAddress
 {
-    public string Address { get; set; } = "";
+    public string Address { get; init; } = "";
 }
 
-public class CheckUserAddressResult
+public record CheckUserAddressResult
 {
-    public bool IsValid { get; set; } = false;
+    public bool IsValid { get; init; } = false;
 }
 
 public class CheckUserAddressConsumer(ILogger<CheckUserAddressConsumer> logger) : IConsumer<CheckUserAddress>

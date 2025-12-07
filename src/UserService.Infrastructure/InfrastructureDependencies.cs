@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using UserService.Application.Shared.Events;
 using UserService.Domain.Aggregates.UserAggregate;
-using UserService.Infrastructure.Messages;
 using UserService.Infrastructure.Messaging;
 using UserService.Infrastructure.Persistance;
 using UserService.Infrastructure.Persistance.Repositories;

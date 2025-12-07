@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using UserService.Application.Shared.Events;
 
-namespace UserService.Infrastructure.Messages;
+namespace UserService.Infrastructure.Messaging;
 
 public class IntegrationEventPublisher(IPublishEndpoint publishEndpoint) : IIntegrationEventPublisher
 {
