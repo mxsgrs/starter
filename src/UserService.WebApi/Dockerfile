@@ -1,7 +1,7 @@
 # Consultez https://aka.ms/customizecontainer pour savoir comment personnaliser votre conteneur de débogage et comment Visual Studio utilise ce Dockerfile pour générer vos images afin d’accélérer le débogage.
 
 # Cet index est utilisé lors de l’exécution à partir de VS en mode rapide (par défaut pour la configuration de débogage)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
@@ -9,11 +9,14 @@ EXPOSE 8081
 
 
 # Cette phase est utilisée pour générer le projet de service
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/UserService.WebApi/UserService.WebApi.csproj", "src/UserService.WebApi/"]
 COPY ["src/Starter.ServiceDefaults/Starter.ServiceDefaults.csproj", "src/Starter.ServiceDefaults/"]
+COPY ["src/UserService.Application/UserService.Application.csproj", "src/UserService.Application/"]
+COPY ["src/UserService.Domain/UserService.Domain.csproj", "src/UserService.Domain/"]
+COPY ["src/UserService.Infrastructure/UserService.Infrastructure.csproj", "src/UserService.Infrastructure/"]
 RUN dotnet restore "./src/UserService.WebApi/UserService.WebApi.csproj"
 COPY . .
 WORKDIR "/src/src/UserService.WebApi"

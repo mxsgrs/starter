@@ -1,15 +1,15 @@
-# .NET 9 web API starter pack
+# .NET 10 web API starter pack
 
 ## Introduction
 
-This project implements an ASP.NET Core 9 web API with the most common features. It is paired with a SQL Server database using a code first approach.
+This project implements an ASP.NET Core 10 web API with the most common features. It is paired with a SQL Server database using a code first approach.
 While this project use .NET Aspire for running the API and its database, the main goal is not to cover DevOps technologies. This content focus
 primarily on building a simple ASP.NET web API with the latest .NET version.
 
 ### Prerequisites
 
 Before anything please install if they are not already the following elements
-- Download and install **.NET 9** [here](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+- Download and install **.NET 10** [here](https://dotnet.microsoft.com/fr-fr/download/dotnet/10.0)
 - Download and install **Docker Desktop** [here](https://docs.docker.com/desktop/install/windows-install/)
 
 ### Run
