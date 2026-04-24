@@ -5,12 +5,12 @@ public interface ICommand { }
 public interface ICommandHandler<TCommand>
     where TCommand : ICommand
 {
-    Task HandleAsync(TCommand command, CancellationToken cancellationToken = default);
+    Task<Result> HandleAsync(TCommand command, CancellationToken cancellationToken = default);
 }
 
 public interface ICommandByIdHandler
 {
-    Task HandleAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Result> HandleAsync(Guid id, CancellationToken cancellationToken = default);
 }
 
 
