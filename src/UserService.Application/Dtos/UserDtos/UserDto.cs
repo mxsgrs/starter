@@ -1,21 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-using UserService.Domain.Validations;
+﻿using System.Text.Json.Serialization;
 
 namespace UserService.Application.Dtos.UserDtos;
 
 public record UserDto
 {
     public Guid Id { get; init; }
-
-    [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address.")]
     public required string EmailAddress { get; init; }
-           
     public required string HashedPassword { get; init; }
     public required string FirstName { get; init; }
     public required string LastName { get; init; }
-
-    [NotInFuture]
     public DateOnly Birthday { get; init; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -24,9 +17,7 @@ public record UserDto
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public Role Role { get; init; }
 
-    [RegularExpression(@"^\+?\d{10,15}$", ErrorMessage = "The phone number must be between 10 and 15 digits and may include a leading +.")]
     public required string Phone { get; init; }
-
     public UserAddressDto? Address { get; init; }
 }
 
