@@ -2,6 +2,8 @@
 
 public class Address : ValueObject<Address>
 {
+    #region Properties
+
     public string AddressLine { get; private set; } = "";
     public string? AddressSupplement { get; private set; }
     public string City { get; private set; } = "";
@@ -9,18 +11,37 @@ public class Address : ValueObject<Address>
     public string? StateProvince { get; private set; }
     public string Country { get; private set; } = "";
 
-    public Address(string addressLine, string city, string zipCode, string country,
-        string? addressSupplement = null, string? stateProvince = null)
-    {
-        AddressLine = addressLine;
-        AddressSupplement = addressSupplement;
-        City = city;
-        ZipCode = zipCode;
-        StateProvince = stateProvince;
-        Country = country;
+    #endregion
 
-        Validate(this);
+    #region Methods
+
+    /// <summary>
+    /// Method for creating an instance under business rules
+    /// </summary>
+    public static Result<Address> Create(string addressLine, string city, string zipCode,
+        string country, string? addressSupplement = null, string? stateProvince = null)
+    {
+        Address address = new()
+        {
+            AddressLine = addressLine,
+            AddressSupplement = addressSupplement,
+            City = city,
+            ZipCode = zipCode,
+            StateProvince = stateProvince,
+            Country = country
+        };
+
+        Result validationResult = Validate(address);
+
+        return validationResult.IsSuccess
+            ? Result.Ok(address)
+            : Result.Fail<Address>(validationResult.Errors);
     }
+
+    /// <summary>
+    /// Constructor for EF Core
+    /// </summary>
+    private Address() { }
 
     /// <summary>
     /// Two value objects are equal if all their properties are equal.
@@ -28,10 +49,12 @@ public class Address : ValueObject<Address>
     public override IEnumerable<object> GetEqualityComponents()
     {
         yield return AddressLine;
-        yield return AddressSupplement;
+        yield return AddressSupplement ?? string.Empty;
         yield return City;
         yield return ZipCode;
-        yield return StateProvince;
+        yield return StateProvince ?? string.Empty;
         yield return Country;
     }
+
+    #endregion
 }

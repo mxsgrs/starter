@@ -1,4 +1,5 @@
 ﻿using UserService.Application.Dtos.UserDtos;
+using UserService.Application.Dtos.UserDtos.Helpers;
 
 namespace UserService.Application.Commands.UserCommands;
 
@@ -10,7 +11,6 @@ public record CreateUserCommand : ICommand
 public interface ICreateUserCommandHandler : ICommandHandler<CreateUserCommand> { }
 
 public class CreateUserCommandHandler(
-    IMapper mapper,
     IUserRepository userRepository,
     ICheckUserAddressService checkAddressService,
     IIntegrationEventPublisher eventPublisher
@@ -18,7 +18,7 @@ public class CreateUserCommandHandler(
 {
     public async Task HandleAsync(CreateUserCommand request, CancellationToken cancellationToken = default)
     {
-        Result<User> user = mapper.TryMap<User, UserDto>(request.UserDto);
+        Result<User> user = UserDtoHelper.ToUser(request.UserDto);
 
         if (user.IsFailed) return;
 

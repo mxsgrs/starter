@@ -5,6 +5,8 @@ namespace UserService.Domain.Aggregates.UserAggregate;
 
 public class User : AggregateRoot
 {
+    #region Properties
+
     public Guid Id { get; private set; }
 
     [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address.")]
@@ -29,58 +31,44 @@ public class User : AggregateRoot
     [RegularExpression(@"^\+?\d{10,15}$", ErrorMessage = "The phone number must be between 10 and 15 digits and may include a leading +.")]
     public string Phone { get; private set; } = "";
 
-    public Address Address { get; private set; }
+    public Address Address { get; private set; } = null!;
 
-    #region Constructors
+    #endregion
+
+    #region Methods
+
     /// <summary>
-    /// Standard constructor for creating a new user
+    /// Method for creating an instance under business rules
     /// </summary>
-    public Result<User> Create(Guid id, string emailAddress, string hashedPassword, string firstName,
-        string lastName, DateOnly birthday, Gender gender, Role role, string phone, Address address)
+    public static Result<User> Create(Guid id, string emailAddress, string hashedPassword,
+        string firstName, string lastName, DateOnly birthday, Gender gender, Role role,
+        string phone, Address address)
     {
-        Id = id;
-        EmailAddress = emailAddress;
-        HashedPassword = hashedPassword;
-        FirstName = firstName;
-        LastName = lastName;
-        Birthday = birthday;
-        Gender = gender;
-        Role = role;
-        Phone = phone;
-        Address = address;
+        User user = new()
+        {
+            Id = id,
+            EmailAddress = emailAddress,
+            HashedPassword = hashedPassword,
+            FirstName = firstName,
+            LastName = lastName,
+            Birthday = birthday,
+            Gender = gender,
+            Role = role,
+            Phone = phone,
+            Address = address
+        };
 
-        Result validationResult = Validate(this);
+        Result validationResult = Validate(user);
 
         return validationResult.IsSuccess
-            ? Result.Ok(this)
+            ? Result.Ok(user)
             : Result.Fail<User>(validationResult.Errors);
     }
 
     /// <summary>
-    /// Public constructor for automatic mapping
+    /// Constructor for EF Core
     /// </summary>
-    public User(Guid id, string emailAddress, string hashedPassword, string firstName,
-        string lastName, DateOnly birthday, Gender gender, Role role, string phone, Address address)
-    {
-        Id = id;
-        EmailAddress = emailAddress;
-        HashedPassword = hashedPassword;
-        FirstName = firstName;
-        LastName = lastName;
-        Birthday = birthday;
-        Gender = gender;
-        Role = role;
-        Phone = phone;
-        Address = address;
+    private User() { }
 
-        ThrowIfInvalid(this);
-    }
-
-    /// <summary>
-    /// Constructor for EF migration
-    /// </summary>
-    private User() : this(Guid.NewGuid(), null!, null!, null!, null!, new DateOnly(),
-        Gender.Male, Role.Admin, null!, null!)
-    { } 
     #endregion
 }

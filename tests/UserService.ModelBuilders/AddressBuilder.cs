@@ -19,5 +19,5 @@ public class AddressBuilder
     public AddressBuilder WithStateProvince(string? v) { _stateProvince = v; return this; }
 
     public Address Build() =>
-        new(_addressLine, _city, _zipCode, _country, _addressSupplement, _stateProvince);
+        Address.Create(_addressLine, _city, _zipCode, _country, _addressSupplement, _stateProvince).Value;
 }

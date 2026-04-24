@@ -23,17 +23,6 @@ public abstract class AggregateRoot : IAggregateRoot
         return Result.Ok();
     }
 
-    protected static void ThrowIfInvalid(object instance)
-    {
-        List<ValidationResult> validationResults = GetValidationResults(instance);
-
-        if (validationResults.Count > 0)
-        {
-            throw new ValidationException($"{instance.GetType().Name} is not valid: " +
-                string.Join(", ", validationResults.Select(vr => vr.ErrorMessage)));
-        }
-    }
-
     private static List<ValidationResult> GetValidationResults(object instance)
     {
         ValidationContext validationContext = new(instance);

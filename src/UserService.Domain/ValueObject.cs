@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 
 namespace UserService.Domain;
 
@@ -24,14 +23,22 @@ public abstract class ValueObject<T> where T : ValueObject<T>
                 .Select(x => x?.GetHashCode() ?? 0)
                 .Aggregate((x, y) => x ^ y);
 
-    protected void Validate(object instance)
+    protected static Result Validate(object instance)
     {
         ValidationContext validationContext = new(instance);
         List<ValidationResult> validationResults = [];
 
-        if (!Validator.TryValidateObject(instance, validationContext, validationResults, true))
+        Validator.TryValidateObject(instance, validationContext, validationResults, true);
+
+        if (validationResults.Count != 0)
         {
-            throw new ValidationException("User data is not valid: " + string.Join(", ", validationResults));
+            IEnumerable<string> errors = validationResults
+                .Where(vr => !string.IsNullOrEmpty(vr.ErrorMessage))
+                .Select(vr => vr.ErrorMessage!);
+
+            return Result.Fail(errors);
         }
+
+        return Result.Ok();
     }
 }

@@ -1,4 +1,3 @@
-using AutoMapper;
 using UserService.Application.Commands.UserCommands;
 using UserService.Application.Dtos.UserDtos;
 using UserService.Application.Shared.Events;
@@ -7,7 +6,6 @@ namespace UserService.Application.UnitTests.Facts.Commands.UserCommands;
 
 public class CreateUserCommandHandlerTests
 {
-    private readonly Mock<IMapper> _mockMapper;
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<ICheckUserAddressService> _mockCheckUserAddressService;
     private readonly Mock<IIntegrationEventPublisher> _mockUserCreatedEventPublisher;
@@ -15,12 +13,10 @@ public class CreateUserCommandHandlerTests
 
     public CreateUserCommandHandlerTests()
     {
-        _mockMapper = new Mock<IMapper>();
         _mockUserRepository = new Mock<IUserRepository>();
         _mockCheckUserAddressService = new Mock<ICheckUserAddressService>();
         _mockUserCreatedEventPublisher = new Mock<IIntegrationEventPublisher>();
         _handler = new CreateUserCommandHandler(
-            _mockMapper.Object,
             _mockUserRepository.Object,
             _mockCheckUserAddressService.Object,
             _mockUserCreatedEventPublisher.Object);
@@ -32,19 +28,12 @@ public class CreateUserCommandHandlerTests
         // Arrange
         UserDto userDto = new UserDtoBuilder().Build();
         User user = new UserBuilder().Build();
-        User createdUser = user;
-
-        _mockMapper.Setup(m => m.Map<User>(userDto))
-            .Returns(user);
-
-        _mockUserRepository.Setup(repo => repo.CreateUser(It.IsAny<User>()))
-            .ReturnsAsync(createdUser);
-
-        _mockMapper.Setup(m => m.Map<UserDto>(createdUser))
-            .Returns(userDto);
 
         _mockCheckUserAddressService.Setup(m => m.Check(userDto.Address!.AddressLine, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
+
+        _mockUserRepository.Setup(repo => repo.CreateUser(It.IsAny<User>()))
+            .ReturnsAsync(Result.Ok(user));
 
         CreateUserCommand command = new() { UserDto = userDto };
 
@@ -52,8 +41,6 @@ public class CreateUserCommandHandlerTests
         await _handler.HandleAsync(command, default);
 
         // Assert
-        _mockMapper.Verify(m => m.Map<User>(userDto), Times.Once);
-
         _mockUserRepository.Verify(repo => repo.CreateUser(It.Is<User>(u => u.EmailAddress == userDto.EmailAddress)), Times.Once);
     }
 
@@ -63,20 +50,18 @@ public class CreateUserCommandHandlerTests
         // Arrange
         UserDto userDto = new UserDtoBuilder().Build();
 
-        CreateUserCommand command = new()
-        {
-            UserDto = userDto
-        };
+        _mockCheckUserAddressService.Setup(m => m.Check(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
-        _mockMapper.Setup(m => m.Map<User>(userDto))
-            .Throws<InvalidOperationException>();
+        _mockUserRepository.Setup(repo => repo.CreateUser(It.IsAny<User>()))
+            .ReturnsAsync(Result.Fail<User>("Repository error"));
+
+        CreateUserCommand command = new() { UserDto = userDto };
 
         // Act
         await _handler.HandleAsync(command, default);
 
         // Assert
-        _mockMapper.Verify(m => m.Map<User>(userDto), Times.Once);
-
-        _mockUserRepository.Verify(repo => repo.CreateUser(It.IsAny<User>()), Times.Never);
+        _mockUserCreatedEventPublisher.Verify(p => p.PublishAsync(It.IsAny<UserCreatedEvent>()), Times.Never);
     }
 }

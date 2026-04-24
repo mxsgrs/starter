@@ -1,3 +1,4 @@
+using FluentResults;
 using UserService.Domain.Aggregates.UserAggregate;
 
 namespace UserService.ModelBuilders;
@@ -26,7 +27,11 @@ public class UserBuilder
     public UserBuilder WithPhone(string v) { _phone = v; return this; }
     public UserBuilder WithAddress(Address v) { _address = v; return this; }
 
-    public User Build() =>
-        new(_id, _emailAddress, _hashedPassword, _firstName, _lastName,
+    public Result<User> BuildResult() =>
+        User.Create(_id, _emailAddress, _hashedPassword, _firstName, _lastName,
             _birthday, _gender, _role, _phone, _address);
+
+    public User Build() =>
+        User.Create(_id, _emailAddress, _hashedPassword, _firstName, _lastName,
+            _birthday, _gender, _role, _phone, _address).Value;
 }
