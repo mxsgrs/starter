@@ -1,11 +1,10 @@
-﻿namespace UserService.Application.Dtos.UserDtos;
+namespace UserService.Application.Dtos.UserDtos;
 
-public class UserMapping : Profile
+public static class UserMapping
 {
-    public UserMapping()
+    public static void Register(TypeAdapterConfig config)
     {
-        CreateMap<User, UserDto>();
-
-        CreateMap<Address, UserAddressDto>();
+        config.NewConfig<Address, UserAddressDto>();
+        config.NewConfig<User, UserDto>();
     }
 }

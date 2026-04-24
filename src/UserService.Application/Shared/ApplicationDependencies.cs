@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 using UserService.Application.Commands.UserCommands;
+using UserService.Application.Dtos.UserDtos;
 using UserService.Application.Queries.AuthQueries;
 using UserService.Application.Queries.UserQueries;
 
@@ -10,9 +10,9 @@ public static class ApplicationDependencies
 {
     public static void AddApplicationServices(this IServiceCollection services)
     {
-        // AutoMapper
-        Assembly assembly = Assembly.Load("UserService.Application");
-        services.AddAutoMapper(configuration => configuration.AddMaps(assembly));
+        // Mapster
+        TypeAdapterConfig config = TypeAdapterConfig.GlobalSettings;
+        UserMapping.Register(config);
 
         // Command handlers
         services.AddScoped<ICreateUserCommandHandler, CreateUserCommandHandler>();
