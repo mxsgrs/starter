@@ -1,4 +1,5 @@
 ﻿global using FluentResults;
+global using UserService.ModelBuilders;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Diagnostics;
 global using Microsoft.Extensions.Configuration;

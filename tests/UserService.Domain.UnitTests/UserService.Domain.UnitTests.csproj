@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\UserService.Domain\UserService.Domain.csproj" />
+    <ProjectReference Include="..\UserService.ModelBuilders\UserService.ModelBuilders.csproj" />
   </ItemGroup>
 
   <ItemGroup>

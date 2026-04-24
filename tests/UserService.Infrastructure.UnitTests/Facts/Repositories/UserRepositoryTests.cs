@@ -1,4 +1,4 @@
-﻿namespace UserService.Infrastructure.UnitTests.Facts.Repositories;
+namespace UserService.Infrastructure.UnitTests.Facts.Repositories;
 
 public class UserRepositoryTests
 {
@@ -9,18 +9,7 @@ public class UserRepositoryTests
     {
         // Arrange
         UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
-        User user = new(
-            Guid.NewGuid(),
-            "test@example.com",
-            "hashedPassword",
-            "John",
-            "Doe",
-            new DateOnly(1990, 1, 1),
-            Gender.Male,
-            Role.User,
-            "+1234567890",
-            new Address("Street", "City", "State", "12345", "Country")
-        );
+        User user = new UserBuilder().Build();
 
         UserRepository repository = new(_logger.Object, dbContext);
 
@@ -38,18 +27,7 @@ public class UserRepositoryTests
     {
         // Arrange
         UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
-        User user = new(
-            Guid.NewGuid(),
-            "test@example.com",
-            "hashedPassword",
-            "John",
-            "Doe",
-            new DateOnly(1990, 1, 1),
-            Gender.Male,
-            Role.User,
-            "+1234567890",
-            new Address("Street", "City", "State", "12345", "Country")
-        );
+        User user = new UserBuilder().Build();
 
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
@@ -86,19 +64,7 @@ public class UserRepositoryTests
     {
         // Arrange
         UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
-
-        User user = new(
-            Guid.NewGuid(),
-            "test@example.com",
-            "hashedPassword",
-            "John",
-            "Doe",
-            new DateOnly(1990, 1, 1),
-            Gender.Male,
-            Role.User,
-            "+1234567890",
-            new Address("Street", "City", "State", "12345", "Country")
-        );
+        User user = new UserBuilder().Build();
 
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
@@ -136,35 +102,26 @@ public class UserRepositoryTests
     {
         // Arrange
         UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
-
-        User user = new(
-            Guid.NewGuid(),
-            "test@example.com",
-            "hashedPassword",
-            "John",
-            "Doe",
-            new DateOnly(1990, 1, 1),
-            Gender.Male,
-            Role.User,
-            "+1234567890",
-            new Address("Street", "City", "State", "12345", "Country")
-        );
+        User user = new UserBuilder().Build();
 
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
 
-        User updatedUser = new(
-            user.Id,
-            "test@example.com",
-            "hashedPassword",
-            "Jane",
-            "Doe",
-            new DateOnly(1991, 2, 2),
-            Gender.Female,
-            Role.Admin,
-            "+0987654321",
-            new Address("New Street", "New City", "New State", "54321", "New Country")
-        );
+        User updatedUser = new UserBuilder()
+            .WithId(user.Id)
+            .WithFirstName("Jane")
+            .WithBirthday(new DateOnly(1991, 2, 2))
+            .WithGender(Gender.Female)
+            .WithRole(Role.Admin)
+            .WithPhone("+0987654321")
+            .WithAddress(new AddressBuilder()
+                .WithAddressLine("New Street")
+                .WithCity("New City")
+                .WithStateProvince("New State")
+                .WithZipCode("54321")
+                .WithCountry("New Country")
+                .Build())
+            .Build();
 
         UserRepository repository = new(_logger.Object, dbContext);
 

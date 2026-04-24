@@ -1,4 +1,4 @@
-﻿using UserService.Application.Dtos;
+using UserService.Application.Dtos;
 using UserService.Application.Queries.AuthQueries;
 using UserService.Application.UnitTests.Facts.Fixtures;
 
@@ -49,31 +49,13 @@ public class GenerateTokenQueryHandlerTests : IClassFixture<SharedFixture>
         string emailAddress = "test@example.com";
         string hashedPassword = "hashedPassword123";
         Guid userId = Guid.NewGuid();
-        User user = new(
-            userId,
-            emailAddress,
-            hashedPassword,
-            "Test",
-            "User",
-            new DateOnly(1990, 1, 1),
-            Gender.Male,
-            Role.User,
-            "+1234567890",
-            new Address(
-                "Street", 
-                "City",
-                "State",
-                "PostalCode",
-                "Country"
-            )
-        );
 
-        JsonWebTokenParameters jwtParameters = new()
-        {
-            Key = "test_secret_key_1234567890",
-            Issuer = "testIssuer",
-            Audience = "testAudience"
-        };
+        User user = new UserBuilder()
+            .WithId(userId)
+            .WithHashedPassword(hashedPassword)
+            .WithFirstName("Test")
+            .WithLastName("User")
+            .Build();
 
         _mockUserRepository
             .Setup(repo => repo.ReadUser(emailAddress, hashedPassword))
@@ -90,4 +72,3 @@ public class GenerateTokenQueryHandlerTests : IClassFixture<SharedFixture>
         Assert.NotEmpty(result.Value.AccessToken);
     }
 }
-

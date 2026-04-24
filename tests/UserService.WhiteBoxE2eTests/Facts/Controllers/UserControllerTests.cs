@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using UserService.Application.Dtos.UserDtos;
 using UserService.WhiteBoxE2eTests.Facts.Factories;
 
@@ -72,9 +72,19 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
         UserDbContext dbContext = _factory.MigrateDbContext();
 
         Guid id = Guid.NewGuid();
-        User user = new(id, "john.doe@example.com", "TWF0cml4UmVsb2FkZWQh", "FirstName",
-            "LastName", new DateOnly(1990, 1, 1), Gender.Male, Role.User, "+1234567890",
-            new("123 Test St", "TestCity", "12345", "TestCountry"));
+        User user = new UserBuilder()
+            .WithId(id)
+            .WithEmailAddress("john.doe@example.com")
+            .WithHashedPassword("TWF0cml4UmVsb2FkZWQh")
+            .WithFirstName("FirstName")
+            .WithLastName("LastName")
+            .WithAddress(new AddressBuilder()
+                .WithAddressLine("123 Test St")
+                .WithCity("TestCity")
+                .WithZipCode("12345")
+                .WithCountry("TestCountry")
+                .Build())
+            .Build();
 
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
@@ -98,7 +108,7 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
         Assert.Equal(Gender.Male, responseUserDto.Gender);
         Assert.Equal(Role.User, responseUserDto.Role);
         Assert.Equal("+1234567890", responseUserDto.Phone);
-        Assert.Equal("123 Test St", responseUserDto.Address.AddressLine);
+        Assert.Equal("123 Test St", responseUserDto.Address!.AddressLine);
         Assert.Equal("TestCity", responseUserDto.Address.City);
         Assert.Equal("12345", responseUserDto.Address.ZipCode);
         Assert.Equal("TestCountry", responseUserDto.Address.Country);

@@ -1,9 +1,9 @@
-﻿using UserService.Application.Dtos;
+using UserService.Application.Dtos;
 using UserService.WhiteBoxE2eTests.Facts.Factories;
 
 namespace UserService.WhiteBoxE2eTests.Facts.Controllers;
 
-public class AuthenticationControllerTests(StarterWebApplicationFactory factory) 
+public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
     : IClassFixture<StarterWebApplicationFactory>
 {
     private readonly StarterWebApplicationFactory _factory = factory;
@@ -14,25 +14,7 @@ public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
         // Arrange
         UserDbContext dbContext = _factory.MigrateDbContext();
 
-        User user = new(
-            Guid.NewGuid(),
-            "test@example.com",
-            "hashedPassword",
-            "John",
-            "Doe",
-            new DateOnly(1990, 1, 1),
-            Gender.Male,
-            Role.User,
-            "+1234567890",
-            new Address
-            (
-                "Street",
-                "City",
-                "State",
-                "12345",
-                "Country"
-            )
-        );
+        User user = new UserBuilder().Build();
 
         dbContext.Users.Add(user);
         dbContext.SaveChanges();

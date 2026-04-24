@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Users/mxsgr/source/repos/starter/src/UserService* -name \"*.cs\" -not -path \"*/obj/*\" -not -path \"*/bin/*\")",
+      "Bash(find /c/Users/mxsgr/source/repos/starter/src/AddressService* -name \"*.cs\" -not -path \"*/obj/*\" -not -path \"*/bin/*\")"
+    ]
+  }
+}

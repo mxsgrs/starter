@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using UserService.Application.Commands.UserCommands;
 using UserService.Application.Dtos.UserDtos;
 using UserService.Application.Shared.Events;
@@ -30,45 +30,8 @@ public class CreateUserCommandHandlerTests
     public async Task Handle_ShouldCreateUser_WhenValidInput()
     {
         // Arrange
-        UserDto userDto = new()
-        {
-            Id = Guid.NewGuid(),
-            EmailAddress = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
-            HashedPassword = "hashedPassword",
-            Birthday = new DateOnly(1990, 1, 1),
-            Gender = Gender.Male,
-            Role = Role.User,
-            Phone = "+1234567890",
-            Address = new UserAddressDto
-            {
-                AddressLine = "123 Main St",
-                City = "Metropolis",
-                ZipCode = "12345",
-                Country = "USA"
-            }
-        };
-
-        User user = new(
-            Guid.NewGuid(),
-            userDto.EmailAddress,
-            userDto.HashedPassword,
-            userDto.FirstName,
-            userDto.LastName,
-            userDto.Birthday,
-            userDto.Gender,
-            userDto.Role,
-            userDto.Phone,
-            new Address
-            (
-                userDto.Address.AddressLine, 
-                userDto.Address.City,
-                userDto.Address.ZipCode,
-                userDto.Address.Country
-            )
-        );
-
+        UserDto userDto = new UserDtoBuilder().Build();
+        User user = new UserBuilder().Build();
         User createdUser = user;
 
         _mockMapper.Setup(m => m.Map<User>(userDto))
@@ -80,7 +43,7 @@ public class CreateUserCommandHandlerTests
         _mockMapper.Setup(m => m.Map<UserDto>(createdUser))
             .Returns(userDto);
 
-        _mockCheckUserAddressService.Setup(m => m.Check(userDto.Address.AddressLine, It.IsAny<CancellationToken>()))
+        _mockCheckUserAddressService.Setup(m => m.Check(userDto.Address!.AddressLine, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         CreateUserCommand command = new() { UserDto = userDto };
@@ -98,15 +61,9 @@ public class CreateUserCommandHandlerTests
     public async Task Handle_ReturnFailure_WhenUserRepositoryFails()
     {
         // Arrange
-        UserDto userDto = new()
-        {
-            Id = Guid.NewGuid(),
-            EmailAddress = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe"
-        };
+        UserDto userDto = new UserDtoBuilder().Build();
 
-        CreateUserCommand command = new() 
+        CreateUserCommand command = new()
         {
             UserDto = userDto
         };
@@ -123,4 +80,3 @@ public class CreateUserCommandHandlerTests
         _mockUserRepository.Verify(repo => repo.CreateUser(It.IsAny<User>()), Times.Never);
     }
 }
-

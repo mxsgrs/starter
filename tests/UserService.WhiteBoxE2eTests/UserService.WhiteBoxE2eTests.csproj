@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\UserService.WebApi\UserService.WebApi.csproj" />
+    <ProjectReference Include="..\UserService.ModelBuilders\UserService.ModelBuilders.csproj" />
   </ItemGroup>
 
   <ItemGroup>

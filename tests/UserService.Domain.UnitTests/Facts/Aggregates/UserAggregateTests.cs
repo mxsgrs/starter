@@ -1,4 +1,4 @@
-﻿using UserService.Domain.Aggregates.UserAggregate;
+using UserService.Domain.Aggregates.UserAggregate;
 using System.ComponentModel.DataAnnotations;
 
 namespace UserService.Domain.UnitTests.Facts.Aggregates;
@@ -13,24 +13,7 @@ public class UserTests
 
         // Act & Assert
         ValidationException exception = Assert.Throws<ValidationException>(() =>
-            new User(
-                Guid.NewGuid(),
-                "test@example.com",
-                "hashedPassword123",
-                "John",
-                "Doe",
-                futureDate,
-                Gender.Male,
-                Role.User,
-                "+1234567890",
-                new Address(
-                    "123 Main St",
-                    "City",
-                    "State",
-                    "PostalCode",
-                    "Country"
-                )
-            )
+            new UserBuilder().WithBirthday(futureDate).Build()
         );
 
         Assert.Equal("User is not valid: Birthday date can't be in the future.", exception.Message);
@@ -44,24 +27,7 @@ public class UserTests
 
         // Act & Assert
         ValidationException exception = Assert.Throws<ValidationException>(() =>
-            new User(
-                Guid.NewGuid(),
-                invalidEmail,
-                "hashedPassword123",
-                "John",
-                "Doe",
-                new DateOnly(1990, 1, 1),
-                Gender.Male,
-                Role.User,
-                "+1234567890",
-                new Address(
-                    "123 Main St",
-                    "City",
-                    "State",
-                    "PostalCode",
-                    "Country"
-                )
-            )
+            new UserBuilder().WithEmailAddress(invalidEmail).Build()
         );
 
         Assert.Equal("User is not valid: Invalid email address.", exception.Message);
@@ -75,24 +41,7 @@ public class UserTests
 
         // Act & Assert
         ValidationException exception = Assert.Throws<ValidationException>(() =>
-            new User(
-                Guid.NewGuid(),
-                "test@example.com",
-                "hashedPassword123",
-                "John",
-                "Doe",
-                new DateOnly(1990, 1, 1),
-                Gender.Male,
-                Role.User,
-                invalidPhone,
-                new Address(
-                    "123 Main St",
-                    "City",
-                    "State",
-                    "PostalCode",
-                    "Country"
-                )
-            )
+            new UserBuilder().WithPhone(invalidPhone).Build()
         );
 
         Assert.Equal("User is not valid: The phone number must be between 10 and 15 digits and may include a leading +.", exception.Message);
@@ -106,24 +55,7 @@ public class UserTests
 
         // Act & Assert
         ValidationException exception = Assert.Throws<ValidationException>(() =>
-            new User(
-                Guid.NewGuid(),
-                "test@example.com",
-                "hashedPassword123",
-                longFirstName,
-                "Doe",
-                new DateOnly(1990, 1, 1),
-                Gender.Male,
-                Role.User,
-                "+1234567890",
-                new Address(
-                    "123 Main St",
-                    "City",
-                    "State",
-                    "PostalCode",
-                    "Country"
-                )
-            )
+            new UserBuilder().WithFirstName(longFirstName).Build()
         );
 
         Assert.Equal("User is not valid: The field FirstName must be a string or array type with a maximum length of '128'.", exception.Message);
@@ -134,19 +66,34 @@ public class UserTests
     {
         // Arrange
         Guid id = Guid.NewGuid();
-        string emailAddress = "test@example.com";
+        string emailAddress = "valid@example.com";
         string hashedPassword = "hashedPassword123";
-        string firstName = "John";
-        string lastName = "Doe";
-        DateOnly birthday = new(1990, 1, 1);
-        Gender gender = Gender.Male;
-        Role role = Role.User;
-        string phone = "+1234567890";
-        Address address = new("123 Main St", "City", "State", "PostalCode", "Country");
+        string firstName = "Jane";
+        string lastName = "Smith";
+        DateOnly birthday = new(1985, 6, 15);
+        Gender gender = Gender.Female;
+        Role role = Role.Admin;
+        string phone = "+9876543210";
+        Address address = new AddressBuilder()
+            .WithAddressLine("42 Oak Avenue")
+            .WithCity("Springfield")
+            .WithZipCode("67890")
+            .WithCountry("Canada")
+            .Build();
 
         // Act
-        User user = new(id, emailAddress, hashedPassword, firstName, 
-            lastName, birthday, gender, role, phone, address);
+        User user = new UserBuilder()
+            .WithId(id)
+            .WithEmailAddress(emailAddress)
+            .WithHashedPassword(hashedPassword)
+            .WithFirstName(firstName)
+            .WithLastName(lastName)
+            .WithBirthday(birthday)
+            .WithGender(gender)
+            .WithRole(role)
+            .WithPhone(phone)
+            .WithAddress(address)
+            .Build();
 
         // Assert
         Assert.Equal(id, user.Id);
