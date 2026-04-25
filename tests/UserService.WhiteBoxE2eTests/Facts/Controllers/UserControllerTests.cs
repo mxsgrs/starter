@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System.Net.Http.Json;
 using UserService.Application.Dtos.UserDtos;
 using UserService.WhiteBoxE2eTests.Facts.Factories;
@@ -5,30 +6,45 @@ using UserService.WhiteBoxE2eTests.Facts.Factories;
 namespace UserService.WhiteBoxE2eTests.Facts.Controllers;
 
 public class UserControllerTests(StarterWebApplicationFactory factory)
-    : IClassFixture<StarterWebApplicationFactory>
+    : IClassFixture<StarterWebApplicationFactory>, IAsyncLifetime
 {
-    //[Fact]
-    //public async Task CreateUser_ShouldReturnOk_WhenUserIsCreated()
-    //{
-    //    // Arrange
-    //    factory.MigrateDbContext();
-    //    HttpClient client = factory.CreateClient();
-    //    UserWriteDto writeDto = new UserWriteDtoBuilder().Build();
+    private readonly HttpClient _client = factory.CreateAuthorizedClient();
+    private readonly UserDbContext _dbContext = factory.MigrateDbContext();
 
-    //    // Act
-    //    HttpResponseMessage response = await client.PostAsJsonAsync("/api/user", writeDto);
+    public Task InitializeAsync()
+    {
+        return Task.CompletedTask;
+    }
 
-    //    // Assert
-    //    response.EnsureSuccessStatusCode();
-    //    Guid createdId = await response.Content.ReadFromJsonAsync<Guid>(JsonOptions.Default);
-    //    Assert.NotEqual(Guid.Empty, createdId);
-    //}
+    public async Task DisposeAsync()
+    {
+        await _dbContext.Users.ExecuteDeleteAsync();
+        factory.DomainEventPublisher.Clear();
+    }
+
+    [Fact]
+    public async Task CreateUser_ShouldReturnOk_WhenUserIsCreated()
+    {
+        // Arrange
+        UserWriteDto writeDto = new UserWriteDtoBuilder().Build();
+
+        // Act
+        HttpResponseMessage response = await _client.PostAsJsonAsync("/api/user", writeDto);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        Guid createdId = await response.Content.ReadFromJsonAsync<Guid>(JsonOptions.Default);
+        Assert.NotEqual(Guid.Empty, createdId);
+        IEnumerable<UserCreatedDomainEvent> publishedEvents = factory.DomainEventPublisher
+            .PublishedEvents.OfType<UserCreatedDomainEvent>();
+        UserCreatedDomainEvent domainEvent = Assert.Single(publishedEvents);
+        Assert.Equal(createdId, domainEvent.UserId);
+    }
 
     [Fact]
     public async Task ReadUser_ShouldReturnOk_WhenUserExists()
     {
         // Arrange
-        UserDbContext dbContext = factory.MigrateDbContext();
         User user = new UserBuilder()
             .WithEmailAddress("john.doe@example.com")
             .WithHashedPassword("TWF0cml4UmVsb2FkZWQh")
@@ -42,13 +58,11 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
                 .Build())
             .Build();
 
-        await dbContext.Users.AddAsync(user);
-        await dbContext.SaveChangesAsync();
-
-        HttpClient client = factory.CreateAuthorizedClient();
+        await _dbContext.Users.AddAsync(user);
+        await _dbContext.SaveChangesAsync();
 
         // Act
-        HttpResponseMessage response = await client.SendAsync(new(HttpMethod.Get, $"/api/user/{user.Id}"));
+        HttpResponseMessage response = await _client.SendAsync(new(HttpMethod.Get, $"/api/user/{user.Id}"));
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -60,22 +74,24 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
         Assert.Equal("123 Test St", dto.Address!.AddressLine);
     }
 
-    //[Fact]
-    //public async Task UpdateUser_ShouldReturnNoContent_WhenUserIsUpdated()
-    //{
-    //    // Arrange
-    //    UserDbContext dbContext = factory.MigrateDbContext();
-    //    User user = new UserBuilder().Build();
-    //    await dbContext.Users.AddAsync(user);
-    //    await dbContext.SaveChangesAsync();
+    [Fact]
+    public async Task UpdateUser_ShouldReturnNoContent_WhenUserIsUpdated()
+    {
+        // Arrange
+        User user = new UserBuilder().Build();
+        await _dbContext.Users.AddAsync(user);
+        await _dbContext.SaveChangesAsync();
 
-    //    HttpClient client = factory.CreateAuthorizedClient();
-    //    UserWriteDto updateDto = new UserWriteDtoBuilder().WithFirstName("Jane").Build();
+        UserWriteDto updateDto = new UserWriteDtoBuilder().WithFirstName("Jane").Build();
 
-    //    // Act
-    //    HttpResponseMessage response = await client.PutAsJsonAsync($"/api/user/{user.Id}", updateDto);
+        // Act
+        HttpResponseMessage response = await _client.PutAsJsonAsync($"/api/user/{user.Id}", updateDto);
 
-    //    // Assert
-    //    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-    //}
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        IEnumerable<UserUpdatedDomainEvent> publishedEvents = factory.DomainEventPublisher
+            .PublishedEvents.OfType<UserUpdatedDomainEvent>();
+        UserUpdatedDomainEvent domainEvent = Assert.Single(publishedEvents);
+        Assert.Equal(user.Id, domainEvent.UserId);
+    }
 }

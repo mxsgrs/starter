@@ -7,12 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Testcontainers.MsSql;
 using Testcontainers.RabbitMq;
+using UserService.Application.Shared.Events;
+using UserService.Domain.Events;
 
 namespace UserService.WhiteBoxE2eTests.Facts.Factories;
 
 public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly MsSqlContainer _dbContainer = new MsSqlBuilder()
+    private readonly MsSqlContainer _dbContainer = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04")
         .Build();
 
     private const string _rabbitMqUsername = "guest";
@@ -20,11 +22,13 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     private const int _rabbitMqContainerPort = 5672;
     private const int _rabbitMqHostPort = 5673;
 
-    private readonly RabbitMqContainer _rabbitMqContainer = new RabbitMqBuilder()
+    private readonly RabbitMqContainer _rabbitMqContainer = new RabbitMqBuilder("rabbitmq:3.11")
         .WithUsername(_rabbitMqUsername)
         .WithPassword(_rabbitMqPassword)
         .WithPortBinding(_rabbitMqHostPort, _rabbitMqContainerPort)
         .Build();
+
+    public FakeDomainEventPublisher DomainEventPublisher { get; } = new();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -38,6 +42,9 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
 
             services.RemoveAll<ICheckUserAddressService>();
             services.AddScoped<ICheckUserAddressService, AlwaysValidAddressService>();
+
+            services.RemoveAll<IDomainEventPublisher>();
+            services.AddSingleton<IDomainEventPublisher>(DomainEventPublisher);
         });
 
         builder.ConfigureAppConfiguration((hostingContext, config) =>
@@ -78,6 +85,25 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
 
     public new Task DisposeAsync()
         => _dbContainer.DisposeAsync().AsTask();
+}
+
+public class FakeDomainEventPublisher : IDomainEventPublisher
+{
+    public List<IDomainEvent> PublishedEvents { get; } = [];
+
+    /// <summary>
+    /// Capture domain events without connecting to any message broker
+    /// </summary>
+    public Task PublishAsync(IDomainEvent domainEvent)
+    {
+        PublishedEvents.Add(domainEvent);
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Reset captured events between tests
+    /// </summary>
+    public void Clear() => PublishedEvents.Clear();
 }
 
 public static class JsonOptions

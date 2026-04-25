@@ -6,20 +6,17 @@ namespace UserService.WhiteBoxE2eTests.Facts.Controllers;
 public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
     : IClassFixture<StarterWebApplicationFactory>
 {
-    private readonly StarterWebApplicationFactory _factory = factory;
+    private readonly HttpClient _client = factory.CreateAuthorizedClient();
+    private readonly UserDbContext _dbContext = factory.MigrateDbContext();
 
     [Fact]
     public async Task Token_ShouldReturnOk_WhenLoginIsSuccessful()
     {
         // Arrange
-        UserDbContext dbContext = _factory.MigrateDbContext();
-
         User user = new UserBuilder().Build();
+        _dbContext.Users.Add(user);
+        _dbContext.SaveChanges();
 
-        dbContext.Users.Add(user);
-        dbContext.SaveChanges();
-
-        HttpClient client = _factory.CreateClient();
         HashedLoginRequestDto hashedLoginRequest = new()
         {
             EmailAddress = "test@example.com",
@@ -34,7 +31,7 @@ public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
         };
 
         // Act
-        HttpResponseMessage response = await client.SendAsync(request);
+        HttpResponseMessage response = await _client.SendAsync(request);
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -46,8 +43,6 @@ public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
     public async Task Token_ShouldReturnBadRequest_WhenLoginFails()
     {
         // Arrange
-        _factory.MigrateDbContext();
-        HttpClient client = _factory.CreateClient();
         HashedLoginRequestDto hashedLoginRequest = new()
         {
             EmailAddress = "testuser@gmail.com",
@@ -62,7 +57,7 @@ public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
         };
 
         // Act
-        HttpResponseMessage response = await client.SendAsync(request);
+        HttpResponseMessage response = await _client.SendAsync(request);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
