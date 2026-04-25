@@ -40,9 +40,18 @@ public class User : AggregateRoot
     /// <summary>
     /// Method for creating an instance under business rules
     /// </summary>
-    public static Result<User> Create(Guid id, string emailAddress, string hashedPassword,
-        string firstName, string lastName, DateOnly birthday, Gender gender, Role role,
-        string phone, Address address)
+    public static Result<User> Create(
+        Guid id,
+        string emailAddress,
+        string hashedPassword,
+        string firstName,
+        string lastName,
+        DateOnly birthday,
+        Gender gender,
+        Role role,
+        string phone,
+        Address address
+    )
     {
         User user = new()
         {
@@ -60,13 +69,10 @@ public class User : AggregateRoot
 
         Result validationResult = Validate(user);
 
-        if (validationResult.IsSuccess)
-        {
-            user.RaiseDomainEvent(new UserCreatedDomainEvent(user.Id));
-            return Result.Ok(user);
-        }
+        if (!validationResult.IsSuccess) return Result.Fail<User>(validationResult.Errors);
 
-        return Result.Fail<User>(validationResult.Errors);
+        user.RaiseDomainEvent(new UserCreatedDomainEvent(user.Id));
+        return Result.Ok(user);
     }
 
     /// <summary>

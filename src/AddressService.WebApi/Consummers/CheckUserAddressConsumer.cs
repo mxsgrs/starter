@@ -1,5 +1,6 @@
 ﻿using MassTransit;
 
+// Keep this namespace intact otherwise MassTransit will break.
 namespace UserService.Infrastructure.Messaging;
 
 public record CheckUserAddress
