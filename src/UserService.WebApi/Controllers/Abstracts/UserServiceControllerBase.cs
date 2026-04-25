@@ -12,19 +12,29 @@ public class UserServiceControllerBase() : ControllerBase
     {
         if (result.IsFailed)
         {
-            return BadRequest(result.Errors.Select(error => error.Message).FirstOrDefault() ?? "An error occurred.");
+            string firstErrorMessage = ReadFirstErrorMessage(result.Errors);
+            return BadRequest(firstErrorMessage);
         }
 
         return Ok(result.Value);
     }
 
+    /// <summary>
+    /// Returns http status code corresponding to the result of the operation.
+    /// </summary>
     public IActionResult CorrespondingStatus(Result result)
     {
         if (result.IsFailed)
         {
-            return BadRequest(result.Errors.Select(error => error.Message).FirstOrDefault() ?? "An error occurred.");
+            string firstErrorMessage = ReadFirstErrorMessage(result.Errors);
+            return BadRequest(firstErrorMessage);
         }
 
         return NoContent();
+    }
+
+    private static string ReadFirstErrorMessage(IReadOnlyList<IError> errorList)
+    {
+        return errorList.Select(error => error.Message).FirstOrDefault() ?? "An error occurred.";
     }
 }
