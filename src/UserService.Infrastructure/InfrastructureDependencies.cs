@@ -16,19 +16,22 @@ public static class InfrastructureDependencies
     public static void AddInfrastructureServices(this IServiceCollection services, 
         IConfiguration configuration, IHostEnvironment environment)
     {
-        string? aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        AddDbContext(services, configuration, environment);
 
-        // Database context
-        if (environment.IsProduction())
-        {
-            string connectionString = configuration.GetConnectionString("SqlServer")
-                ?? throw new Exception("Connection string for SQL Server is missing");
+        AddMassTransit(services, configuration);
 
-            services.AddDbContext<UserDbContext>(options =>
-                options.UseSqlServer(connectionString));
-        }
+        services.AddScoped<DomainEventInterceptor>();
+        services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+        services.AddScoped<IDomainEventHandler<UserCreatedDomainEvent>, UserCreatedDomainEventHandler>();
+        services.AddScoped<ICheckUserAddressService, CheckUserAddressService>();
+        services.AddScoped<IUserRepository, UserRepository>();
+    }
 
-        // Message bus
+    /// <summary>
+    /// Configure MassTransit DI
+    /// </summary>
+    private static void AddMassTransit(IServiceCollection services, IConfiguration configuration)
+    {
         services.AddMassTransit(registration =>
         {
             registration.UsingRabbitMq((context, rabbitMqConfiguration) =>
@@ -41,11 +44,26 @@ public static class InfrastructureDependencies
                 rabbitMqConfiguration.ConfigureEndpoints(context);
             });
         });
+    }
 
-        services.AddScoped<ICheckUserAddressService, CheckUserAddressService>();
-        services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
+    /// <summary>
+    /// Configure DbContext DI
+    /// </summary>
+    private static void AddDbContext(IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+    {
+        string? aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-        // Repositories
-        services.AddScoped<IUserRepository, UserRepository>();
+        if ((environment.IsDevelopment() && aspNetCoreEnvironment is not null) || environment.IsProduction())
+        {
+            // docker run -d -e ACCEPT_EULA=Y -e SA_PASSWORD=B1q22MPXUgosXiqZ -p 1433:1433 mcr.microsoft.com/mssql/server:2022-latest
+            string connectionString = configuration.GetConnectionString(environment.IsProduction() ? "SqlServer" : "UserDatabase")
+                ?? throw new Exception("Connection string for SQL Server is missing");
+
+            services.AddDbContext<UserDbContext>((sp, options) =>
+            {
+                options.UseSqlServer(connectionString);
+                options.AddInterceptors(sp.GetRequiredService<DomainEventInterceptor>());
+            });
+        }
     }
 }

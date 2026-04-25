@@ -1,0 +1,20 @@
+namespace UserService.Domain.Aggregates.UserAggregate;
+
+public class UserAuditLog
+{
+    /// <summary>
+    /// Create a new audit log entry for a user event
+    /// </summary>
+    public static UserAuditLog Create(Guid userId, string eventType) => new()
+    {
+        Id = Guid.NewGuid(),
+        UserId = userId,
+        EventType = eventType,
+        OccurredOn = DateTime.UtcNow
+    };
+
+    public Guid Id { get; private set; }
+    public Guid UserId { get; private set; }
+    public string EventType { get; private set; } = string.Empty;
+    public DateTime OccurredOn { get; private set; }
+}

@@ -7,8 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Testcontainers.MsSql;
 using Testcontainers.RabbitMq;
-using UserService.Application.Shared.Events;
-using UserService.Domain.Events;
+using UserService.Infrastructure.Messaging;
 
 namespace UserService.WhiteBoxE2eTests.Facts.Factories;
 
@@ -28,8 +27,6 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
         .WithPortBinding(_rabbitMqHostPort, _rabbitMqContainerPort)
         .Build();
 
-    public FakeDomainEventPublisher DomainEventPublisher { get; } = new();
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
@@ -37,14 +34,14 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
             services.RemoveAll<DbContextOptions<UserDbContext>>();
 
             string connectionString = _dbContainer.GetConnectionString();
-            services.AddDbContext<UserDbContext>(options => options
-                .UseSqlServer(connectionString));
+            services.AddDbContext<UserDbContext>((sp, options) =>
+            {
+                options.UseSqlServer(connectionString);
+                options.AddInterceptors(sp.GetRequiredService<DomainEventInterceptor>());
+            });
 
             services.RemoveAll<ICheckUserAddressService>();
             services.AddScoped<ICheckUserAddressService, AlwaysValidAddressService>();
-
-            services.RemoveAll<IDomainEventPublisher>();
-            services.AddSingleton<IDomainEventPublisher>(DomainEventPublisher);
         });
 
         builder.ConfigureAppConfiguration((hostingContext, config) =>
@@ -85,25 +82,6 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
 
     public new Task DisposeAsync()
         => _dbContainer.DisposeAsync().AsTask();
-}
-
-public class FakeDomainEventPublisher : IDomainEventPublisher
-{
-    public List<IDomainEvent> PublishedEvents { get; } = [];
-
-    /// <summary>
-    /// Capture domain events without connecting to any message broker
-    /// </summary>
-    public Task PublishAsync(IDomainEvent domainEvent)
-    {
-        PublishedEvents.Add(domainEvent);
-        return Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// Reset captured events between tests
-    /// </summary>
-    public void Clear() => PublishedEvents.Clear();
 }
 
 public static class JsonOptions

@@ -12,8 +12,7 @@ public interface ICreateUserCommandHandler : ICommandHandlerResultingGuid<Create
 
 public class CreateUserCommandHandler(
     IUserRepository userRepository,
-    ICheckUserAddressService checkAddressService,
-    IDomainEventPublisher eventPublisher
+    ICheckUserAddressService checkAddressService
 ) : ICreateUserCommandHandler
 {
     public async Task<Result<Guid>> HandleAsync(CreateUserCommand request, CancellationToken cancellationToken = default)
@@ -29,8 +28,6 @@ public class CreateUserCommandHandler(
         Result<User> createdUser = await userRepository.CreateUser(user.Value);
 
         if (createdUser.IsFailed) return Result.Fail(createdUser.Errors);
-
-        await eventPublisher.DispatchAndClearAsync(createdUser.Value);
 
         return Result.Ok(createdUser.Value.Id);
     }

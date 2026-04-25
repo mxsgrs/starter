@@ -1,4 +1,4 @@
-@UserId=20dcf5fe-1e1a-43db-a2f8-d91e2650ff00
+@UserId=cc9037dd-ad50-47de-b729-81734206675a
 
 # Register new user
 POST {{HostAddress}}/api/user

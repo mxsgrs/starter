@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
 using UserService.Application.Shared;
+using UserService.Infrastructure.Messaging;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -27,11 +28,6 @@ builder.Services.AddInfrastructureServices(builder.Configuration, builder.Enviro
 string? aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
 builder.AddServiceDefaults();
-
-if (builder.Environment.IsDevelopment() && aspNetCoreEnvironment is not null)
-{
-    builder.AddSqlServerDbContext<UserDbContext>("UserDatabase");
-}
 
 builder.Services.AddApplicationServices();
 

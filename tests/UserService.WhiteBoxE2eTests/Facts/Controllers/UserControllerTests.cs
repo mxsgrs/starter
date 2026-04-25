@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http.Json;
 using UserService.Application.Dtos.UserDtos;
+using UserService.Domain.Events;
 using UserService.WhiteBoxE2eTests.Facts.Factories;
 
 namespace UserService.WhiteBoxE2eTests.Facts.Controllers;
@@ -18,8 +19,8 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
 
     public async Task DisposeAsync()
     {
+        await _dbContext.AuditLogs.ExecuteDeleteAsync();
         await _dbContext.Users.ExecuteDeleteAsync();
-        factory.DomainEventPublisher.Clear();
     }
 
     [Fact]
@@ -35,10 +36,9 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
         response.EnsureSuccessStatusCode();
         Guid createdId = await response.Content.ReadFromJsonAsync<Guid>(JsonOptions.Default);
         Assert.NotEqual(Guid.Empty, createdId);
-        IEnumerable<UserCreatedDomainEvent> publishedEvents = factory.DomainEventPublisher
-            .PublishedEvents.OfType<UserCreatedDomainEvent>();
-        UserCreatedDomainEvent domainEvent = Assert.Single(publishedEvents);
-        Assert.Equal(createdId, domainEvent.UserId);
+        UserAuditLog? auditLog = await _dbContext.AuditLogs
+            .FirstOrDefaultAsync(a => a.UserId == createdId && a.EventType == nameof(UserCreatedDomainEvent));
+        Assert.NotNull(auditLog);
     }
 
     [Fact]
@@ -89,9 +89,5 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
 
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        IEnumerable<UserUpdatedDomainEvent> publishedEvents = factory.DomainEventPublisher
-            .PublishedEvents.OfType<UserUpdatedDomainEvent>();
-        UserUpdatedDomainEvent domainEvent = Assert.Single(publishedEvents);
-        Assert.Equal(user.Id, domainEvent.UserId);
     }
 }

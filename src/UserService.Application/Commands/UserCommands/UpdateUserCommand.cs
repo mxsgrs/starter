@@ -12,8 +12,7 @@ public interface IUpdateUserCommandHandler : ICommandHandler<UpdateUserCommand> 
 
 public class UpdateUserCommandHandler(
     IUserRepository userRepository,
-    ICheckUserAddressService checkAddressService,
-    IDomainEventPublisher eventPublisher
+    ICheckUserAddressService checkAddressService
 ) : IUpdateUserCommandHandler
 {
     public async Task<Result> HandleAsync(UpdateUserCommand request, CancellationToken cancellationToken = default)
@@ -33,8 +32,6 @@ public class UpdateUserCommandHandler(
         Result savedUser = await userRepository.SaveChanges();
 
         if (savedUser.IsFailed) return Result.Fail(savedUser.Errors);
-
-        await eventPublisher.DispatchAndClearAsync(trackedUser.Value);
 
         return Result.Ok();
     }

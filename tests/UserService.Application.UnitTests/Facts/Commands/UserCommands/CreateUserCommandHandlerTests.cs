@@ -1,6 +1,5 @@
 using UserService.Application.Commands.UserCommands;
 using UserService.Application.Dtos.UserDtos;
-using UserService.Application.Shared.Events;
 
 namespace UserService.Application.UnitTests.Facts.Commands.UserCommands;
 
@@ -8,18 +7,15 @@ public class CreateUserCommandHandlerTests
 {
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<ICheckUserAddressService> _mockCheckUserAddressService;
-    private readonly Mock<IDomainEventPublisher> _mockDomainEventPublisher;
     private readonly CreateUserCommandHandler _handler;
 
     public CreateUserCommandHandlerTests()
     {
         _mockUserRepository = new Mock<IUserRepository>();
         _mockCheckUserAddressService = new Mock<ICheckUserAddressService>();
-        _mockDomainEventPublisher = new Mock<IDomainEventPublisher>();
         _handler = new CreateUserCommandHandler(
             _mockUserRepository.Object,
-            _mockCheckUserAddressService.Object,
-            _mockDomainEventPublisher.Object);
+            _mockCheckUserAddressService.Object);
     }
 
     [Fact]
@@ -44,7 +40,6 @@ public class CreateUserCommandHandlerTests
         Assert.True(result.IsSuccess);
         Assert.Equal(user.Id, result.Value);
         _mockUserRepository.Verify(repo => repo.CreateUser(It.Is<User>(u => u.EmailAddress == userWriteDto.EmailAddress)), Times.Once);
-        _mockDomainEventPublisher.Verify(p => p.PublishAsync(It.IsAny<UserCreatedDomainEvent>()), Times.Once);
     }
 
     [Fact]
@@ -66,6 +61,5 @@ public class CreateUserCommandHandlerTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        _mockDomainEventPublisher.Verify(p => p.PublishAsync(It.IsAny<UserCreatedDomainEvent>()), Times.Never);
     }
 }

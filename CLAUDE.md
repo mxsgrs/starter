@@ -1,11 +1,85 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Starter
 
 ASP.NET Core 10 clean-architecture microservices starter (UserService, AddressService) using .NET Aspire, Entity Framework Core, and SQL Server.
 
 Run via .NET Aspire AppHost (`src/AppHost`); tests use Testcontainers for integration and xUnit for unit testing.
 
+## Commands
+
+```bash
+# Build
+dotnet build Starter.sln
+
+# Run via Aspire (starts SQL Server, RabbitMQ, and all services in containers)
+dotnet run --project src/Starter.AppHost/Starter.AppHost.csproj
+
+# Run all tests
+dotnet test Starter.sln
+
+# Run a specific test project
+dotnet test tests/UserService.Application.UnitTests/UserService.Application.UnitTests.csproj
+
+# Run a single test by name
+dotnet test --filter "FullyQualifiedName~Handle_ShouldCreateUser_WhenValidInput"
+
+# Add an EF Core migration (run from repo root)
+dotnet ef migrations add <MigrationName> --project src/UserService.Infrastructure --startup-project src/UserService.WebApi
+```
+
+## Architecture
+
+### Projects
+
+| Project | Layer | Role |
+|---|---|---|
+| `UserService.Domain` | Domain | Aggregates, domain events, repository interfaces, value objects |
+| `UserService.Application` | Application | CQRS command/query handlers, DTOs, DI registration |
+| `UserService.Infrastructure` | Infrastructure | EF Core DbContext, repositories, MassTransit, external service clients |
+| `UserService.WebApi` | Presentation | ASP.NET Core controllers, JWT auth, DI composition root |
+| `AddressService.WebApi` | Microservice | Address validation HTTP API + MassTransit consumers |
+| `Starter.AppHost` | Orchestration | .NET Aspire host — wires SQL Server, RabbitMQ, and services |
+| `Starter.ServiceDefaults` | Cross-cutting | Shared Aspire observability/health extensions |
+
+Test projects mirror the layer under test: `UserService.Domain.UnitTests`, `UserService.Application.UnitTests`, `UserService.Infrastructure.UnitTests`, `UserService.WhiteBoxE2eTests`.  
+`UserService.ModelBuilders` is a shared test library with fluent builders (e.g., `new UserBuilder().WithFirstName("Jane").Build()`).
+
+### Key patterns
+
+**CQRS** — Commands and queries live in `UserService.Application/Commands/` and `Queries/`. Each operation is a record implementing `ICommand` or `IQuery<TResult>` with a corresponding handler interface and class in the same file. Handlers are registered manually in `ApplicationDependencies.cs`.
+
+**Result pattern** — All operations return `Result` or `Result<T>` (FluentResults). Never throw exceptions for business logic; propagate failures via `Result.Fail(...)`.
+
+**Domain events** — Aggregates inherit `AggregateRoot` which holds a private `List<IDomainEvent>`. Entities call `RaiseDomainEvent(...)` to append events. `UserDbContext.SaveChangesAsync` automatically snapshots events from all tracked `AggregateRoot` instances, clears them, then dispatches after a successful save.
+
+**Repository pattern** — Interfaces live in the Domain layer (`IUserRepository`); implementations in Infrastructure. Repositories return `Result<T>` rather than throwing. `SaveChanges()` on the repository delegates to `DbContext.SaveChangesAsync`.
+
+**Mapping** — Mapster is used for DTO mapping. Type configurations are registered in `UserMapping.cs` and applied in `ApplicationDependencies.cs`.
+
+**Messaging** — MassTransit with RabbitMQ handles cross-service integration events. `AddressService` consumes `UserCreatedDomainEvent` via `IConsumer<T>`. MassTransit is configured in `InfrastructureDependencies.cs`.
+
+### DI composition
+
+- `Program.cs` calls `AddApplicationServices()` and `AddInfrastructureServices()`.
+- `ApplicationDependencies.cs` registers command handlers, query handlers, and Mapster config.
+- `InfrastructureDependencies.cs` registers `UserDbContext`, MassTransit, repositories, and external service clients.
+- `UserDbContext` is only registered in Production; in Development the Aspire host wires the connection string and the context is resolved via the standard `AddDbContext` call from `Program.cs`.
+
+### Testing
+
+- **Unit tests** use in-memory EF Core (`SharedFixture` creates a uniquely named in-memory DB per test class) and Moq for dependencies.
+- **E2E tests** (`WhiteBoxE2eTests`) spin up real SQL Server and RabbitMQ containers via Testcontainers. `StarterWebApplicationFactory` replaces `ICheckUserAddressService` with `AlwaysValidAddressService` and provides `CreateAuthorizedClient()` with a long-lived JWT.
+- The E2E factory exposes a `FakeDomainEventPublisher` on `factory.DomainEventPublisher` for asserting on published events.
+
+### Configuration
+
+The app reads `appsettings.{ConfigurationName}.json` where `ConfigurationName` comes from an assembly-level attribute (not the standard `ASPNETCORE_ENVIRONMENT`). The `Debug` configuration includes local SQL Server and JWT parameters. In Aspire, connection strings are injected automatically.
+
 ## Microservice Independence Rules
- 
+
 - **No project references between microservices.** Each microservice must be a standalone deployable unit. Never add a `ProjectReference` (or equivalent) from one microservice to another.
 - **No shared libraries between microservices.** Do not create or reference common/shared class libraries that are consumed by more than one microservice. Duplication is preferred over coupling.
 - **Communicate only via contracts.** Microservices interact exclusively through well-defined APIs (HTTP, gRPC, messaging/events). Never via in-process calls or shared code.
@@ -15,9 +89,9 @@ Run via .NET Aspire AppHost (`src/AppHost`); tests use Testcontainers for integr
 
 ## Code Style
 
-- Always add a comment on each method
+- Always add a XML doc comment on each method:
 
-```
+```csharp
 /// <summary>
 /// Create a new user in the database
 /// </summary>
