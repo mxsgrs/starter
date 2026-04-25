@@ -83,4 +83,21 @@ public class UserTests
         // Assert
         Assert.True(result.IsFailed);
     }
+
+    [Fact]
+    public void Create_ShouldRaiseUserCreatedDomainEvent_WhenInputsAreValid()
+    {
+        // Arrange
+        Guid id = Guid.NewGuid();
+
+        // Act
+        Result<User> result = new UserBuilder().WithId(id).BuildResult();
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        UserCreatedDomainEvent domainEvent = Assert.Single(result.Value.DomainEvents.OfType<UserCreatedDomainEvent>());
+        Assert.Equal(id, domainEvent.UserId);
+        Assert.NotEqual(Guid.Empty, domainEvent.Id);
+        Assert.True(domainEvent.CreatedOn <= DateTime.UtcNow);
+    }
 }

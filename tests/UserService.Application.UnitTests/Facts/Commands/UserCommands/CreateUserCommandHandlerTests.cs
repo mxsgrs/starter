@@ -1,8 +1,6 @@
 using UserService.Application.Commands.UserCommands;
 using UserService.Application.Dtos.UserDtos;
 using UserService.Application.Shared.Events;
-using UserService.Domain.Aggregates.UserAggregate;
-using UserService.Domain.Events;
 
 namespace UserService.Application.UnitTests.Facts.Commands.UserCommands;
 

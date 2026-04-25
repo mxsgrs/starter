@@ -3,7 +3,13 @@ using MassTransit;
 // Keep this namespace intact otherwise MassTransit will break.
 namespace UserService.Domain.Aggregates.UserAggregate;
 
-public record UserCreatedDomainEvent(Guid UserId);
+public abstract record DomainEvent
+{
+    public Guid Id { get; } = Guid.NewGuid();
+    public DateTime CreatedOn { get; } = DateTime.UtcNow;
+}
+
+public record UserCreatedDomainEvent(Guid UserId) : DomainEvent;
 
 public class UserCreatedEventConsumer(ILogger<UserCreatedEventConsumer> logger) : IConsumer<UserCreatedDomainEvent>
 {
