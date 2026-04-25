@@ -43,7 +43,7 @@ public static class InfrastructureDependencies
         });
 
         services.AddScoped<ICheckUserAddressService, CheckUserAddressService>();
-        services.AddScoped<IIntegrationEventPublisher, IntegrationEventPublisher>();
+        services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 
         // Repositories
         services.AddScoped<IUserRepository, UserRepository>();

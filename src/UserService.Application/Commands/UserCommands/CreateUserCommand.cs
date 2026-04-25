@@ -16,7 +16,7 @@ public interface ICreateUserCommandHandler : ICommandHandler<CreateUserCommand> 
 public class CreateUserCommandHandler(
     IUserRepository userRepository,
     ICheckUserAddressService checkAddressService,
-    IIntegrationEventPublisher eventPublisher
+    IDomainEventPublisher eventPublisher
 ) : ICreateUserCommandHandler
 {
     public async Task<Result> HandleAsync(CreateUserCommand request, CancellationToken cancellationToken = default)
@@ -36,19 +36,8 @@ public class CreateUserCommandHandler(
 
         if (createdUser.IsFailed) return Result.Fail(createdUser.Errors);
 
-        UserCreatedEvent userCreatedEvent = new()
-        {
-            UserId = user.Value.Id,
-        };
-
-        // Publish an user created event so other services know
-        await eventPublisher.PublishAsync(userCreatedEvent);
+        await eventPublisher.DispatchAndClearAsync(createdUser.Value);
 
         return Result.Ok();
     }
-}
-
-public record UserCreatedEvent : IntegrationEvent
-{
-    public Guid UserId { get; init; }
 }

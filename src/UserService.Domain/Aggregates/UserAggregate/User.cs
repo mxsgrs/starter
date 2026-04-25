@@ -60,9 +60,13 @@ public class User : AggregateRoot
 
         Result validationResult = Validate(user);
 
-        return validationResult.IsSuccess
-            ? Result.Ok(user)
-            : Result.Fail<User>(validationResult.Errors);
+        if (validationResult.IsSuccess)
+        {
+            user.RaiseDomainEvent(new UserCreatedDomainEvent(user.Id));
+            return Result.Ok(user);
+        }
+
+        return Result.Fail<User>(validationResult.Errors);
     }
 
     /// <summary>

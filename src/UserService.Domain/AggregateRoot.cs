@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using UserService.Domain.Events;
 
 namespace UserService.Domain;
 
@@ -6,6 +7,18 @@ public interface IAggregateRoot { }
 
 public abstract class AggregateRoot : IAggregateRoot
 {
+    #region Domain Events
+
+    private readonly List<IDomainEvent> _domainEvents = [];
+
+    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+
+    protected void RaiseDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+
+    public void ClearDomainEvents() => _domainEvents.Clear();
+
+    #endregion
+
     #region Validation
     protected static Result Validate(object instance)
     {

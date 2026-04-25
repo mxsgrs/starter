@@ -1,6 +1,8 @@
 using UserService.Application.Commands.UserCommands;
 using UserService.Application.Dtos.UserDtos;
 using UserService.Application.Shared.Events;
+using UserService.Domain.Aggregates.UserAggregate;
+using UserService.Domain.Events;
 
 namespace UserService.Application.UnitTests.Facts.Commands.UserCommands;
 
@@ -8,18 +10,18 @@ public class CreateUserCommandHandlerTests
 {
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<ICheckUserAddressService> _mockCheckUserAddressService;
-    private readonly Mock<IIntegrationEventPublisher> _mockUserCreatedEventPublisher;
+    private readonly Mock<IDomainEventPublisher> _mockDomainEventPublisher;
     private readonly CreateUserCommandHandler _handler;
 
     public CreateUserCommandHandlerTests()
     {
         _mockUserRepository = new Mock<IUserRepository>();
         _mockCheckUserAddressService = new Mock<ICheckUserAddressService>();
-        _mockUserCreatedEventPublisher = new Mock<IIntegrationEventPublisher>();
+        _mockDomainEventPublisher = new Mock<IDomainEventPublisher>();
         _handler = new CreateUserCommandHandler(
             _mockUserRepository.Object,
             _mockCheckUserAddressService.Object,
-            _mockUserCreatedEventPublisher.Object);
+            _mockDomainEventPublisher.Object);
     }
 
     [Fact]
@@ -43,7 +45,7 @@ public class CreateUserCommandHandlerTests
         // Assert
         Assert.True(result.IsSuccess);
         _mockUserRepository.Verify(repo => repo.CreateUser(It.Is<User>(u => u.EmailAddress == userDto.EmailAddress)), Times.Once);
-        _mockUserCreatedEventPublisher.Verify(p => p.PublishAsync(It.IsAny<UserCreatedEvent>()), Times.Once);
+        _mockDomainEventPublisher.Verify(p => p.PublishAsync(It.IsAny<UserCreatedDomainEvent>()), Times.Once);
     }
 
     [Fact]
@@ -65,6 +67,6 @@ public class CreateUserCommandHandlerTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        _mockUserCreatedEventPublisher.Verify(p => p.PublishAsync(It.IsAny<UserCreatedEvent>()), Times.Never);
+        _mockDomainEventPublisher.Verify(p => p.PublishAsync(It.IsAny<UserCreatedDomainEvent>()), Times.Never);
     }
 }
