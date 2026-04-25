@@ -38,10 +38,11 @@ public class CreateUserCommandHandlerTests
         CreateUserCommand command = new() { UserDto = userDto };
 
         // Act
-        Result result = await _handler.HandleAsync(command, default);
+        Result<Guid> result = await _handler.HandleAsync(command, default);
 
         // Assert
         Assert.True(result.IsSuccess);
+        Assert.Equal(user.Id, result.Value);
         _mockUserRepository.Verify(repo => repo.CreateUser(It.Is<User>(u => u.EmailAddress == userDto.EmailAddress)), Times.Once);
         _mockDomainEventPublisher.Verify(p => p.PublishAsync(It.IsAny<UserCreatedDomainEvent>()), Times.Once);
     }
@@ -61,7 +62,7 @@ public class CreateUserCommandHandlerTests
         CreateUserCommand command = new() { UserDto = userDto };
 
         // Act
-        Result result = await _handler.HandleAsync(command, default);
+        Result<Guid> result = await _handler.HandleAsync(command, default);
 
         // Assert
         Assert.False(result.IsSuccess);

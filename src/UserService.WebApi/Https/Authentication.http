@@ -1,3 +1,4 @@
+@UserId=e7b5f557-e5e8-4c89-7169-08dea2c12670
 
 # Register new user
 POST {{HostAddress}}/api/user
@@ -36,5 +37,5 @@ Content-Type: application/json
 ###
 
 # Read user information
-GET {{HostAddress}}/api/user/f5e76976-45c4-44b5-397b-08de35b3846f
+GET {{HostAddress}}/api/user/{{UserId}}
 Authorization: Bearer {{Jwt}}

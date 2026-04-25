@@ -16,9 +16,9 @@ public class UserController : UserServiceControllerBase
             UserDto = userDto
         };
 
-        await createUserCommandHandler.HandleAsync(command);
+        Result<Guid> result = await createUserCommandHandler.HandleAsync(command);
 
-        return Ok();
+        return CorrespondingStatus(result);
     }
 
     [HttpGet("{id:guid}")]

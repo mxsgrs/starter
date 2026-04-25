@@ -11,7 +11,7 @@ public record CreateUserCommand : ICommand
 /// <summary>
 /// Create a new user in the database
 /// </summary>
-public interface ICreateUserCommandHandler : ICommandHandler<CreateUserCommand> { }
+public interface ICreateUserCommandHandler : ICommandHandlerResultingGuid<CreateUserCommand> { }
 
 public class CreateUserCommandHandler(
     IUserRepository userRepository,
@@ -19,16 +19,13 @@ public class CreateUserCommandHandler(
     IDomainEventPublisher eventPublisher
 ) : ICreateUserCommandHandler
 {
-    public async Task<Result> HandleAsync(CreateUserCommand request, CancellationToken cancellationToken = default)
+    public async Task<Result<Guid>> HandleAsync(CreateUserCommand request, CancellationToken cancellationToken = default)
     {
         Result<User> user = UserDtoHelper.ToUser(request.UserDto);
 
         if (user.IsFailed) return Result.Fail(user.Errors);
 
-        string userAddress = user.Value.Address.AddressLine;
-
-        // Call address service for validation
-        bool isAddressValid = await checkAddressService.Check(userAddress, cancellationToken);
+        bool isAddressValid = await checkAddressService.Check(user.Value.Address.AddressLine, cancellationToken);
 
         if (!isAddressValid) return Result.Fail("Address is not valid");
 
@@ -38,6 +35,6 @@ public class CreateUserCommandHandler(
 
         await eventPublisher.DispatchAndClearAsync(createdUser.Value);
 
-        return Result.Ok();
+        return Result.Ok(createdUser.Value.Id);
     }
 }
