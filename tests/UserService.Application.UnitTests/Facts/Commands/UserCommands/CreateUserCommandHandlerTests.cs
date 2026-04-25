@@ -26,16 +26,16 @@ public class CreateUserCommandHandlerTests
     public async Task Handle_ShouldCreateUser_WhenValidInput()
     {
         // Arrange
-        UserDto userDto = new UserDtoBuilder().Build();
+        UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
         User user = new UserBuilder().Build();
 
-        _mockCheckUserAddressService.Setup(m => m.Check(userDto.Address!.AddressLine, It.IsAny<CancellationToken>()))
+        _mockCheckUserAddressService.Setup(m => m.Check(userWriteDto.Address!.AddressLine, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         _mockUserRepository.Setup(repo => repo.CreateUser(It.IsAny<User>()))
             .ReturnsAsync(Result.Ok(user));
 
-        CreateUserCommand command = new() { UserDto = userDto };
+        CreateUserCommand command = new(userWriteDto);
 
         // Act
         Result<Guid> result = await _handler.HandleAsync(command, default);
@@ -43,7 +43,7 @@ public class CreateUserCommandHandlerTests
         // Assert
         Assert.True(result.IsSuccess);
         Assert.Equal(user.Id, result.Value);
-        _mockUserRepository.Verify(repo => repo.CreateUser(It.Is<User>(u => u.EmailAddress == userDto.EmailAddress)), Times.Once);
+        _mockUserRepository.Verify(repo => repo.CreateUser(It.Is<User>(u => u.EmailAddress == userWriteDto.EmailAddress)), Times.Once);
         _mockDomainEventPublisher.Verify(p => p.PublishAsync(It.IsAny<UserCreatedDomainEvent>()), Times.Once);
     }
 
@@ -51,7 +51,7 @@ public class CreateUserCommandHandlerTests
     public async Task Handle_ReturnFailure_WhenUserRepositoryFails()
     {
         // Arrange
-        UserDto userDto = new UserDtoBuilder().Build();
+        UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
 
         _mockCheckUserAddressService.Setup(m => m.Check(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -59,7 +59,7 @@ public class CreateUserCommandHandlerTests
         _mockUserRepository.Setup(repo => repo.CreateUser(It.IsAny<User>()))
             .ReturnsAsync(Result.Fail<User>("Repository error"));
 
-        CreateUserCommand command = new() { UserDto = userDto };
+        CreateUserCommand command = new(userWriteDto);
 
         // Act
         Result<Guid> result = await _handler.HandleAsync(command, default);

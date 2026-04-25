@@ -17,4 +17,14 @@ public class UserServiceControllerBase() : ControllerBase
 
         return Ok(result.Value);
     }
+
+    public IActionResult CorrespondingStatus(Result result)
+    {
+        if (result.IsFailed)
+        {
+            return BadRequest(result.Errors.Select(error => error.Message).FirstOrDefault() ?? "An error occurred.");
+        }
+
+        return NoContent();
+    }
 }

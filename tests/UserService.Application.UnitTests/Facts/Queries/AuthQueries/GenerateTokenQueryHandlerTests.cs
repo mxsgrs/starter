@@ -30,7 +30,7 @@ public class GenerateTokenQueryHandlerTests : IClassFixture<SharedFixture>
         string hashedPassword = "wrongPassword";
 
         _mockUserRepository
-            .Setup(repo => repo.ReadUser(emailAddress, hashedPassword))
+            .Setup(repo => repo.ReadUserByCredentials(emailAddress, hashedPassword))
             .ReturnsAsync(Result.Fail("User not found"));
 
         GenerateTokenQuery command = new(emailAddress, hashedPassword);
@@ -58,7 +58,7 @@ public class GenerateTokenQueryHandlerTests : IClassFixture<SharedFixture>
             .Build();
 
         _mockUserRepository
-            .Setup(repo => repo.ReadUser(emailAddress, hashedPassword))
+            .Setup(repo => repo.ReadUserByCredentials(emailAddress, hashedPassword))
             .ReturnsAsync(user);
 
         GenerateTokenQuery command = new(emailAddress, hashedPassword);

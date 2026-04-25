@@ -35,6 +35,9 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
             string connectionString = _dbContainer.GetConnectionString();
             services.AddDbContext<UserDbContext>(options => options
                 .UseSqlServer(connectionString));
+
+            services.RemoveAll<ICheckUserAddressService>();
+            services.AddScoped<ICheckUserAddressService, AlwaysValidAddressService>();
         });
 
         builder.ConfigureAppConfiguration((hostingContext, config) =>

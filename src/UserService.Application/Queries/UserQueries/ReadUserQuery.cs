@@ -8,7 +8,7 @@ public class ReadUserQueryHandler(IUserRepository userRepository) : IReadUserQue
 {
     public async Task<Result<UserDto>> HandleAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        Result<User> user = await userRepository.ReadUser(id);
+        Result<User> user = await userRepository.ReadTrackedUser(id);
 
         if (user.IsFailed) return Result.Fail(user.Errors);
 

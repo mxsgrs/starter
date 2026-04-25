@@ -1,11 +1,11 @@
 namespace UserService.Infrastructure.UnitTests.Facts.UserRepositoryTestCases;
 
-public class ReadUserTests
+public class ReadTrackedUserTests
 {
     private readonly Mock<ILogger<UserRepository>> _logger = new();
 
     [Fact]
-    public async Task ReadUser_ById_ShouldReturnUser_WhenUserExists()
+    public async Task ReadTrackedUser_ById_ShouldReturnUser_WhenUserExists()
     {
         // Arrange
         UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
@@ -17,7 +17,7 @@ public class ReadUserTests
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        Result<User> result = await repository.ReadUser(user.Id);
+        Result<User> result = await repository.ReadTrackedUser(user.Id);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -25,14 +25,14 @@ public class ReadUserTests
     }
 
     [Fact]
-    public async Task ReadUser_ById_ShouldReturnFail_WhenUserDoesNotExist()
+    public async Task ReadTrackedUser_ById_ShouldReturnFail_WhenUserDoesNotExist()
     {
         // Arrange
         UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        Result<User> result = await repository.ReadUser(Guid.NewGuid());
+        Result<User> result = await repository.ReadTrackedUser(Guid.NewGuid());
 
         // Assert
         Assert.True(result.IsFailed);
@@ -40,7 +40,7 @@ public class ReadUserTests
     }
 
     [Fact]
-    public async Task ReadUser_ByEmailAndPassword_ShouldReturnUser_WhenUserExists()
+    public async Task ReadTrackedUser_ByEmailAndPassword_ShouldReturnUser_WhenUserExists()
     {
         // Arrange
         UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
@@ -52,7 +52,7 @@ public class ReadUserTests
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        Result<User> result = await repository.ReadUser("test@example.com", "hashedPassword");
+        Result<User> result = await repository.ReadUserByCredentials("test@example.com", "hashedPassword");
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -60,14 +60,14 @@ public class ReadUserTests
     }
 
     [Fact]
-    public async Task ReadUser_ByEmailAndPassword_ShouldReturnFail_WhenUserDoesNotExist()
+    public async Task ReadTrackedUser_ByEmailAndPassword_ShouldReturnFail_WhenUserDoesNotExist()
     {
         // Arrange
         UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        Result<User> result = await repository.ReadUser("nonexistent@example.com", "wrongPassword");
+        Result<User> result = await repository.ReadUserByCredentials("nonexistent@example.com", "wrongPassword");
 
         // Assert
         Assert.True(result.IsFailed);

@@ -1,4 +1,4 @@
-@UserId=e7b5f557-e5e8-4c89-7169-08dea2c12670
+@UserId=20dcf5fe-1e1a-43db-a2f8-d91e2650ff00
 
 # Register new user
 POST {{HostAddress}}/api/user
@@ -39,3 +39,29 @@ Content-Type: application/json
 # Read user information
 GET {{HostAddress}}/api/user/{{UserId}}
 Authorization: Bearer {{Jwt}}
+
+###
+
+# Update user information
+PUT {{HostAddress}}/api/user/{{UserId}}
+Content-Type: application/json
+Authorization: Bearer {{Jwt}}
+
+{
+  "emailAddress": "john.doe@example.com",
+  "hashedPassword": "TWF0cml4UmVsb2FkZWQh",
+  "firstName": "John",
+  "lastName": "Dudule",
+  "birthday": "1990-05-15",
+  "gender": "Male",
+  "role": "Admin",
+  "phone": "+1234567890",
+  "address": {
+    "addressLine": "456 New St",
+    "addressSupplement": "Apt 4B",
+    "city": "New York",
+    "zipCode": "12345",
+    "stateProvince": "CA",
+    "country": "USA"
+  }
+}

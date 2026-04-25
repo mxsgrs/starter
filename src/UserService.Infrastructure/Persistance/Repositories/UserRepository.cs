@@ -26,7 +26,7 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
         return user;
     }
 
-    public async Task<Result<User>> ReadUser(Guid id)
+    public async Task<Result<User>> ReadTrackedUser(Guid id)
     {
         User? user = await dbContext.Users.FindAsync(id);
 
@@ -40,7 +40,7 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
         return Result.Ok(user);
     }
 
-    public async Task<Result<User>> ReadUser(string emailAddress, string hashedPassword)
+    public async Task<Result<User>> ReadUserByCredentials(string emailAddress, string hashedPassword)
     {
         User? user = await dbContext.Users
             .FirstOrDefaultAsync(item => item.EmailAddress == emailAddress
@@ -56,29 +56,10 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
         return Result.Ok(user);
     }
 
-    public async Task<Result<User>> UpdateUser(Guid id, User user)
+    public async Task<Result> SaveChanges()
     {
-        User? existing = await dbContext.Users
-            .FirstOrDefaultAsync(item => item.EmailAddress == user.EmailAddress
-                && item.HashedPassword == user.HashedPassword);
-
-        if (existing is null)
-        {
-            logger.LogWarning("User with id {id} was not found", id);
-
-            return Result.Fail("User not found");
-        }
-
-        dbContext.Entry(existing).CurrentValues.SetValues(user);
-
-        // Update the user address as owned types are not updated by default
-        if (user.Address is not null && existing.Address is not null)
-        {
-            dbContext.Entry(existing.Address).CurrentValues.SetValues(user.Address);
-        }
-
         await dbContext.SaveChangesAsync();
 
-        return Result.Ok(existing);
+        return Result.Ok();
     }
 }

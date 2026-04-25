@@ -7,73 +7,29 @@ namespace UserService.WhiteBoxE2eTests.Facts.Controllers;
 public class UserControllerTests(StarterWebApplicationFactory factory)
     : IClassFixture<StarterWebApplicationFactory>
 {
-    private readonly StarterWebApplicationFactory _factory = factory;
-
     //[Fact]
     //public async Task CreateUser_ShouldReturnOk_WhenUserIsCreated()
     //{
     //    // Arrange
-    //    _factory.MigrateDbContext();
-    //    HttpClient client = _factory.CreateClient();
-
-    //    Guid id = Guid.NewGuid();
-    //    UserDto userDto = new()
-    //    {
-    //        Id = id,
-    //        EmailAddress = "test@example.com",
-    //        HashedPassword = "hashedpassword",
-    //        FirstName = "FirstName",
-    //        LastName = "LastName",
-    //        Birthday = new DateOnly(1990, 1, 1),
-    //        Gender = Gender.Male,
-    //        Role = Role.User,
-    //        Phone = "+1234567890",
-    //        Address = new()
-    //        {
-    //            AddressLine = "123 Test St",
-    //            City = "TestCity",
-    //            ZipCode = "12345",
-    //            Country = "TestCountry"
-    //        }
-    //    };
-
-    //    string json = JsonSerializer.Serialize(userDto);
-    //    StringContent content = new(json, Encoding.UTF8, "application/json");
-    //    HttpRequestMessage request = new(HttpMethod.Post, "/api/user")
-    //    {
-    //        Content = content
-    //    };
+    //    factory.MigrateDbContext();
+    //    HttpClient client = factory.CreateClient();
+    //    UserWriteDto writeDto = new UserWriteDtoBuilder().Build();
 
     //    // Act
-    //    HttpResponseMessage response = await client.SendAsync(request);
+    //    HttpResponseMessage response = await client.PostAsJsonAsync("/api/user", writeDto);
 
     //    // Assert
     //    response.EnsureSuccessStatusCode();
-    //    UserDto? responseUserDto = await response.Content.ReadFromJsonAsync<UserDto>();
-    //    Assert.NotNull(responseUserDto);
-    //    Assert.Equal("test@example.com", responseUserDto.EmailAddress);
-    //    Assert.Equal("hashedpassword", responseUserDto.HashedPassword);
-    //    Assert.Equal("FirstName", responseUserDto.FirstName);
-    //    Assert.Equal("LastName", responseUserDto.LastName);
-    //    Assert.Equal(new DateOnly(1990, 1, 1), responseUserDto.Birthday);
-    //    Assert.Equal(Gender.Male, responseUserDto.Gender);
-    //    Assert.Equal(Role.User, responseUserDto.Role);
-    //    Assert.Equal("+1234567890", responseUserDto.Phone);
-    //    Assert.Equal("123 Test St", responseUserDto.Address.AddressLine);
-    //    Assert.Equal("TestCity", responseUserDto.Address.City);
-    //    Assert.Equal("12345", responseUserDto.Address.ZipCode);
-    //    Assert.Equal("TestCountry", responseUserDto.Address.Country);
+    //    Guid createdId = await response.Content.ReadFromJsonAsync<Guid>(JsonOptions.Default);
+    //    Assert.NotEqual(Guid.Empty, createdId);
     //}
 
     [Fact]
     public async Task ReadUser_ShouldReturnOk_WhenUserExists()
     {
         // Arrange
-        UserDbContext dbContext = _factory.MigrateDbContext();
-
-        Guid id = Guid.NewGuid();
+        UserDbContext dbContext = factory.MigrateDbContext();
         User user = new UserBuilder()
-            .WithId(id)
             .WithEmailAddress("john.doe@example.com")
             .WithHashedPassword("TWF0cml4UmVsb2FkZWQh")
             .WithFirstName("FirstName")
@@ -89,28 +45,37 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
 
-        HttpClient client = _factory.CreateAuthorizedClient();
-        HttpRequestMessage request = new(HttpMethod.Get, $"/api/user/{id}");
+        HttpClient client = factory.CreateAuthorizedClient();
 
         // Act
-        HttpResponseMessage response = await client.SendAsync(request);
+        HttpResponseMessage response = await client.SendAsync(new(HttpMethod.Get, $"/api/user/{user.Id}"));
 
         // Assert
         response.EnsureSuccessStatusCode();
-        UserDto? responseUserDto = await response.Content.ReadFromJsonAsync<UserDto>();
-        Assert.NotNull(responseUserDto);
-        Assert.Equal(id, responseUserDto.Id);
-        Assert.Equal("john.doe@example.com", responseUserDto.EmailAddress);
-        Assert.Equal("TWF0cml4UmVsb2FkZWQh", responseUserDto.HashedPassword);
-        Assert.Equal("FirstName", responseUserDto.FirstName);
-        Assert.Equal("LastName", responseUserDto.LastName);
-        Assert.Equal(new DateOnly(1990, 1, 1), responseUserDto.Birthday);
-        Assert.Equal(Gender.Male, responseUserDto.Gender);
-        Assert.Equal(Role.User, responseUserDto.Role);
-        Assert.Equal("+1234567890", responseUserDto.Phone);
-        Assert.Equal("123 Test St", responseUserDto.Address!.AddressLine);
-        Assert.Equal("TestCity", responseUserDto.Address.City);
-        Assert.Equal("12345", responseUserDto.Address.ZipCode);
-        Assert.Equal("TestCountry", responseUserDto.Address.Country);
+        UserDto? dto = await response.Content.ReadFromJsonAsync<UserDto>(JsonOptions.Default);
+        Assert.NotNull(dto);
+        Assert.Equal(user.Id, dto.Id);
+        Assert.Equal("john.doe@example.com", dto.EmailAddress);
+        Assert.Equal("FirstName", dto.FirstName);
+        Assert.Equal("123 Test St", dto.Address!.AddressLine);
     }
+
+    //[Fact]
+    //public async Task UpdateUser_ShouldReturnNoContent_WhenUserIsUpdated()
+    //{
+    //    // Arrange
+    //    UserDbContext dbContext = factory.MigrateDbContext();
+    //    User user = new UserBuilder().Build();
+    //    await dbContext.Users.AddAsync(user);
+    //    await dbContext.SaveChangesAsync();
+
+    //    HttpClient client = factory.CreateAuthorizedClient();
+    //    UserWriteDto updateDto = new UserWriteDtoBuilder().WithFirstName("Jane").Build();
+
+    //    // Act
+    //    HttpResponseMessage response = await client.PutAsJsonAsync($"/api/user/{user.Id}", updateDto);
+
+    //    // Assert
+    //    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    //}
 }

@@ -23,7 +23,7 @@ public class ReadUserQueryHandlerTests
         Guid userId = Guid.NewGuid();
         User user = new UserBuilder().WithId(userId).Build();
 
-        _mockUserRepository.Setup(repo => repo.ReadUser(userId)).ReturnsAsync(user);
+        _mockUserRepository.Setup(repo => repo.ReadTrackedUser(userId)).ReturnsAsync(user);
 
         // Act
         Result<UserDto> result = await _handler.HandleAsync(userId, default);
@@ -34,7 +34,7 @@ public class ReadUserQueryHandlerTests
         Assert.Equal(user.EmailAddress, result.Value.EmailAddress);
         Assert.Equal(user.FirstName, result.Value.FirstName);
 
-        _mockUserRepository.Verify(repo => repo.ReadUser(userId), Times.Once);
+        _mockUserRepository.Verify(repo => repo.ReadTrackedUser(userId), Times.Once);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class ReadUserQueryHandlerTests
         // Arrange
         Guid userId = Guid.NewGuid();
 
-        _mockUserRepository.Setup(repo => repo.ReadUser(userId))
+        _mockUserRepository.Setup(repo => repo.ReadTrackedUser(userId))
             .ReturnsAsync(Result.Fail<User>("User not found"));
 
         // Act
@@ -52,6 +52,6 @@ public class ReadUserQueryHandlerTests
         // Assert
         Assert.True(result.IsFailed);
 
-        _mockUserRepository.Verify(repo => repo.ReadUser(userId), Times.Once);
+        _mockUserRepository.Verify(repo => repo.ReadTrackedUser(userId), Times.Once);
     }
 }

@@ -35,7 +35,7 @@ public class User : AggregateRoot
 
     #endregion
 
-    #region Methods
+    #region Create
 
     /// <summary>
     /// Method for creating an instance under business rules
@@ -74,6 +74,47 @@ public class User : AggregateRoot
         user.RaiseDomainEvent(new UserCreatedDomainEvent(user.Id));
         return Result.Ok(user);
     }
+
+    #endregion
+
+    #region Update
+
+    /// <summary>
+    /// Updates the entity's values under business rules without changing its identity.
+    /// </summary>
+    public Result Update(
+        string emailAddress,
+        string hashedPassword,
+        string firstName,
+        string lastName,
+        DateOnly birthday,
+        Gender gender,
+        Role role,
+        string phone,
+        Address address
+    )
+    {
+        EmailAddress = emailAddress;
+        HashedPassword = hashedPassword;
+        FirstName = firstName;
+        LastName = lastName;
+        Birthday = birthday;
+        Gender = gender;
+        Role = role;
+        Phone = phone;
+        Address.UpdateFrom(address);
+
+        Result validationResult = Validate(this);
+
+        if (!validationResult.IsSuccess) return Result.Fail(validationResult.Errors);
+
+        RaiseDomainEvent(new UserUpdatedDomainEvent(Id));
+        return Result.Ok();
+    }
+
+    #endregion
+
+    #region Private Constructor
 
     /// <summary>
     /// Constructor for EF Core

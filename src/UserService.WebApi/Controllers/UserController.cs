@@ -8,27 +8,19 @@ public class UserController : UserServiceControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateUser(
         [FromServices] ICreateUserCommandHandler createUserCommandHandler,
-        UserDto userDto
-    )
-    {
-        CreateUserCommand command = new()
-        {
-            UserDto = userDto
-        };
-
-        Result<Guid> result = await createUserCommandHandler.HandleAsync(command);
-
-        return CorrespondingStatus(result);
-    }
+        UserWriteDto userWriteDto
+    ) => CorrespondingStatus(await createUserCommandHandler.HandleAsync(new CreateUserCommand(userWriteDto)));
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> ReadUser(
         Guid id,
         [FromServices] IReadUserQueryHandler readUserQueryHandler
-    )
-    {
-        Result<UserDto> resultDto = await readUserQueryHandler.HandleAsync(id);
+    ) => CorrespondingStatus(await readUserQueryHandler.HandleAsync(id));
 
-        return CorrespondingStatus(resultDto);
-    }
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateUser(
+        Guid id,
+        [FromServices] IUpdateUserCommandHandler updateUserCommandHandler,
+        UserWriteDto userWriteDto
+    ) => CorrespondingStatus(await updateUserCommandHandler.HandleAsync(new UpdateUserCommand(id, userWriteDto)));
 }

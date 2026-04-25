@@ -3,10 +3,7 @@ using UserService.Application.Dtos.UserDtos.Helpers;
 
 namespace UserService.Application.Commands.UserCommands;
 
-public record CreateUserCommand : ICommand
-{
-    public required UserDto UserDto { get; init; }
-}
+public record CreateUserCommand(UserWriteDto UserWriteDto) : ICommand;
 
 /// <summary>
 /// Create a new user in the database
@@ -21,7 +18,7 @@ public class CreateUserCommandHandler(
 {
     public async Task<Result<Guid>> HandleAsync(CreateUserCommand request, CancellationToken cancellationToken = default)
     {
-        Result<User> user = UserDtoHelper.ToUser(request.UserDto);
+        Result<User> user = UserDtoHelper.ToUser(Guid.NewGuid(), request.UserWriteDto);
 
         if (user.IsFailed) return Result.Fail(user.Errors);
 

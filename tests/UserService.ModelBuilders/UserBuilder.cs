@@ -31,6 +31,20 @@ public class UserBuilder
         User.Create(_id, _emailAddress, _hashedPassword, _firstName, _lastName,
             _birthday, _gender, _role, _phone, _address);
 
+    public Result<User> BuildUpdateResult()
+    {
+        Result<User> createResult = User.Create(_id, _emailAddress, _hashedPassword, _firstName, _lastName,
+            _birthday, _gender, _role, _phone, _address);
+        if (createResult.IsFailed) return createResult;
+
+        User user = createResult.Value;
+        user.ClearDomainEvents();
+        Result updateResult = user.Update(_emailAddress, _hashedPassword, _firstName, _lastName,
+            _birthday, _gender, _role, _phone, _address);
+
+        return updateResult.IsFailed ? Result.Fail<User>(updateResult.Errors) : Result.Ok(user);
+    }
+
     public User Build() =>
         User.Create(_id, _emailAddress, _hashedPassword, _firstName, _lastName,
             _birthday, _gender, _role, _phone, _address).Value;

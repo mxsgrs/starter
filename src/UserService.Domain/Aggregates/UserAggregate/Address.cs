@@ -13,7 +13,7 @@ public class Address : ValueObject<Address>
 
     #endregion
 
-    #region Methods
+    #region Create
 
     /// <summary>
     /// Method for creating an instance under business rules
@@ -38,10 +38,23 @@ public class Address : ValueObject<Address>
             : Result.Fail<Address>(validationResult.Errors);
     }
 
-    /// <summary>
-    /// Constructor for EF Core
-    /// </summary>
-    private Address() { }
+    #endregion
+
+    #region UpdateFrom
+
+    internal void UpdateFrom(Address other)
+    {
+        AddressLine = other.AddressLine;
+        AddressSupplement = other.AddressSupplement;
+        City = other.City;
+        ZipCode = other.ZipCode;
+        StateProvince = other.StateProvince;
+        Country = other.Country;
+    }
+
+    #endregion
+
+    #region GetEqualityComponents
 
     /// <summary>
     /// Two value objects are equal if all their properties are equal.
@@ -55,6 +68,15 @@ public class Address : ValueObject<Address>
         yield return StateProvince ?? string.Empty;
         yield return Country;
     }
+
+    #endregion
+
+    #region Private Constructor
+
+    /// <summary>
+    /// Constructor for EF Core
+    /// </summary>
+    private Address() { }
 
     #endregion
 }
