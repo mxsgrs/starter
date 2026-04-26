@@ -14,7 +14,9 @@
       "Bash(dotnet ef *)",
       "Bash(ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations add AddUserAuditLog --project src/UserService.Infrastructure --startup-project src/UserService.Infrastructure)",
       "Bash(dotnet tool *)",
-      "Bash(del \"C:\\\\Users\\\\mxsgr\\\\source\\\\repos\\\\starter\\\\tests\\\\Network.Infrastructure.UnitTests\\\\Facts\\\\UserRepositoryTestCases\\\\SaveChangesTests.cs\")"
+      "Bash(del \"C:\\\\Users\\\\mxsgr\\\\source\\\\repos\\\\starter\\\\tests\\\\Network.Infrastructure.UnitTests\\\\Facts\\\\UserRepositoryTestCases\\\\SaveChangesTests.cs\")",
+      "Bash(cat)",
+      "Read(//c/Users/mxsgr/.claude/plans/**)"
     ]
   }
 }

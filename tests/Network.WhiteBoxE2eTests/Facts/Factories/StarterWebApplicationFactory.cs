@@ -19,12 +19,10 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     private const string _rabbitMqUsername = "guest";
     private const string _rabbitMqPassword = "1MRt58rcy4NtfpcMcxsMJb";
     private const int _rabbitMqContainerPort = 5672;
-    private const int _rabbitMqHostPort = 5673;
 
     private readonly RabbitMqContainer _rabbitMqContainer = new RabbitMqBuilder("rabbitmq:3.11")
         .WithUsername(_rabbitMqUsername)
         .WithPassword(_rabbitMqPassword)
-        .WithPortBinding(_rabbitMqHostPort, _rabbitMqContainerPort)
         .Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -44,7 +42,7 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
 
         builder.ConfigureAppConfiguration((hostingContext, config) =>
         {
-            string rabbitMqConnectionString = $"amqp://{_rabbitMqUsername}:{_rabbitMqPassword}@{_rabbitMqContainer.Hostname}:{_rabbitMqHostPort}";
+            string rabbitMqConnectionString = $"amqp://{_rabbitMqUsername}:{_rabbitMqPassword}@{_rabbitMqContainer.Hostname}:{_rabbitMqContainer.GetMappedPublicPort(_rabbitMqContainerPort)}";
 
             IEnumerable<KeyValuePair<string, string?>> settings = 
             [
@@ -75,11 +73,17 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
         return dbContext;
     }
 
-    public Task InitializeAsync()
-        => _dbContainer.StartAsync();
+    public async Task InitializeAsync()
+    {
+        await _dbContainer.StartAsync();
+        await _rabbitMqContainer.StartAsync();
+    }
 
-    public new Task DisposeAsync()
-        => _dbContainer.DisposeAsync().AsTask();
+    public new async Task DisposeAsync()
+    {
+        await _dbContainer.DisposeAsync();
+        await _rabbitMqContainer.DisposeAsync();
+    }
 }
 
 public static class JsonOptions
