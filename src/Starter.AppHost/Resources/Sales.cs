@@ -2,12 +2,10 @@
 
 public static class Sales
 {
-    public static IResourceBuilder<ProjectResource> AddResources(IDistributedApplicationBuilder builder, IResourceBuilder<RabbitMQServerResource> rabbitMq)
+    public static IResourceBuilder<ProjectResource> AddResources(IDistributedApplicationBuilder builder, IResourceBuilder<SqlServerServerResource> sqlServer, IResourceBuilder<RabbitMQServerResource> rabbitMq)
     {
-        IResourceBuilder<SqlServerServerResource> salesSqlServer = builder
-            .AddSqlServer("SalesSqlServer");
 
-        IResourceBuilder<SqlServerDatabaseResource> salesDatabase = salesSqlServer
+        IResourceBuilder<SqlServerDatabaseResource> salesDatabase = sqlServer
             .AddDatabase("SalesDb");
 
         return builder

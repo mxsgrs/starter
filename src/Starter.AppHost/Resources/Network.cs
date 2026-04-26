@@ -2,12 +2,9 @@
 
 public static class Network
 {
-    public static IResourceBuilder<ProjectResource> AddResources(IDistributedApplicationBuilder builder, IResourceBuilder<RabbitMQServerResource> rabbitMq)
+    public static IResourceBuilder<ProjectResource> AddResources(IDistributedApplicationBuilder builder, IResourceBuilder<SqlServerServerResource> sqlServer, IResourceBuilder<RabbitMQServerResource> rabbitMq)
     {
-        IResourceBuilder<SqlServerServerResource> networkSqlSerever = builder
-            .AddSqlServer("NetworkSqlServer");
-
-        IResourceBuilder<SqlServerDatabaseResource> userDatabase = networkSqlSerever
+        IResourceBuilder<SqlServerDatabaseResource> userDatabase = sqlServer
             .AddDatabase("NetworkDb");
 
         return builder.AddProject<Projects.Network_WebApi>("Network")
