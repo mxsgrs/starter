@@ -1,6 +1,6 @@
 using MassTransit;
-using UserService.Domain.Aggregates.UserAggregate;
-using UserService.Infrastructure.Messaging;
+using Network.Domain.Aggregates.UserAggregate;
+using Network.Infrastructure.Messaging;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

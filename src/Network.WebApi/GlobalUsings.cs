@@ -1,0 +1,11 @@
+﻿global using FluentResults;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
+global using Network.Application.Commands.UserCommands;
+global using Network.Application.Dtos;
+global using Network.Application.Queries.UserQueries;
+global using Network.Application.Shared.Interfaces;
+global using Network.Domain.Authentication;
+global using Network.Infrastructure;
+global using Network.WebApi.Controllers.Abstracts;
+global using Network.WebApi.Utilities;

@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Network.WebApi\Network.WebApi.csproj" />
     <ProjectReference Include="..\Sales.WebApi\Sales.WebApi.csproj" />
-    <ProjectReference Include="..\UserService.WebApi\UserService.WebApi.csproj" />
   </ItemGroup>
 
 </Project>

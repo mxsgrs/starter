@@ -1,7 +1,7 @@
 using MassTransit;
 
 // Keep this namespace intact otherwise MassTransit will break.
-namespace UserService.Domain.Aggregates.UserAggregate;
+namespace Network.Domain.Aggregates.UserAggregate;
 
 public abstract record DomainEvent
 {

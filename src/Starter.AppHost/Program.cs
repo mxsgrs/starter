@@ -8,10 +8,9 @@ IResourceBuilder<SqlServerServerResource> sqlServer = builder
     .AddSqlServer("SqlServer");
 
 IResourceBuilder<SqlServerDatabaseResource> userDatabase = sqlServer
-    .AddDatabase("UserDatabase");
+    .AddDatabase("NetworkDb");
 
-builder
-    .AddProject<Projects.UserService_WebApi>("UserService")
+builder.AddProject<Projects.Network_WebApi>("Network")
     .WithReference(rabbitMq)
     .WithReference(userDatabase);
 

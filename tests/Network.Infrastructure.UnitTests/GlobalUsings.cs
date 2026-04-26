@@ -1,0 +1,13 @@
+﻿global using FluentResults;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Diagnostics;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.Logging;
+global using Moq;
+global using Network.Application.Shared.Interfaces;
+global using Network.Domain.Aggregates.UserAggregate;
+global using Network.Domain.Authentication;
+global using Network.Infrastructure.Persistance;
+global using Network.Infrastructure.Persistance.Repositories;
+global using Network.Infrastructure.UnitTests.Facts.Fixtures;
+global using Network.ModelBuilders;
