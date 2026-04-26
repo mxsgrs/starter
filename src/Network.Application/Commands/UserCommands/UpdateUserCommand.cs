@@ -12,8 +12,7 @@ public record UpdateUserCommand(Guid Id, UserWriteDto UserWriteDto) : ICommand;
 public interface IUpdateUserCommandHandler : ICommandHandler<UpdateUserCommand> { }
 
 public class UpdateUserCommandHandler(
-    IUserRepository userRepository,
-    ICheckUserAddressService checkAddressService
+    IUserRepository userRepository
 ) : IUpdateUserCommandHandler
 {
     public async Task<Result> HandleAsync(UpdateUserCommand request, CancellationToken cancellationToken = default)
@@ -25,10 +24,6 @@ public class UpdateUserCommandHandler(
         Result updateResult = UserDtoHelper.ApplyUpdate(trackedUser.Value, request.UserWriteDto);
 
         if (updateResult.IsFailed) return Result.Fail(updateResult.Errors);
-
-        bool isAddressValid = await checkAddressService.Check(trackedUser.Value.Address.AddressLine, cancellationToken);
-
-        if (!isAddressValid) return Result.Fail("Address is not valid");
 
         Result savedUser = await userRepository.UpdateUser(request.Id);
 

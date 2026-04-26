@@ -12,8 +12,7 @@ public record CreateUserCommand(UserWriteDto UserWriteDto) : ICommand;
 public interface ICreateUserCommandHandler : ICommandHandlerResultingGuid<CreateUserCommand> { }
 
 public class CreateUserCommandHandler(
-    IUserRepository userRepository,
-    ICheckUserAddressService checkAddressService
+    IUserRepository userRepository
 ) : ICreateUserCommandHandler
 {
     public async Task<Result<Guid>> HandleAsync(CreateUserCommand request, CancellationToken cancellationToken = default)
@@ -21,10 +20,6 @@ public class CreateUserCommandHandler(
         Result<User> user = UserDtoHelper.ToUser(Guid.NewGuid(), request.UserWriteDto);
 
         if (user.IsFailed) return Result.Fail(user.Errors);
-
-        bool isAddressValid = await checkAddressService.Check(user.Value.Address.AddressLine, cancellationToken);
-
-        if (!isAddressValid) return Result.Fail("Address is not valid");
 
         Result<User> createdUser = await userRepository.CreateUser(user.Value);
 

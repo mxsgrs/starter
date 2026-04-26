@@ -6,16 +6,13 @@ namespace Network.Application.UnitTests.Facts.Commands.UserCommands;
 public class UpdateUserCommandHandlerTests
 {
     private readonly Mock<IUserRepository> _mockUserRepository;
-    private readonly Mock<ICheckUserAddressService> _mockCheckUserAddressService;
     private readonly UpdateUserCommandHandler _handler;
 
     public UpdateUserCommandHandlerTests()
     {
         _mockUserRepository = new Mock<IUserRepository>();
-        _mockCheckUserAddressService = new Mock<ICheckUserAddressService>();
         _handler = new UpdateUserCommandHandler(
-            _mockUserRepository.Object,
-            _mockCheckUserAddressService.Object);
+            _mockUserRepository.Object);
     }
 
     [Fact]
@@ -24,9 +21,6 @@ public class UpdateUserCommandHandlerTests
         // Arrange
         UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
         User user = new UserBuilder().Build();
-
-        _mockCheckUserAddressService.Setup(m => m.Check(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
 
         _mockUserRepository.Setup(repo => repo.ReadTrackedUser(user.Id))
             .ReturnsAsync(Result.Ok(user));
@@ -71,9 +65,6 @@ public class UpdateUserCommandHandlerTests
         UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
         User user = new UserBuilder().Build();
 
-        _mockCheckUserAddressService.Setup(m => m.Check(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
-
         _mockUserRepository.Setup(repo => repo.ReadTrackedUser(user.Id))
             .ReturnsAsync(Result.Ok(user));
 
@@ -89,26 +80,4 @@ public class UpdateUserCommandHandlerTests
         Assert.False(result.IsSuccess);
     }
 
-    [Fact]
-    public async Task Handle_ReturnFailure_WhenAddressIsInvalid()
-    {
-        // Arrange
-        UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
-        User user = new UserBuilder().Build();
-
-        _mockUserRepository.Setup(repo => repo.ReadTrackedUser(user.Id))
-            .ReturnsAsync(Result.Ok(user));
-
-        _mockCheckUserAddressService.Setup(m => m.Check(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
-
-        UpdateUserCommand command = new(user.Id, userWriteDto);
-
-        // Act
-        Result result = await _handler.HandleAsync(command, default);
-
-        // Assert
-        Assert.False(result.IsSuccess);
-        _mockUserRepository.Verify(repo => repo.UpdateUser(It.IsAny<Guid>()), Times.Never);
-    }
 }

@@ -40,8 +40,6 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
                 options.AddInterceptors(sp.GetRequiredService<DomainEventInterceptor>());
             });
 
-            services.RemoveAll<ICheckUserAddressService>();
-            services.AddScoped<ICheckUserAddressService, AlwaysValidAddressService>();
         });
 
         builder.ConfigureAppConfiguration((hostingContext, config) =>

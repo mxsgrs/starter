@@ -26,7 +26,6 @@ public static class InfrastructureDependencies
         services.AddScoped<IIntegrationEventPublisher<UserCreatedDomainEvent>, PostUserCreatedDomainEventHandler>();
         services.AddScoped<IDomainEventHandler<UserUpdatedDomainEvent>, UserUpdatedDomainEventHandler>();
         services.AddScoped<IDomainEventHandler<UserDeletedDomainEvent>, UserDeletedDomainEventHandler>();
-        services.AddScoped<ICheckUserAddressService, CheckUserAddressService>();
         services.AddScoped<IUserRepository, UserRepository>();
     }
 

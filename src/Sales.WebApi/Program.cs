@@ -1,7 +1,6 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Network.Application.IntegrationEvents;
-using Network.Infrastructure.Messaging;
 using Sales.WebApi.Persistence;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -11,7 +10,6 @@ builder.AddServiceDefaults();
 // Message bus
 builder.Services.AddMassTransit(registration =>
 {
-    registration.AddConsumer<CheckUserAddressConsumer>();
     registration.AddConsumer<UserCreatedEventConsumer>();
 
     registration.UsingRabbitMq((context, rabbitMqConfiguration) =>
