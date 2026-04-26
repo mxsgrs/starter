@@ -23,4 +23,10 @@ public class UserController : NetworkControllerBase
         [FromServices] IUpdateUserCommandHandler updateUserCommandHandler,
         UserWriteDto userWriteDto
     ) => CorrespondingStatus(await updateUserCommandHandler.HandleAsync(new UpdateUserCommand(id, userWriteDto)));
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteUser(
+        Guid id,
+        [FromServices] IDeleteUserCommandHandler deleteUserCommandHandler
+    ) => CorrespondingStatus(await deleteUserCommandHandler.HandleAsync(id));
 }

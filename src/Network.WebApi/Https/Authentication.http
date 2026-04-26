@@ -1,4 +1,4 @@
-@UserId=cc9037dd-ad50-47de-b729-81734206675a
+@UserId=a447edd9-b9ab-4930-b038-d399ed7212f9
 
 # Register new user
 POST {{HostAddress}}/api/user
@@ -65,3 +65,9 @@ Authorization: Bearer {{Jwt}}
     "country": "USA"
   }
 }
+
+###
+
+# Delete user information
+DELETE {{HostAddress}}/api/user/{{UserId}}
+Authorization: Bearer {{Jwt}}

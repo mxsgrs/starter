@@ -41,6 +41,26 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
     }
 
     [Fact]
+    public async Task DeleteUser_ShouldReturnNoContent_WhenUserIsDeleted()
+    {
+        // Arrange
+        User user = new UserBuilder().Build();
+        await _dbContext.Users.AddAsync(user);
+        await _dbContext.SaveChangesAsync();
+
+        // Act
+        HttpResponseMessage response = await _client.SendAsync(new(HttpMethod.Delete, $"/api/user/{user.Id}"));
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        User? deleted = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == user.Id);
+        Assert.Null(deleted);
+        UserAuditLog? auditLog = await _dbContext.AuditLogs
+            .FirstOrDefaultAsync(a => a.UserId == user.Id && a.EventType == nameof(UserDeletedDomainEvent));
+        Assert.NotNull(auditLog);
+    }
+
+    [Fact]
     public async Task ReadUser_ShouldReturnOk_WhenUserExists()
     {
         // Arrange

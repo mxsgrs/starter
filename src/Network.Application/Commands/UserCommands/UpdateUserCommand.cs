@@ -30,7 +30,7 @@ public class UpdateUserCommandHandler(
 
         if (!isAddressValid) return Result.Fail("Address is not valid");
 
-        Result savedUser = await userRepository.SaveChanges();
+        Result savedUser = await userRepository.UpdateUser(request.Id);
 
         if (savedUser.IsFailed) return Result.Fail(savedUser.Errors);
 

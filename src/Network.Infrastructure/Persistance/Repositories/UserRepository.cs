@@ -56,10 +56,41 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
         return Result.Ok(user);
     }
 
-    public async Task<Result> SaveChanges()
+    public async Task<Result> DeleteUser(Guid id)
     {
+        User? user = await dbContext.Users.FindAsync(id);
+
+        if (user is null)
+        {
+            logger.LogWarning("User with id {id} was not found", id);
+
+            return Result.Fail("User not found");
+        }
+
+        dbContext.Users.Remove(user);
+
         await dbContext.SaveChangesAsync();
 
         return Result.Ok();
     }
+
+    /// <summary>
+    /// Persists mutations already applied to the tracked User aggregate.
+    /// FindAsync returns the same in-memory instance (identity map), so no extra DB round trip occurs.
+    /// </summary>
+    public async Task<Result> UpdateUser(Guid id)
+    {
+        User? trackedUser = await dbContext.Users.FindAsync(id);
+
+        if (trackedUser is null)
+        {
+            logger.LogWarning("User with id {id} was not found", id);
+            return Result.Fail("User not found");
+        }
+
+        await dbContext.SaveChangesAsync();
+
+        return Result.Ok();
+    }
+
 }

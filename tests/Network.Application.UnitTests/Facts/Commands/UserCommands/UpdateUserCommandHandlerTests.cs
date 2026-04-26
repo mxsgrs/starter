@@ -31,7 +31,7 @@ public class UpdateUserCommandHandlerTests
         _mockUserRepository.Setup(repo => repo.ReadTrackedUser(user.Id))
             .ReturnsAsync(Result.Ok(user));
 
-        _mockUserRepository.Setup(repo => repo.SaveChanges())
+        _mockUserRepository.Setup(repo => repo.UpdateUser(user.Id))
             .ReturnsAsync(Result.Ok());
 
         UpdateUserCommand command = new(user.Id, userWriteDto);
@@ -41,7 +41,7 @@ public class UpdateUserCommandHandlerTests
 
         // Assert
         Assert.True(result.IsSuccess);
-        _mockUserRepository.Verify(repo => repo.SaveChanges(), Times.Once);
+        _mockUserRepository.Verify(repo => repo.UpdateUser(user.Id), Times.Once);
     }
 
     [Fact]
@@ -61,11 +61,11 @@ public class UpdateUserCommandHandlerTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        _mockUserRepository.Verify(repo => repo.SaveChanges(), Times.Never);
+        _mockUserRepository.Verify(repo => repo.UpdateUser(It.IsAny<Guid>()), Times.Never);
     }
 
     [Fact]
-    public async Task Handle_ReturnFailure_WhenSaveChangesFails()
+    public async Task Handle_ReturnFailure_WhenUpdateUserFails()
     {
         // Arrange
         UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
@@ -77,7 +77,7 @@ public class UpdateUserCommandHandlerTests
         _mockUserRepository.Setup(repo => repo.ReadTrackedUser(user.Id))
             .ReturnsAsync(Result.Ok(user));
 
-        _mockUserRepository.Setup(repo => repo.SaveChanges())
+        _mockUserRepository.Setup(repo => repo.UpdateUser(user.Id))
             .ReturnsAsync(Result.Fail("Repository error"));
 
         UpdateUserCommand command = new(user.Id, userWriteDto);
@@ -109,6 +109,6 @@ public class UpdateUserCommandHandlerTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        _mockUserRepository.Verify(repo => repo.SaveChanges(), Times.Never);
+        _mockUserRepository.Verify(repo => repo.UpdateUser(It.IsAny<Guid>()), Times.Never);
     }
 }

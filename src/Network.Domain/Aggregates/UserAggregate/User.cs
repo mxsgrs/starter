@@ -114,6 +114,18 @@ public class User : AggregateRoot
 
     #endregion
 
+    #region Delete
+
+    /// <summary>
+    /// Marks the user for deletion and raises the corresponding domain event.
+    /// </summary>
+    public void Delete()
+    {
+        RaiseDomainEvent(new UserDeletedDomainEvent(Id));
+    }
+
+    #endregion
+
     #region Private Constructor
 
     /// <summary>

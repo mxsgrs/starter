@@ -17,6 +17,7 @@ public static class ApplicationDependencies
         // Command handlers
         services.AddScoped<ICreateUserCommandHandler, CreateUserCommandHandler>();
         services.AddScoped<IUpdateUserCommandHandler, UpdateUserCommandHandler>();
+        services.AddScoped<IDeleteUserCommandHandler, DeleteUserCommandHandler>();
 
         // Query handlers
         services.AddScoped<IGenerateTokenQueryHandler, GenerateTokenQueryHandler>();

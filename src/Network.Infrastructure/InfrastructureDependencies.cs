@@ -23,6 +23,8 @@ public static class InfrastructureDependencies
         services.AddScoped<DomainEventInterceptor>();
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
         services.AddScoped<IDomainEventHandler<UserCreatedDomainEvent>, UserCreatedDomainEventHandler>();
+        services.AddScoped<IDomainEventHandler<UserUpdatedDomainEvent>, UserUpdatedDomainEventHandler>();
+        services.AddScoped<IDomainEventHandler<UserDeletedDomainEvent>, UserDeletedDomainEventHandler>();
         services.AddScoped<ICheckUserAddressService, CheckUserAddressService>();
         services.AddScoped<IUserRepository, UserRepository>();
     }
