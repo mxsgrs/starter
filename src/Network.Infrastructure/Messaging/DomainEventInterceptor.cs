@@ -8,26 +8,42 @@ namespace Network.Infrastructure.Messaging;
 
 public class DomainEventInterceptor(IDomainEventDispatcher dispatcher) : SaveChangesInterceptor
 {
+    private List<IDomainEvent> _pendingEvents = [];
+
     /// <summary>
-    /// Snapshot and dispatch domain events before EF Core writes to the database so that
-    /// handler side-effects (e.g. audit log entries) are committed in the same transaction
+    /// Snapshot and dispatch pre-save handlers before EF Core writes to the database so that
+    /// side-effects (e.g. audit log entries) are committed in the same transaction
     /// </summary>
     public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
     {
         if (eventData.Context is not null)
         {
-            List<IDomainEvent> events = [.. eventData.Context.ChangeTracker
+            _pendingEvents = [.. eventData.Context.ChangeTracker
                 .Entries<AggregateRoot>()
                 .SelectMany(e => e.Entity.DomainEvents)];
 
-            foreach (IDomainEvent evt in events)
-                await dispatcher.DispatchAsync(evt, cancellationToken);
+            foreach (IDomainEvent evt in _pendingEvents)
+                await dispatcher.DispatchPreSaveAsync(evt, cancellationToken);
 
             foreach (EntityEntry<AggregateRoot> entry in eventData.Context.ChangeTracker.Entries<AggregateRoot>())
                 entry.Entity.ClearDomainEvents();
         }
 
         return await base.SavingChangesAsync(eventData, result, cancellationToken);
+    }
+
+    /// <summary>
+    /// Dispatch post-save integration event publishers after the DB transaction has committed
+    /// </summary>
+    public override async ValueTask<int> SavedChangesAsync(
+        SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
+    {
+        foreach (IDomainEvent evt in _pendingEvents)
+            await dispatcher.DispatchPostSaveAsync(evt, cancellationToken);
+
+        _pendingEvents = [];
+
+        return await base.SavedChangesAsync(eventData, result, cancellationToken);
     }
 }

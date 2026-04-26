@@ -8,12 +8,25 @@ namespace Network.Infrastructure.Messaging;
 public class DomainEventDispatcher(IServiceProvider serviceProvider) : IDomainEventDispatcher
 {
     /// <summary>
-    /// Resolve and invoke all handlers registered for the concrete event type
+    /// Resolve and invoke all pre-save handlers registered for the concrete event type
     /// </summary>
-    public async Task DispatchAsync(IDomainEvent domainEvent, CancellationToken cancellationToken)
+    public async Task DispatchPreSaveAsync(IDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        Type handlerType = typeof(IDomainEventHandler<>).MakeGenericType(domainEvent.GetType());
-        MethodInfo handleMethod = handlerType.GetMethod("HandleAsync")!;
+        await InvokeHandlers(typeof(IDomainEventHandler<>), "HandleAsync", domainEvent, cancellationToken);
+    }
+
+    /// <summary>
+    /// Resolve and invoke all post-save integration event publishers for the concrete event type
+    /// </summary>
+    public async Task DispatchPostSaveAsync(IDomainEvent domainEvent, CancellationToken cancellationToken)
+    {
+        await InvokeHandlers(typeof(IIntegrationEventPublisher<>), "PublishAsync", domainEvent, cancellationToken);
+    }
+
+    private async Task InvokeHandlers(Type openGenericType, string methodName, IDomainEvent domainEvent, CancellationToken cancellationToken)
+    {
+        Type handlerType = openGenericType.MakeGenericType(domainEvent.GetType());
+        MethodInfo handleMethod = handlerType.GetMethod(methodName)!;
 
         foreach (object? handler in serviceProvider.GetServices(handlerType))
         {
