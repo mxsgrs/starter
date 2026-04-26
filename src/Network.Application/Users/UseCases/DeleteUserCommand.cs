@@ -1,6 +1,4 @@
-using Network.Application.Shared.Cqrs;
-
-namespace Network.Application.Commands.UserCommands;
+namespace Network.Application.Users.UseCases;
 
 /// <summary>
 /// Delete a user from the database by ID.

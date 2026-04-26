@@ -1,0 +1,258 @@
+{
+  "info": {
+    "_postman_id": "5456c06f-ea99-4606-944a-47ced33ff14b",
+    "name": "Starter",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "24266264"
+  },
+  "item": [
+    {
+      "name": "Sales",
+      "item": [
+        {
+          "name": "Read all financial products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{HostAddress}}/api/sales/financial-products",
+              "host": [
+                "{{HostAddress}}"
+              ],
+              "path": [
+                "api",
+                "sales",
+                "financial-products"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Network",
+      "item": [
+        {
+          "name": "Register new user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailAddress\": \"john.doe@example.com\",\n  \"hashedPassword\": \"TWF0cml4UmVsb2FkZWQh\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"birthday\": \"1990-05-15\",\n  \"gender\": \"Male\",\n  \"role\": \"Admin\",\n  \"phone\": \"+1234567890\",\n  \"address\": {\n    \"addressLine\": \"123 Main St\",\n    \"addressSupplement\": \"Apt 4B\",\n    \"city\": \"New York\",\n    \"zipCode\": \"12345\",\n    \"stateProvince\": \"CA\",\n    \"country\": \"USA\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{HostAddress}}/api/network/user",
+              "host": [
+                "{{HostAddress}}"
+              ],
+              "path": [
+                "api",
+                "network",
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate access token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.accessToken) {",
+                  "  pm.collectionVariables.set('Jwt', json.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailAddress\": \"john.doe@example.com\",\n  \"hashedPassword\": \"TWF0cml4UmVsb2FkZWQh\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{HostAddress}}/api/network/authentication/token",
+              "host": [
+                "{{HostAddress}}"
+              ],
+              "path": [
+                "api",
+                "network",
+                "authentication",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Read user information",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{Jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{HostAddress}}/api/network/user/{{UserId}}",
+              "host": [
+                "{{HostAddress}}"
+              ],
+              "path": [
+                "api",
+                "network",
+                "user",
+                "{{UserId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update user information",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{Jwt}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailAddress\": \"john.doe@example.com\",\n  \"hashedPassword\": \"TWF0cml4UmVsb2FkZWQh\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Dudule\",\n  \"birthday\": \"1990-05-15\",\n  \"gender\": \"Male\",\n  \"role\": \"Admin\",\n  \"phone\": \"+1234567890\",\n  \"address\": {\n    \"addressLine\": \"456 New St\",\n    \"addressSupplement\": \"Apt 4B\",\n    \"city\": \"New York\",\n    \"zipCode\": \"12345\",\n    \"stateProvince\": \"CA\",\n    \"country\": \"USA\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{HostAddress}}/api/network/user/{{UserId}}",
+              "host": [
+                "{{HostAddress}}"
+              ],
+              "path": [
+                "api",
+                "network",
+                "user",
+                "{{UserId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete user information",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{Jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{HostAddress}}/api/network/user/{{UserId}}",
+              "host": [
+                "{{HostAddress}}"
+              ],
+              "path": [
+                "api",
+                "network",
+                "user",
+                "{{UserId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{Jwt}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "HostAddress",
+      "value": "https://localhost:5001"
+    },
+    {
+      "key": "UserId",
+      "value": "ff2b6230-59b1-402b-9977-a21ca0398f3c"
+    },
+    {
+      "key": "Jwt",
+      "value": ""
+    }
+  ]
+}

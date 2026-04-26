@@ -1,6 +1,6 @@
 using Mapster;
-using Network.Application.Dtos.UserDtos;
-using Network.Application.Queries.UserQueries;
+using Network.Application.Users.Dtos;
+using Network.Application.Users.UseCases;
 
 namespace Network.Application.UnitTests.Facts.Queries.UserQueries;
 

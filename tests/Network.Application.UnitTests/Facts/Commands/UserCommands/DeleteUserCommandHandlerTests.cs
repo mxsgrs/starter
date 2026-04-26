@@ -1,4 +1,4 @@
-using Network.Application.Commands.UserCommands;
+using Network.Application.Users.UseCases;
 
 namespace Network.Application.UnitTests.Facts.Commands.UserCommands;
 

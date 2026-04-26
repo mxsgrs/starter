@@ -1,8 +1,6 @@
-using Network.Application.Dtos.UserDtos;
-using Network.Application.Dtos.UserDtos.Helpers;
-using Network.Application.Shared.Cqrs;
+using Network.Application.Users.Dtos.Helpers;
 
-namespace Network.Application.Commands.UserCommands;
+namespace Network.Application.Users.UseCases;
 
 public record UpdateUserCommand(Guid Id, UserWriteDto UserWriteDto) : ICommand;
 

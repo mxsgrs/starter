@@ -4,9 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Network.Application.Shared.Events;
+using Network.Application.Shared.Interfaces;
 using Network.Domain.Aggregates.UserAggregate;
 using Network.Infrastructure.Messaging;
-using Network.Infrastructure.Messaging.UserHandlers;
 using Network.Infrastructure.Persistance;
 using Network.Infrastructure.Persistance.Repositories;
 
@@ -23,11 +23,10 @@ public static class InfrastructureDependencies
 
         services.AddScoped<DomainEventInterceptor>();
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
-        services.AddScoped<IPreSavedDomainEventHandler<UserCreatedDomainEvent>, PreUserCreatedDomainEventHandler>();
-        services.AddScoped<IPostSavedDomainEventHandler<UserCreatedDomainEvent>, PostUserCreatedDomainEventHandler>();
-        services.AddScoped<IPreSavedDomainEventHandler<UserUpdatedDomainEvent>, PreUserUpdatedDomainEventHandler>();
-        services.AddScoped<IPreSavedDomainEventHandler<UserDeletedDomainEvent>, PreUserDeletedDomainEventHandler>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        services.AddScoped<ISecurityNoteRepository, SecurityNoteRepository>();
+        services.AddScoped<IIntegrationEventPublisher, MassTransitIntegrationEventPublisher>();
     }
 
     /// <summary>

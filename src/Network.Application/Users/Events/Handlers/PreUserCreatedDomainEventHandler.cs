@@ -1,10 +1,11 @@
 using Network.Application.Shared.Events;
-using Network.Domain.Aggregates.UserAggregate;
-using Network.Infrastructure.Persistance;
 
-namespace Network.Infrastructure.Messaging.UserHandlers;
+namespace Network.Application.Users.Events.Handlers;
 
-public class PreUserCreatedDomainEventHandler(UserDbContext dbContext)
+public class PreUserCreatedDomainEventHandler(
+    IUserRepository userRepository,
+    IAuditLogRepository auditLogRepository,
+    ISecurityNoteRepository securityNoteRepository)
     : IPreSavedDomainEventHandler<UserCreatedDomainEvent>
 {
     /// <summary>
@@ -13,13 +14,13 @@ public class PreUserCreatedDomainEventHandler(UserDbContext dbContext)
     public async Task HandleAsync(UserCreatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         UserAuditLog auditLog = UserAuditLog.Create(domainEvent.UserId, nameof(UserCreatedDomainEvent));
-        await dbContext.AuditLogs.AddAsync(auditLog, cancellationToken);
+        await auditLogRepository.AddAsync(auditLog, cancellationToken);
 
-        User? user = dbContext.Users.Local.FirstOrDefault(u => u.Id == domainEvent.UserId);
-        if (user is not null && user.Age >= 30)
+        Result<User> userResult = await userRepository.ReadTrackedUser(domainEvent.UserId);
+        if (userResult.IsSuccess && userResult.Value.Age >= 30)
         {
             SecurityNote note = SecurityNote.Create(domainEvent.UserId, "User age is 30 or above");
-            await dbContext.SecurityNotes.AddAsync(note, cancellationToken);
+            await securityNoteRepository.AddAsync(note, cancellationToken);
         }
     }
 }

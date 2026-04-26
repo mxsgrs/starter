@@ -1,4 +1,4 @@
-namespace Network.Application.Dtos.UserDtos;
+namespace Network.Application.Users.Dtos;
 
 public static class UserMapping
 {

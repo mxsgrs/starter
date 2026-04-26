@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Network.Application.Commands.UserCommands;
-using Network.Application.Dtos.UserDtos;
-using Network.Application.Queries.AuthQueries;
-using Network.Application.Queries.UserQueries;
+using Network.Application.Authentication.UseCases;
+using Network.Application.Shared.Events;
+using Network.Application.Users.Dtos;
+using Network.Application.Users.Events.Handlers;
+using Network.Application.Users.UseCases;
 
 namespace Network.Application.Shared;
 
@@ -22,5 +23,11 @@ public static class ApplicationDependencies
         // Query handlers
         services.AddScoped<IGenerateTokenQueryHandler, GenerateTokenQueryHandler>();
         services.AddScoped<IReadUserQueryHandler, ReadUserQueryHandler>();
+
+        // Domain event handlers
+        services.AddScoped<IPreSavedDomainEventHandler<UserCreatedDomainEvent>, PreUserCreatedDomainEventHandler>();
+        services.AddScoped<IPreSavedDomainEventHandler<UserUpdatedDomainEvent>, PreUserUpdatedDomainEventHandler>();
+        services.AddScoped<IPreSavedDomainEventHandler<UserDeletedDomainEvent>, PreUserDeletedDomainEventHandler>();
+        services.AddScoped<IPostSavedDomainEventHandler<UserCreatedDomainEvent>, PostUserCreatedDomainEventHandler>();
     }
 }

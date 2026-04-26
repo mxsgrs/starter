@@ -1,4 +1,5 @@
-﻿using Network.Application.Dtos.UserDtos;
+﻿using Network.Application.Users.Dtos;
+using Network.Application.Users.UseCases;
 
 namespace Network.WebApi.Controllers;
 

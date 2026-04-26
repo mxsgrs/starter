@@ -1,5 +1,5 @@
 using Network.WhiteBoxE2eTests.Facts.Factories;
-using Network.Application.Dtos;
+using Network.Application.Authentication.Dtos;
 
 namespace Network.WhiteBoxE2eTests.Facts.Controllers;
 

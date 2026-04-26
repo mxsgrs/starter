@@ -1,7 +1,4 @@
-﻿using Network.Application.Dtos.UserDtos;
-using Network.Application.Shared.Cqrs;
-
-namespace Network.Application.Queries.UserQueries;
+﻿namespace Network.Application.Users.UseCases;
 
 public interface IReadUserQueryHandler : IQueryByIdHandler<Result<UserDto>> { }
 

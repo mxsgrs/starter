@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Network.Application.Dtos.UserDtos;
+using Network.Application.Users.Dtos;
 using Network.WhiteBoxE2eTests.Facts.Factories;
 using System.Net.Http.Json;
 

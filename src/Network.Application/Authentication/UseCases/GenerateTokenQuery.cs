@@ -2,13 +2,12 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using Network.Application.Dtos;
-using Network.Application.Shared.Cqrs;
+using Network.Application.Authentication.Dtos;
 using Network.Domain.Authentication;
 using System.Security.Claims;
 using System.Text;
 
-namespace Network.Application.Queries.AuthQueries;
+namespace Network.Application.Authentication.UseCases;
 
 public record GenerateTokenQuery(string EmailAddress, string HashedPassword) : IQuery<Result<LoginResponseDto>>;
 

@@ -1,4 +1,4 @@
-﻿namespace Network.Application.Dtos;
+﻿namespace Network.Application.Authentication.Dtos;
 
 public record HashedLoginRequestDto
 {

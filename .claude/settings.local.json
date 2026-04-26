@@ -16,7 +16,10 @@
       "Bash(dotnet tool *)",
       "Bash(del \"C:\\\\Users\\\\mxsgr\\\\source\\\\repos\\\\starter\\\\tests\\\\Network.Infrastructure.UnitTests\\\\Facts\\\\UserRepositoryTestCases\\\\SaveChangesTests.cs\")",
       "Bash(cat)",
-      "Read(//c/Users/mxsgr/.claude/plans/**)"
+      "Read(//c/Users/mxsgr/.claude/plans/**)",
+      "Bash(dotnet restore *)",
+      "Bash(export PATH=\"$PATH:/Users/maximegros/.dotnet/tools\")",
+      "Bash(xargs cat *)"
     ]
   }
 }

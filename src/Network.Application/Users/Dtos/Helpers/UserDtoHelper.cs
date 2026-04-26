@@ -1,4 +1,4 @@
-namespace Network.Application.Dtos.UserDtos.Helpers;
+namespace Network.Application.Users.Dtos.Helpers;
 
 public static class UserDtoHelper
 {

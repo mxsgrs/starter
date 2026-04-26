@@ -1,8 +1,8 @@
 using Network.Application.UnitTests.Facts.Fixtures;
-using Network.Application.Dtos;
-using Network.Application.Queries.AuthQueries;
 using Network.Domain.Aggregates.UserAggregate;
 using Network.ModelBuilders;
+using Network.Application.Authentication.Dtos;
+using Network.Application.Authentication.UseCases;
 
 namespace Network.Application.UnitTests.Facts.Queries.AuthQueries;
 

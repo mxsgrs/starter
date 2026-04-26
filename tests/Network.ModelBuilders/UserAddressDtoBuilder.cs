@@ -1,4 +1,4 @@
-using Network.Application.Dtos.UserDtos;
+using Network.Application.Users.Dtos;
 
 namespace Network.ModelBuilders;
 

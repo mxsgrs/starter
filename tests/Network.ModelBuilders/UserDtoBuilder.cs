@@ -1,4 +1,4 @@
-using Network.Application.Dtos.UserDtos;
+using Network.Application.Users.Dtos;
 using Network.Domain.Aggregates.UserAggregate;
 
 namespace Network.ModelBuilders;

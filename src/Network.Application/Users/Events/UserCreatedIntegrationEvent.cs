@@ -1,3 +1,3 @@
-namespace Network.Application.IntegrationEvents;
+namespace Network.Application.Users.Events;
 
 public record UserCreatedIntegrationEvent(Guid UserId);
