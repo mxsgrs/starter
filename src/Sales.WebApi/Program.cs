@@ -23,7 +23,11 @@ builder.Services.AddMassTransit(registration =>
     });
 });
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApiDocument(settings =>
+{
+    settings.Title = "Sales API";
+    settings.Version = "v1";
+});
 
 WebApplication app = builder.Build();
 
@@ -32,7 +36,8 @@ app.MapDefaultEndpoints();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseOpenApi();
+    app.UseSwaggerUi();
 }
 
 app.UseHttpsRedirection();

@@ -8,6 +8,7 @@ public class NetworkControllerBase() : ControllerBase
     /// <summary>
     /// Returns http status code corresponding to the result of the operation.
     /// </summary>
+    [NonAction]
     public IActionResult CorrespondingStatus<TEntity>(Result<TEntity> result)
     {
         if (result.IsFailed)
@@ -22,6 +23,7 @@ public class NetworkControllerBase() : ControllerBase
     /// <summary>
     /// Returns http status code corresponding to the result of the operation.
     /// </summary>
+    [NonAction]
     public IActionResult CorrespondingStatus(Result result)
     {
         if (result.IsFailed)

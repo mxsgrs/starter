@@ -12,11 +12,13 @@ IResourceBuilder<SqlServerDatabaseResource> userDatabase = sqlServer
 
 builder.AddProject<Projects.Network_WebApi>("Network")
     .WithReference(rabbitMq)
-    .WithReference(userDatabase);
+    .WithReference(userDatabase)
+    .WithUrlForEndpoint("https", url => url.Url += "/swagger");
 
 builder
     .AddProject<Projects.Sales_WebApi>("Sales")
-    .WithReference(rabbitMq);
+    .WithReference(rabbitMq)
+    .WithUrlForEndpoint("https", url => url.Url += "/swagger");
 
 builder
     .Build()

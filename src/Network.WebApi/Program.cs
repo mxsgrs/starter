@@ -58,7 +58,20 @@ builder.Services.AddControllers(options =>
         };
     });
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApiDocument(settings =>
+{
+    settings.Title = "Network API";
+    settings.Version = "v1";
+    settings.AddSecurity("Bearer", new NSwag.OpenApiSecurityScheme
+    {
+        Type = NSwag.OpenApiSecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "Enter your JWT token"
+    });
+    settings.OperationProcessors.Add(
+        new NSwag.Generation.Processors.Security.OperationSecurityScopeProcessor("Bearer"));
+});
 
 // Configure JWT authentication
 builder.Services.AddAuthentication()
@@ -86,7 +99,8 @@ app.MapDefaultEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseOpenApi();
+    app.UseSwaggerUi();
 }
 
 app.UseHttpsRedirection();
