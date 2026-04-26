@@ -12,7 +12,7 @@ public class DomainEventDispatcher(IServiceProvider serviceProvider) : IDomainEv
     /// </summary>
     public async Task DispatchPreSaveAsync(IDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        await InvokeHandlers(typeof(IDomainEventHandler<>), "HandleAsync", domainEvent, cancellationToken);
+        await InvokeHandlers(typeof(IPreSavedDomainEventHandler<>), "HandleAsync", domainEvent, cancellationToken);
     }
 
     /// <summary>
@@ -20,7 +20,7 @@ public class DomainEventDispatcher(IServiceProvider serviceProvider) : IDomainEv
     /// </summary>
     public async Task DispatchPostSaveAsync(IDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        await InvokeHandlers(typeof(IIntegrationEventPublisher<>), "PublishAsync", domainEvent, cancellationToken);
+        await InvokeHandlers(typeof(IPostSavedDomainEventHandler<>), "PublishAsync", domainEvent, cancellationToken);
     }
 
     private async Task InvokeHandlers(Type openGenericType, string methodName, IDomainEvent domainEvent, CancellationToken cancellationToken)

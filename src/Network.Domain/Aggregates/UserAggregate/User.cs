@@ -33,6 +33,19 @@ public class User : AggregateRoot
 
     public Address Address { get; private set; } = null!;
 
+    public SecurityNote? SecurityNote { get; private set; }
+
+    public int Age
+    {
+        get
+        {
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+            int age = today.Year - Birthday.Year;
+            if (Birthday > today.AddYears(-age)) age--;
+            return age;
+        }
+    }
+
     #endregion
 
     #region Create

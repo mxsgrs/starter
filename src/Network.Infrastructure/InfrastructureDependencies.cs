@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Network.Application.Shared.Events;
 using Network.Domain.Aggregates.UserAggregate;
 using Network.Infrastructure.Messaging;
+using Network.Infrastructure.Messaging.UserHandlers;
 using Network.Infrastructure.Persistance;
 using Network.Infrastructure.Persistance.Repositories;
 
@@ -22,10 +23,10 @@ public static class InfrastructureDependencies
 
         services.AddScoped<DomainEventInterceptor>();
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
-        services.AddScoped<IDomainEventHandler<UserCreatedDomainEvent>, PreUserCreatedDomainEventHandler>();
-        services.AddScoped<IIntegrationEventPublisher<UserCreatedDomainEvent>, PostUserCreatedDomainEventHandler>();
-        services.AddScoped<IDomainEventHandler<UserUpdatedDomainEvent>, UserUpdatedDomainEventHandler>();
-        services.AddScoped<IDomainEventHandler<UserDeletedDomainEvent>, UserDeletedDomainEventHandler>();
+        services.AddScoped<IPreSavedDomainEventHandler<UserCreatedDomainEvent>, PreUserCreatedDomainEventHandler>();
+        services.AddScoped<IPostSavedDomainEventHandler<UserCreatedDomainEvent>, PostUserCreatedDomainEventHandler>();
+        services.AddScoped<IPreSavedDomainEventHandler<UserUpdatedDomainEvent>, PreUserUpdatedDomainEventHandler>();
+        services.AddScoped<IPreSavedDomainEventHandler<UserDeletedDomainEvent>, PreUserDeletedDomainEventHandler>();
         services.AddScoped<IUserRepository, UserRepository>();
     }
 

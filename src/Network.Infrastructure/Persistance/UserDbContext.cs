@@ -14,6 +14,7 @@ public partial class UserDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<UserAuditLog> AuditLogs { get; set; }
+    public virtual DbSet<SecurityNote> SecurityNotes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         => modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
