@@ -1,6 +1,8 @@
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Network.Domain.Aggregates.UserAggregate;
 using Network.Infrastructure.Messaging;
+using Sales.WebApi.Persistence;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,20 @@ builder.Services.AddMassTransit(registration =>
     });
 });
 
+string? aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+if ((builder.Environment.IsDevelopment() && aspNetCoreEnvironment is not null) || builder.Environment.IsProduction())
+{
+    string connectionString = builder.Configuration.GetConnectionString(
+        builder.Environment.IsProduction() ? "SqlServer" : "SalesDb")
+            ?? throw new Exception("Connection string for SQL Server is missing");
+
+    builder.Services.AddDbContext<SalesDbContext>(options =>
+        options.UseSqlServer(connectionString));
+}
+
+builder.Services.AddControllers();
+
 builder.Services.AddOpenApiDocument(settings =>
 {
     settings.Title = "Sales API";
@@ -32,6 +48,7 @@ builder.Services.AddOpenApiDocument(settings =>
 WebApplication app = builder.Build();
 
 app.MapDefaultEndpoints();
+app.MapControllers();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

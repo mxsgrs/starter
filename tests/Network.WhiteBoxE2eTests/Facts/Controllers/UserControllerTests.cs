@@ -29,7 +29,7 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
         UserWriteDto writeDto = new UserWriteDtoBuilder().Build();
 
         // Act
-        HttpResponseMessage response = await _client.PostAsJsonAsync("/api/user", writeDto);
+        HttpResponseMessage response = await _client.PostAsJsonAsync("/api/network/user", writeDto);
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -49,7 +49,7 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
         await _dbContext.SaveChangesAsync();
 
         // Act
-        HttpResponseMessage response = await _client.SendAsync(new(HttpMethod.Delete, $"/api/user/{user.Id}"));
+        HttpResponseMessage response = await _client.SendAsync(new(HttpMethod.Delete, $"/api/network/user/{user.Id}"));
 
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -81,7 +81,7 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
         await _dbContext.SaveChangesAsync();
 
         // Act
-        HttpResponseMessage response = await _client.SendAsync(new(HttpMethod.Get, $"/api/user/{user.Id}"));
+        HttpResponseMessage response = await _client.SendAsync(new(HttpMethod.Get, $"/api/network/user/{user.Id}"));
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -104,7 +104,7 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
         UserWriteDto updateDto = new UserWriteDtoBuilder().WithFirstName("Jane").Build();
 
         // Act
-        HttpResponseMessage response = await _client.PutAsJsonAsync($"/api/user/{user.Id}", updateDto);
+        HttpResponseMessage response = await _client.PutAsJsonAsync($"/api/network/user/{user.Id}", updateDto);
 
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

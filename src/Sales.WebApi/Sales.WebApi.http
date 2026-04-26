@@ -1,0 +1,4 @@
+﻿@HostAddress = https://localhost:7142
+
+### Read all financial products
+GET {{HostAddress}}/api/sales/financial-products

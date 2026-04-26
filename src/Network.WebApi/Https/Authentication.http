@@ -1,7 +1,7 @@
 @UserId=a447edd9-b9ab-4930-b038-d399ed7212f9
 
 # Register new user
-POST {{HostAddress}}/api/user
+POST {{HostAddress}}/api/network/user
 Content-Type: application/json
 
 {
@@ -37,13 +37,13 @@ Content-Type: application/json
 ###
 
 # Read user information
-GET {{HostAddress}}/api/user/{{UserId}}
+GET {{HostAddress}}/api/network/user/{{UserId}}
 Authorization: Bearer {{Jwt}}
 
 ###
 
 # Update user information
-PUT {{HostAddress}}/api/user/{{UserId}}
+PUT {{HostAddress}}/api/network/user/{{UserId}}
 Content-Type: application/json
 Authorization: Bearer {{Jwt}}
 
@@ -69,5 +69,5 @@ Authorization: Bearer {{Jwt}}
 ###
 
 # Delete user information
-DELETE {{HostAddress}}/api/user/{{UserId}}
+DELETE {{HostAddress}}/api/network/user/{{UserId}}
 Authorization: Bearer {{Jwt}}

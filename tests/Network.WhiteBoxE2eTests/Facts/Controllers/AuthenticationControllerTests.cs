@@ -25,7 +25,7 @@ public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
 
         string json = JsonSerializer.Serialize(hashedLoginRequest);
         StringContent content = new(json, Encoding.UTF8, "application/json");
-        HttpRequestMessage request = new(HttpMethod.Post, "/api/authentication/token")
+        HttpRequestMessage request = new(HttpMethod.Post, "/api/network/authentication/token")
         {
             Content = content
         };
@@ -51,7 +51,7 @@ public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
 
         string json = JsonSerializer.Serialize(hashedLoginRequest);
         StringContent content = new(json, Encoding.UTF8, "application/json");
-        HttpRequestMessage request = new(HttpMethod.Post, "/api/authentication/token")
+        HttpRequestMessage request = new(HttpMethod.Post, "/api/network/authentication/token")
         {
             Content = content
         };

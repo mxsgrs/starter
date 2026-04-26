@@ -2,7 +2,7 @@
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/network/[controller]")]
 public class NetworkControllerBase() : ControllerBase 
 {
     /// <summary>
