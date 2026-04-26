@@ -99,8 +99,12 @@ app.MapDefaultEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseOpenApi();
-    app.UseSwaggerUi();
+    app.UseOpenApi(c => c.Path = "/api/network/swagger/{documentName}/swagger.json");
+    app.UseSwaggerUi(c =>
+    {
+        c.Path = "/api/network/swagger";
+        c.DocumentPath = "/api/network/swagger/v1/swagger.json";
+    });
 }
 
 app.UseHttpsRedirection();

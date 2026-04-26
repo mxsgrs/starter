@@ -13,6 +13,7 @@ public static class Network
         return builder.AddProject<Projects.Network_WebApi>("Network")
             .WithReference(rabbitMq)
             .WithReference(userDatabase)
-            .WithUrlForEndpoint("https", url => url.Url += "/swagger");
+            .WaitFor(userDatabase)
+            .WithUrlForEndpoint("https", url => url.Url += "/api/network/swagger");
     }
 }

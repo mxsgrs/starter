@@ -51,8 +51,12 @@ app.MapControllers();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseOpenApi();
-    app.UseSwaggerUi();
+    app.UseOpenApi(c => c.Path = "/api/sales/swagger/{documentName}/swagger.json");
+    app.UseSwaggerUi(c =>
+    {
+        c.Path = "/api/sales/swagger";
+        c.DocumentPath = "/api/sales/swagger/v1/swagger.json";
+    });
 }
 
 app.UseHttpsRedirection();

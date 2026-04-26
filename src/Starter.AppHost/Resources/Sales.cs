@@ -14,6 +14,7 @@ public static class Sales
             .AddProject<Projects.Sales_WebApi>("Sales")
             .WithReference(rabbitMq)
             .WithReference(salesDatabase)
-            .WithUrlForEndpoint("https", url => url.Url += "/swagger");
+            .WaitFor(salesDatabase)
+            .WithUrlForEndpoint("https", url => url.Url += "/api/sales/swagger");
     }
 }
