@@ -1,23 +1,22 @@
 using MassTransit;
 
-// Keep this namespace intact otherwise MassTransit will break.
-namespace Network.Domain.Aggregates.UserAggregate;
+// Duplicate of Network.Application.IntegrationEvents.UserCreatedIntegrationEvent.
+// Namespace must match the publisher's namespace for MassTransit routing.
+namespace Network.Application.IntegrationEvents;
 
-public abstract record DomainEvent
+public record UserCreatedIntegrationEvent(Guid UserId);
+
+public class UserCreatedEventConsumer(ILogger<UserCreatedEventConsumer> logger)
+    : IConsumer<UserCreatedIntegrationEvent>
 {
-    public Guid Id { get; } = Guid.NewGuid();
-    public DateTime CreatedOn { get; } = DateTime.UtcNow;
-}
-
-public record UserCreatedDomainEvent(Guid UserId) : DomainEvent;
-
-public class UserCreatedEventConsumer(ILogger<UserCreatedEventConsumer> logger) : IConsumer<UserCreatedDomainEvent>
-{
-    public Task Consume(ConsumeContext<UserCreatedDomainEvent> context)
+    /// <summary>
+    /// Handle the user created integration event
+    /// </summary>
+    public Task Consume(ConsumeContext<UserCreatedIntegrationEvent> context)
     {
         if (logger.IsEnabled(LogLevel.Information))
         {
-            logger.LogInformation("Received the user created event {UserCreatedDomainEvent}", context.Message);
+            logger.LogInformation("Received the user created event {UserCreatedIntegrationEvent}", context.Message);
         }
 
         return Task.CompletedTask;

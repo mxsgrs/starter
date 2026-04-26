@@ -1,6 +1,6 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using Network.Domain.Aggregates.UserAggregate;
+using Network.Application.IntegrationEvents;
 using Network.Infrastructure.Messaging;
 using Sales.WebApi.Persistence;
 
