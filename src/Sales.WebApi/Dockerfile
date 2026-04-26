@@ -12,20 +12,20 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/AddressService.WebApi/AddressService.WebApi.csproj", "src/AddressService.WebApi/"]
+COPY ["src/Sales.WebApi/Sales.WebApi.csproj", "src/Sales.WebApi/"]
 COPY ["src/Starter.ServiceDefaults/Starter.ServiceDefaults.csproj", "src/Starter.ServiceDefaults/"]
-RUN dotnet restore "./src/AddressService.WebApi/AddressService.WebApi.csproj"
+RUN dotnet restore "./src/Sales.WebApi/Sales.WebApi.csproj"
 COPY . .
-WORKDIR "/src/src/AddressService.WebApi"
-RUN dotnet build "./AddressService.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/src/Sales.WebApi"
+RUN dotnet build "./Sales.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Cette étape permet de publier le projet de service à copier dans la phase finale
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./AddressService.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Sales.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Cette phase est utilisée en production ou lors de l’exécution à partir de VS en mode normal (par défaut quand la configuration de débogage n’est pas utilisée)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AddressService.WebApi.dll"]
+ENTRYPOINT ["dotnet", "Sales.WebApi.dll"]

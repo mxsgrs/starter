@@ -16,7 +16,7 @@ builder
     .WithReference(userDatabase);
 
 builder
-    .AddProject<Projects.AddressService_WebApi>("AddressService")
+    .AddProject<Projects.Sales_WebApi>("Sales")
     .WithReference(rabbitMq);
 
 builder
