@@ -1,4 +1,4 @@
-@UserId=a447edd9-b9ab-4930-b038-d399ed7212f9
+@UserId=ff2b6230-59b1-402b-9977-a21ca0398f3c
 
 # Read all financial products
 GET {{HostAddress}}/api/sales/financial-products
@@ -31,7 +31,7 @@ Content-Type: application/json
 ###
 
 # Generate access token
-POST {{HostAddress}}/api/authentication/token
+POST {{HostAddress}}/api/network/authentication/token
 Content-Type: application/json
 
 {

@@ -12,6 +12,9 @@ public class FinancialProductsController(SalesDbContext db) : ControllerBase
     /// Get all financial products
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAll() =>
-        Ok(await db.FinancialProducts.ToListAsync());
+    public async Task<IActionResult> GetAll()
+    {
+        List<FinancialProduct> financialProducts = await db.FinancialProducts.ToListAsync();
+        return Ok(financialProducts);
+    }
 }
