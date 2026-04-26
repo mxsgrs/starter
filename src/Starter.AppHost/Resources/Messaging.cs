@@ -1,4 +1,4 @@
-﻿namespace Starter.AppHost;
+﻿namespace Starter.AppHost.Resources;
 
 public static class Messaging
 {

@@ -1,5 +1,10 @@
 @UserId=a447edd9-b9ab-4930-b038-d399ed7212f9
 
+# Read all financial products
+GET {{HostAddress}}/api/sales/financial-products
+
+###
+
 # Register new user
 POST {{HostAddress}}/api/network/user
 Content-Type: application/json

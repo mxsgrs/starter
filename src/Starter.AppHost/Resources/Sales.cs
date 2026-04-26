@@ -1,8 +1,8 @@
-﻿namespace Starter.AppHost;
+﻿namespace Starter.AppHost.Resources;
 
 public static class Sales
 {
-    public static void AddResources(IDistributedApplicationBuilder builder, IResourceBuilder<RabbitMQServerResource> rabbitMq)
+    public static IResourceBuilder<ProjectResource> AddResources(IDistributedApplicationBuilder builder, IResourceBuilder<RabbitMQServerResource> rabbitMq)
     {
         IResourceBuilder<SqlServerServerResource> salesSqlServer = builder
             .AddSqlServer("SalesSqlServer");
@@ -10,7 +10,7 @@ public static class Sales
         IResourceBuilder<SqlServerDatabaseResource> salesDatabase = salesSqlServer
             .AddDatabase("SalesDb");
 
-        builder
+        return builder
             .AddProject<Projects.Sales_WebApi>("Sales")
             .WithReference(rabbitMq)
             .WithReference(salesDatabase)

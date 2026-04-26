@@ -1,8 +1,8 @@
-﻿namespace Starter.AppHost;
+﻿namespace Starter.AppHost.Resources;
 
 public static class Network
 {
-    public static void AddResources(IDistributedApplicationBuilder builder, IResourceBuilder<RabbitMQServerResource> rabbitMq)
+    public static IResourceBuilder<ProjectResource> AddResources(IDistributedApplicationBuilder builder, IResourceBuilder<RabbitMQServerResource> rabbitMq)
     {
         IResourceBuilder<SqlServerServerResource> networkSqlSerever = builder
             .AddSqlServer("NetworkSqlServer");
@@ -10,7 +10,7 @@ public static class Network
         IResourceBuilder<SqlServerDatabaseResource> userDatabase = networkSqlSerever
             .AddDatabase("NetworkDb");
 
-        builder.AddProject<Projects.Network_WebApi>("Network")
+        return builder.AddProject<Projects.Network_WebApi>("Network")
             .WithReference(rabbitMq)
             .WithReference(userDatabase)
             .WithUrlForEndpoint("https", url => url.Url += "/swagger");
