@@ -25,6 +25,14 @@ The Aspire dashboard will open automatically and display all running services wi
 
 ## Architecture Decisions
 
+### Microservices size
+
+Microservices should be deliberately larger in scope rather than highly granular.
+This approach reduces excessive cross-service communication, which can otherwise introduce significant latency and performance bottlenecks.
+By consolidating related functionality into fewer, more cohesive services, we improve system responsiveness and stability.
+It also simplifies the development workflow, as engineers spend less time managing inter-service dependencies and coordination.
+Overall, this trade-off favors practical efficiency and developer productivity over strict adherence to fine-grained microservice principles.
+
 ### Database per service
 
 Each microservice owns its dedicated SQL Server database, and no service is allowed to query another service's data store directly.
