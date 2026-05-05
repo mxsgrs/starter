@@ -1,6 +1,6 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using Network.Application.IntegrationEvents;
+using Network.Application.Users.Events;
 using Sales.WebApi.Persistence;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -11,6 +11,7 @@ builder.AddServiceDefaults();
 builder.Services.AddMassTransit(registration =>
 {
     registration.AddConsumer<UserCreatedEventConsumer>();
+    registration.AddConsumer<UserDeletedEventConsumer>();
 
     registration.UsingRabbitMq((context, rabbitMqConfiguration) =>
     {

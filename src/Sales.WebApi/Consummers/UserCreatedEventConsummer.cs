@@ -2,7 +2,7 @@ using MassTransit;
 
 // Duplicate of Network.Application.IntegrationEvents.UserCreatedIntegrationEvent.
 // Namespace must match the publisher's namespace for MassTransit routing.
-namespace Network.Application.IntegrationEvents;
+namespace Network.Application.Users.Events;
 
 public record UserCreatedIntegrationEvent(Guid UserId);
 

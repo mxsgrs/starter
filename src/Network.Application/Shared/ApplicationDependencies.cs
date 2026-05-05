@@ -29,5 +29,6 @@ public static class ApplicationDependencies
         services.AddScoped<IPreSavedDomainEventHandler<UserUpdatedDomainEvent>, PreUserUpdatedDomainEventHandler>();
         services.AddScoped<IPreSavedDomainEventHandler<UserDeletedDomainEvent>, PreUserDeletedDomainEventHandler>();
         services.AddScoped<IPostSavedDomainEventHandler<UserCreatedDomainEvent>, PostUserCreatedDomainEventHandler>();
+        services.AddScoped<IPostSavedDomainEventHandler<UserDeletedDomainEvent>, PostUserDeletedDomainEventHandler>();
     }
 }
