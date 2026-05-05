@@ -36,6 +36,8 @@ if ((builder.Environment.IsDevelopment() && aspNetCoreEnvironment is not null) |
         options.UseSqlServer(connectionString));
 }
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApiDocument(settings =>
