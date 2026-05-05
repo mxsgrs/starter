@@ -23,7 +23,7 @@ dotnet run --project src/Starter.AppHost/Starter.AppHost.csproj
 
 The Aspire dashboard will open automatically and display all running services with their logs and traces.
 
-## Architecture Decisions
+## Architecture decisions
 
 ### Microservices size
 
