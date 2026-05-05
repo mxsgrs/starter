@@ -2,10 +2,7 @@ using Starter.AppHost.Resources;
 
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
-IResourceBuilder<ParameterResource> sqlPassword = builder.AddParameter("SqlPassword", secret: true);
-
-IResourceBuilder<SqlServerServerResource> sqlServer = builder
-    .AddSqlServer("SqlServer", password: sqlPassword, port: 14330);
+IResourceBuilder<SqlServerServerResource> sqlServer = SqlServer.AddResources(builder);
 
 IResourceBuilder<RabbitMQServerResource> rabbitMq = Messaging.AddResources(builder);
 

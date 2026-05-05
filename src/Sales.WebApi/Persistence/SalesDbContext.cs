@@ -23,6 +23,7 @@ public class SalesDbContext : DbContext
 
     public virtual DbSet<FinancialProduct> FinancialProducts { get; set; } = null!;
     public virtual DbSet<User> Users { get; set; } = null!;
+    public virtual DbSet<Contract> Contracts { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         => modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

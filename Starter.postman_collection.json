@@ -11,6 +11,20 @@
       "item": [
         {
           "name": "Read all financial products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.length > 0) pm.collectionVariables.set('FinancialProductId', json[0].id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -27,6 +41,148 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Create contract",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.id) {",
+                  "  pm.collectionVariables.set('ContractId', json.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{UserId}}\",\n  \"financialProductId\": \"{{FinancialProductId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{HostAddress}}/api/sales/contracts",
+              "host": [
+                "{{HostAddress}}"
+              ],
+              "path": [
+                "api",
+                "sales",
+                "contracts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Read all contracts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{HostAddress}}/api/sales/contracts",
+              "host": [
+                "{{HostAddress}}"
+              ],
+              "path": [
+                "api",
+                "sales",
+                "contracts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Read contract by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{HostAddress}}/api/sales/contracts/{{ContractId}}",
+              "host": [
+                "{{HostAddress}}"
+              ],
+              "path": [
+                "api",
+                "sales",
+                "contracts",
+                "{{ContractId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update contract",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"financialProductId\": \"{{FinancialProductId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{HostAddress}}/api/sales/contracts/{{ContractId}}",
+              "host": [
+                "{{HostAddress}}"
+              ],
+              "path": [
+                "api",
+                "sales",
+                "contracts",
+                "{{ContractId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete contract",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{HostAddress}}/api/sales/contracts/{{ContractId}}",
+              "host": [
+                "{{HostAddress}}"
+              ],
+              "path": [
+                "api",
+                "sales",
+                "contracts",
+                "{{ContractId}}"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -35,6 +191,20 @@
       "item": [
         {
           "name": "Register new user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var id = pm.response.text().replace(/\"/g, '').trim();",
+                  "if (id) pm.collectionVariables.set('UserId', id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -244,7 +414,7 @@
   "variable": [
     {
       "key": "HostAddress",
-      "value": "https://localhost:5001"
+      "value": "https://localhost:64030"
     },
     {
       "key": "UserId",
@@ -252,6 +422,14 @@
     },
     {
       "key": "Jwt",
+      "value": ""
+    },
+    {
+      "key": "FinancialProductId",
+      "value": ""
+    },
+    {
+      "key": "ContractId",
       "value": ""
     }
   ]
