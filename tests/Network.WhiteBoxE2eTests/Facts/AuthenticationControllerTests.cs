@@ -1,7 +1,7 @@
-using Network.WhiteBoxE2eTests.Facts.Factories;
 using Network.Application.Authentication.Dtos;
+using Network.WhiteBoxE2eTests.Factories;
 
-namespace Network.WhiteBoxE2eTests.Facts.Controllers;
+namespace Network.WhiteBoxE2eTests.Facts;
 
 public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
     : IClassFixture<StarterWebApplicationFactory>

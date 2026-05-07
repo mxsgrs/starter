@@ -1,6 +1,6 @@
 ﻿using Network.Application.Shared.Interfaces;
 
-namespace Network.Application.UnitTests.Facts.Fixtures;
+namespace Network.Application.UnitTests.Fixtures;
 
 public class SharedFixture
 {

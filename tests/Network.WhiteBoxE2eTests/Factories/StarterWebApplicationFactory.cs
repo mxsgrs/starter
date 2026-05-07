@@ -9,7 +9,7 @@ using Network.Infrastructure.Messaging;
 using Testcontainers.MsSql;
 using Testcontainers.RabbitMq;
 
-namespace Network.WhiteBoxE2eTests.Facts.Factories;
+namespace Network.WhiteBoxE2eTests.Factories;
 
 public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {

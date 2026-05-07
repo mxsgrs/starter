@@ -1,6 +1,7 @@
-namespace Network.Infrastructure.UnitTests.Facts.UserRepositoryTestCases;
+namespace Network.Infrastructure.IntegrationTests.Facts.UserRepositoryTestCases;
 
-public class ReadTrackedUserTests
+[Collection("Database")]
+public class ReadTrackedUserTests(SharedFixture fixture) : IDisposable
 {
     private readonly Mock<ILogger<UserRepository>> _logger = new();
 
@@ -8,7 +9,7 @@ public class ReadTrackedUserTests
     public async Task ReadTrackedUser_ById_ShouldReturnUser_WhenUserExists()
     {
         // Arrange
-        UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
+        UserDbContext dbContext = fixture.CreateDatabaseContext();
         User user = new UserBuilder().Build();
 
         await dbContext.Users.AddAsync(user);
@@ -28,7 +29,7 @@ public class ReadTrackedUserTests
     public async Task ReadTrackedUser_ById_ShouldReturnFail_WhenUserDoesNotExist()
     {
         // Arrange
-        UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
+        UserDbContext dbContext = fixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
@@ -43,7 +44,7 @@ public class ReadTrackedUserTests
     public async Task ReadTrackedUser_ByEmailAndPassword_ShouldReturnUser_WhenUserExists()
     {
         // Arrange
-        UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
+        UserDbContext dbContext = fixture.CreateDatabaseContext();
         User user = new UserBuilder().Build();
 
         await dbContext.Users.AddAsync(user);
@@ -63,7 +64,7 @@ public class ReadTrackedUserTests
     public async Task ReadTrackedUser_ByEmailAndPassword_ShouldReturnFail_WhenUserDoesNotExist()
     {
         // Arrange
-        UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
+        UserDbContext dbContext = fixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
@@ -72,5 +73,12 @@ public class ReadTrackedUserTests
         // Assert
         Assert.True(result.IsFailed);
         Assert.Equal("User not found", result.Errors[0].Message);
+    }
+
+    public void Dispose()
+    {
+        using UserDbContext context = fixture.CreateDatabaseContext();
+        context.Users.ExecuteDelete();
+        GC.SuppressFinalize(this);
     }
 }

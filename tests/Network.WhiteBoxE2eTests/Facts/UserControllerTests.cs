@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Network.Application.Users.Dtos;
-using Network.WhiteBoxE2eTests.Facts.Factories;
+using Network.WhiteBoxE2eTests.Factories;
 using System.Net.Http.Json;
 
-namespace Network.WhiteBoxE2eTests.Facts.Controllers;
+namespace Network.WhiteBoxE2eTests.Facts;
 
 public class UserControllerTests(StarterWebApplicationFactory factory)
     : IClassFixture<StarterWebApplicationFactory>, IAsyncLifetime

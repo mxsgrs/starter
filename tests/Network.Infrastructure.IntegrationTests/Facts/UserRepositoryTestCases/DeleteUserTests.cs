@@ -1,6 +1,7 @@
-namespace Network.Infrastructure.UnitTests.Facts.UserRepositoryTestCases;
+namespace Network.Infrastructure.IntegrationTests.Facts.UserRepositoryTestCases;
 
-public class DeleteUserTests
+[Collection("Database")]
+public class DeleteUserTests(SharedFixture fixture) : IDisposable
 {
     private readonly Mock<ILogger<UserRepository>> _logger = new();
 
@@ -8,7 +9,7 @@ public class DeleteUserTests
     public async Task DeleteUser_ShouldRemoveUserFromDatabase()
     {
         // Arrange
-        UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
+        UserDbContext dbContext = fixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
         User user = new UserBuilder().Build();
 
@@ -28,7 +29,7 @@ public class DeleteUserTests
     public async Task DeleteUser_ShouldReturnFail_WhenUserDoesNotExist()
     {
         // Arrange
-        UserDbContext dbContext = SharedFixture.CreateDatabaseContext();
+        UserDbContext dbContext = fixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
@@ -36,5 +37,12 @@ public class DeleteUserTests
 
         // Assert
         Assert.True(result.IsFailed);
+    }
+
+    public void Dispose()
+    {
+        using UserDbContext context = fixture.CreateDatabaseContext();
+        context.Users.ExecuteDelete();
+        GC.SuppressFinalize(this);
     }
 }

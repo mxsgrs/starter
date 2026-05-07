@@ -1,6 +1,6 @@
 using Network.Application.Users.UseCases;
 
-namespace Network.Application.UnitTests.Facts.Commands.UserCommands;
+namespace Network.Application.UnitTests.Facts.Users;
 
 public class DeleteUserCommandHandlerTests
 {

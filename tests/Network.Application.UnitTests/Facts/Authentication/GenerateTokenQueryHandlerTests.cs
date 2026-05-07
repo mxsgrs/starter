@@ -1,10 +1,8 @@
-using Network.Application.UnitTests.Facts.Fixtures;
-using Network.Domain.Aggregates.UserAggregate;
-using Network.ModelBuilders;
 using Network.Application.Authentication.Dtos;
 using Network.Application.Authentication.UseCases;
+using Network.Application.UnitTests.Fixtures;
 
-namespace Network.Application.UnitTests.Facts.Queries.AuthQueries;
+namespace Network.Application.UnitTests.Facts.Authentication;
 
 public class GenerateTokenQueryHandlerTests : IClassFixture<SharedFixture>
 {

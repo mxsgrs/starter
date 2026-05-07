@@ -1,8 +1,7 @@
-using Mapster;
 using Network.Application.Users.Dtos;
 using Network.Application.Users.UseCases;
 
-namespace Network.Application.UnitTests.Facts.Queries.UserQueries;
+namespace Network.Application.UnitTests.Facts.Users;
 
 public class ReadUserQueryHandlerTests
 {
