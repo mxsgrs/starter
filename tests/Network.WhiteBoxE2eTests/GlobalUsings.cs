@@ -1,4 +1,5 @@
 ﻿global using Network.Domain.Aggregates.UserAggregate;
+global using Network.Domain.Aggregates.UserAuditLogAggregate;
 global using Network.Infrastructure.Persistance;
 global using Network.ModelBuilders.Aggregates.UserAggregate;
 global using Network.ModelBuilders.Dtos.UserDtos;

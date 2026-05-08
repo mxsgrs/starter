@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Network.Domain.Aggregates.UserAggregate;
+using Network.Domain.Aggregates.UserAuditLogAggregate;
 using System.Reflection;
 
 namespace Network.Infrastructure.Persistance;

@@ -1,10 +1,12 @@
-namespace Network.Infrastructure.IntegrationTests.Facts.SecurityNoteRepositoryTestCases;
+namespace Network.Infrastructure.IntegrationTests.Facts.UserRepositoryTestCases;
 
 [Collection("Database")]
-public class RemoveTests(SharedFixture fixture) : IDisposable
+public class AddSecurityNoteAsyncTests(SharedFixture fixture) : IDisposable
 {
+    private readonly Mock<ILogger<UserRepository>> _logger = new();
+
     [Fact]
-    public async Task Remove_ShouldRemoveSecurityNote_WhenCalled()
+    public async Task AddSecurityNoteAsync_ShouldStageSecurityNote_WhenCalled()
     {
         // Arrange
         UserDbContext dbContext = fixture.CreateDatabaseContext();
@@ -12,19 +14,18 @@ public class RemoveTests(SharedFixture fixture) : IDisposable
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
 
+        UserRepository repository = new(_logger.Object, dbContext);
         SecurityNote note = SecurityNote.Create(user.Id, "Suspicious activity");
-        await dbContext.SecurityNotes.AddAsync(note);
-        await dbContext.SaveChangesAsync();
-
-        SecurityNoteRepository repository = new(dbContext);
 
         // Act
-        repository.Remove(note);
+        await repository.AddSecurityNoteAsync(note);
         await dbContext.SaveChangesAsync();
 
         // Assert
-        SecurityNote? deleted = await dbContext.SecurityNotes.FindAsync(note.Id);
-        Assert.Null(deleted);
+        SecurityNote? stored = await dbContext.SecurityNotes.FindAsync(note.Id);
+        Assert.NotNull(stored);
+        Assert.Equal(user.Id, stored.UserId);
+        Assert.Equal("Suspicious activity", stored.Reason);
     }
 
     public void Dispose()

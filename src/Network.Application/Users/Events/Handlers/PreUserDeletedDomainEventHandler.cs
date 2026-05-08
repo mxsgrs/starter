@@ -3,8 +3,8 @@ using Network.Application.Shared.Events;
 namespace Network.Application.Users.Events.Handlers;
 
 public class PreUserDeletedDomainEventHandler(
-    IAuditLogRepository auditLogRepository,
-    ISecurityNoteRepository securityNoteRepository)
+    IUserRepository userRepository,
+    IAuditLogRepository auditLogRepository)
     : IPreSavedDomainEventHandler<UserDeletedDomainEvent>
 {
     /// <summary>
@@ -13,10 +13,10 @@ public class PreUserDeletedDomainEventHandler(
     public async Task HandleAsync(UserDeletedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         UserAuditLog auditLog = UserAuditLog.Create(domainEvent.UserId, nameof(UserDeletedDomainEvent));
-        await auditLogRepository.AddAsync(auditLog, cancellationToken);
+        await auditLogRepository.AddAsync(auditLog);
 
-        SecurityNote? note = await securityNoteRepository.FindByUserIdAsync(domainEvent.UserId, cancellationToken);
+        SecurityNote? note = await userRepository.FindSecurityNoteByUserIdAsync(domainEvent.UserId);
         if (note is not null)
-            securityNoteRepository.Remove(note);
+            userRepository.RemoveSecurityNote(note);
     }
 }

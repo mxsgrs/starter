@@ -6,6 +6,11 @@ namespace Network.Infrastructure.Persistance.Repositories;
 
 public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbContext) : IUserRepository
 {
+    #region User
+
+    /// <summary>
+    /// Add a new user to the database
+    /// </summary>
     public async Task<Result<User>> AddAsync(User user)
     {
         logger.LogInformation("Creating user credentials {user}", user);
@@ -26,6 +31,9 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
         return user;
     }
 
+    /// <summary>
+    /// Find a user by their unique identifier
+    /// </summary>
     public async Task<Result<User>> FindByIdAsync(Guid id)
     {
         User? user = await dbContext.Users.FindAsync(id);
@@ -40,6 +48,9 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
         return Result.Ok(user);
     }
 
+    /// <summary>
+    /// Find a user by their email address and hashed password
+    /// </summary>
     public async Task<Result<User>> FindByCredentialsAsync(string emailAddress, string hashedPassword)
     {
         User? user = await dbContext.Users
@@ -56,6 +67,9 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
         return Result.Ok(user);
     }
 
+    /// <summary>
+    /// Remove a user from the database
+    /// </summary>
     public async Task<Result> RemoveAsync(Guid id)
     {
         User? user = await dbContext.Users.FindAsync(id);
@@ -92,5 +106,29 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
 
         return Result.Ok();
     }
+
+    #endregion
+
+    #region Security Note
+
+    /// <summary>
+    /// Stage a new security note to be committed as part of the current transaction
+    /// </summary>
+    public async Task AddSecurityNoteAsync(SecurityNote note)
+        => await dbContext.SecurityNotes.AddAsync(note);
+
+    /// <summary>
+    /// Find the security note for a given user, or null if none exists
+    /// </summary>
+    public async Task<SecurityNote?> FindSecurityNoteByUserIdAsync(Guid userId)
+        => await dbContext.SecurityNotes.FirstOrDefaultAsync(n => n.UserId == userId);
+
+    /// <summary>
+    /// Stage the removal of a security note to be committed as part of the current transaction
+    /// </summary>
+    public void RemoveSecurityNote(SecurityNote note)
+        => dbContext.SecurityNotes.Remove(note);
+
+    #endregion
 
 }

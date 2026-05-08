@@ -98,7 +98,7 @@ namespace UserService.Infrastructure.Persistance.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Network.Domain.Aggregates.UserAggregate.UserAuditLog", b =>
+            modelBuilder.Entity("Network.Domain.Aggregates.UserAuditLogAggregate.UserAuditLog", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

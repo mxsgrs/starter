@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Network.Domain.Aggregates.UserAggregate;
+using Network.Domain.Aggregates.UserAuditLogAggregate;
 
 namespace Network.Infrastructure.Persistance.Configurations;
 

@@ -1,10 +1,12 @@
-namespace Network.Infrastructure.IntegrationTests.Facts.SecurityNoteRepositoryTestCases;
+namespace Network.Infrastructure.IntegrationTests.Facts.UserRepositoryTestCases;
 
 [Collection("Database")]
-public class FindByUserIdAsyncTests(SharedFixture fixture) : IDisposable
+public class FindSecurityNoteByUserIdAsyncTests(SharedFixture fixture) : IDisposable
 {
+    private readonly Mock<ILogger<UserRepository>> _logger = new();
+
     [Fact]
-    public async Task FindByUserIdAsync_ShouldReturnSecurityNote_WhenExists()
+    public async Task FindSecurityNoteByUserIdAsync_ShouldReturnSecurityNote_WhenExists()
     {
         // Arrange
         UserDbContext dbContext = fixture.CreateDatabaseContext();
@@ -16,10 +18,10 @@ public class FindByUserIdAsyncTests(SharedFixture fixture) : IDisposable
         await dbContext.SecurityNotes.AddAsync(note);
         await dbContext.SaveChangesAsync();
 
-        SecurityNoteRepository repository = new(dbContext);
+        UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        SecurityNote? result = await repository.FindByUserIdAsync(user.Id, CancellationToken.None);
+        SecurityNote? result = await repository.FindSecurityNoteByUserIdAsync(user.Id);
 
         // Assert
         Assert.NotNull(result);
@@ -27,14 +29,14 @@ public class FindByUserIdAsyncTests(SharedFixture fixture) : IDisposable
     }
 
     [Fact]
-    public async Task FindByUserIdAsync_ShouldReturnNull_WhenNotExists()
+    public async Task FindSecurityNoteByUserIdAsync_ShouldReturnNull_WhenNotExists()
     {
         // Arrange
         UserDbContext dbContext = fixture.CreateDatabaseContext();
-        SecurityNoteRepository repository = new(dbContext);
+        UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        SecurityNote? result = await repository.FindByUserIdAsync(Guid.NewGuid(), CancellationToken.None);
+        SecurityNote? result = await repository.FindSecurityNoteByUserIdAsync(Guid.NewGuid());
 
         // Assert
         Assert.Null(result);

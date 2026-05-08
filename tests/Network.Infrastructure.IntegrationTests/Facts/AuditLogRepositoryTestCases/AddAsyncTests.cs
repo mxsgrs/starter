@@ -16,7 +16,7 @@ public class AddAsyncTests(SharedFixture fixture) : IDisposable
         UserAuditLog auditLog = UserAuditLog.Create(user.Id, "UserCreated");
 
         // Act
-        await repository.AddAsync(auditLog, CancellationToken.None);
+        await repository.AddAsync(auditLog);
         await dbContext.SaveChangesAsync();
 
         // Assert

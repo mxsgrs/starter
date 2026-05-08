@@ -4,8 +4,7 @@ namespace Network.Application.Users.Events.Handlers;
 
 public class PreUserUpdatedDomainEventHandler(
     IUserRepository userRepository,
-    IAuditLogRepository auditLogRepository,
-    ISecurityNoteRepository securityNoteRepository)
+    IAuditLogRepository auditLogRepository)
     : IPreSavedDomainEventHandler<UserUpdatedDomainEvent>
 {
     /// <summary>
@@ -14,22 +13,22 @@ public class PreUserUpdatedDomainEventHandler(
     public async Task HandleAsync(UserUpdatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         UserAuditLog auditLog = UserAuditLog.Create(domainEvent.UserId, nameof(UserUpdatedDomainEvent));
-        await auditLogRepository.AddAsync(auditLog, cancellationToken);
+        await auditLogRepository.AddAsync(auditLog);
 
         Result<User> userResult = await userRepository.FindByIdAsync(domainEvent.UserId);
         if (!userResult.IsSuccess) return;
 
         User user = userResult.Value;
-        SecurityNote? existingNote = await securityNoteRepository.FindByUserIdAsync(domainEvent.UserId, cancellationToken);
+        SecurityNote? existingNote = await userRepository.FindSecurityNoteByUserIdAsync(domainEvent.UserId);
 
         if (user.Age >= 30 && existingNote is null)
         {
             SecurityNote note = SecurityNote.Create(domainEvent.UserId, "User age is 30 or above");
-            await securityNoteRepository.AddAsync(note, cancellationToken);
+            await userRepository.AddSecurityNoteAsync(note);
         }
         else if (user.Age < 30 && existingNote is not null)
         {
-            securityNoteRepository.Remove(existingNote);
+            userRepository.RemoveSecurityNote(existingNote);
         }
     }
 }

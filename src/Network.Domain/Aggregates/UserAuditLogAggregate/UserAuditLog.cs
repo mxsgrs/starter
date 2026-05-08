@@ -1,4 +1,4 @@
-namespace Network.Domain.Aggregates.UserAggregate;
+namespace Network.Domain.Aggregates.UserAuditLogAggregate;
 
 public class UserAuditLog
 {

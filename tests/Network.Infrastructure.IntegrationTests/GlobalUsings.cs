@@ -4,6 +4,7 @@ global using Microsoft.Extensions.Logging;
 global using Moq;
 global using Network.Application.Shared.Interfaces;
 global using Network.Domain.Aggregates.UserAggregate;
+global using Network.Domain.Aggregates.UserAuditLogAggregate;
 global using Network.Domain.Authentication;
 global using Network.Infrastructure.IntegrationTests.Fixtures;
 global using Network.Infrastructure.Persistance;

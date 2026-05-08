@@ -20,6 +20,6 @@ public class UserCreatedEventConsumer(ILogger<UserCreatedEventConsumer> logger, 
             logger.LogInformation("Received the user created event {UserCreatedIntegrationEvent}", context.Message);
         }
 
-        await userRepository.AddAsync(context.Message.UserId, context.CancellationToken);
+        await userRepository.AddAsync(context.Message.UserId);
     }
 }

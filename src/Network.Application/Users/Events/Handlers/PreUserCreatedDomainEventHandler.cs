@@ -4,8 +4,7 @@ namespace Network.Application.Users.Events.Handlers;
 
 public class PreUserCreatedDomainEventHandler(
     IUserRepository userRepository,
-    IAuditLogRepository auditLogRepository,
-    ISecurityNoteRepository securityNoteRepository)
+    IAuditLogRepository auditLogRepository)
     : IPreSavedDomainEventHandler<UserCreatedDomainEvent>
 {
     /// <summary>
@@ -14,13 +13,13 @@ public class PreUserCreatedDomainEventHandler(
     public async Task HandleAsync(UserCreatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         UserAuditLog auditLog = UserAuditLog.Create(domainEvent.UserId, nameof(UserCreatedDomainEvent));
-        await auditLogRepository.AddAsync(auditLog, cancellationToken);
+        await auditLogRepository.AddAsync(auditLog);
 
         Result<User> userResult = await userRepository.FindByIdAsync(domainEvent.UserId);
         if (userResult.IsSuccess && userResult.Value.Age >= 30)
         {
             SecurityNote note = SecurityNote.Create(domainEvent.UserId, "User age is 30 or above");
-            await securityNoteRepository.AddAsync(note, cancellationToken);
+            await userRepository.AddSecurityNoteAsync(note);
         }
     }
 }

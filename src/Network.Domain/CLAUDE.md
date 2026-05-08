@@ -1,5 +1,17 @@
 # Network.Domain
 
+## Regions in Repository Interfaces
+
+Repository interfaces that cover multiple entity concerns must use `#region` blocks to group methods by entity. Each region is named after the entity it covers (e.g. `#region User`, `#region Security Note`).
+
+## Aggregate Folder Naming
+
+Aggregate folders must end with `Aggregate` (e.g. `UserAggregate`, `UserAuditLogAggregate`). This prevents name conflicts between the folder and the class it contains.
+
+## CancellationToken
+
+Do not add `CancellationToken` parameters to any method unless explicitly asked.
+
 ## Aggregate Roots
 
 Aggregates must have no public constructors and no public setters. All state changes go through domain methods (`Create`, `Update`, etc.) that return `Result` or `Result<T>`. Constructors are either `private` (for domain instantiation) or `private` with an EF Core comment (for ORM hydration).
