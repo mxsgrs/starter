@@ -115,7 +115,7 @@ public class User : AggregateRoot
         Gender = gender;
         Role = role;
         Phone = phone;
-        Address.UpdateFrom(address);
+        Address = address;
 
         Result validationResult = Validate(this);
 

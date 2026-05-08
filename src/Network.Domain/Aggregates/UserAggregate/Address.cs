@@ -42,20 +42,6 @@ public class Address : ValueObject<Address>
 
     #endregion
 
-    #region UpdateFrom
-
-    internal void UpdateFrom(Address other)
-    {
-        AddressLine = other.AddressLine;
-        AddressSupplement = other.AddressSupplement;
-        City = other.City;
-        ZipCode = other.ZipCode;
-        StateProvince = other.StateProvince;
-        Country = other.Country;
-    }
-
-    #endregion
-
     #region GetEqualityComponents
 
     /// <summary>
