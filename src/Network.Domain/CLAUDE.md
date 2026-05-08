@@ -6,7 +6,7 @@ Repository interfaces that cover multiple entity concerns must use `#region` blo
 
 ## Aggregate Folder Naming
 
-Aggregate folders must end with `Aggregate` (e.g. `UserAggregate`, `UserAuditLogAggregate`). This prevents name conflicts between the folder and the class it contains.
+Aggregate folders must end with `Aggregate` (e.g. `UserAggregate`, `AuditLogAggregate`). This prevents name conflicts between the folder and the class it contains.
 
 ## CancellationToken
 

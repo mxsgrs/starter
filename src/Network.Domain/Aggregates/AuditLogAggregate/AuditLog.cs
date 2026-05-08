@@ -1,11 +1,11 @@
-namespace Network.Domain.Aggregates.UserAuditLogAggregate;
+namespace Network.Domain.Aggregates.AuditLogAggregate;
 
-public class UserAuditLog
+public class AuditLog
 {
     /// <summary>
     /// Create a new audit log entry for a user event
     /// </summary>
-    public static UserAuditLog Create(Guid userId, string eventType) => new()
+    public static AuditLog Create(Guid userId, string eventType) => new()
     {
         Id = Guid.NewGuid(),
         UserId = userId,

@@ -12,7 +12,7 @@ public class PreUserUpdatedDomainEventHandler(
     /// </summary>
     public async Task HandleAsync(UserUpdatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        UserAuditLog auditLog = UserAuditLog.Create(domainEvent.UserId, nameof(UserUpdatedDomainEvent));
+        AuditLog auditLog = AuditLog.Create(domainEvent.UserId, nameof(UserUpdatedDomainEvent));
         await auditLogRepository.AddAsync(auditLog);
 
         Result<User> userResult = await userRepository.FindByIdAsync(domainEvent.UserId);

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Network.Domain.Aggregates.UserAggregate;
-using Network.Domain.Aggregates.UserAuditLogAggregate;
 using System.Reflection;
 
 namespace Network.Infrastructure.Persistance;
@@ -14,7 +13,7 @@ public partial class UserDbContext : DbContext
     }
 
     public virtual DbSet<User> Users { get; set; }
-    public virtual DbSet<UserAuditLog> AuditLogs { get; set; }
+    public virtual DbSet<AuditLog> AuditLogs { get; set; }
     public virtual DbSet<SecurityNote> SecurityNotes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

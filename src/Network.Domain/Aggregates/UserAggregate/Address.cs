@@ -1,6 +1,4 @@
-﻿using Network.Domain;
-
-namespace Network.Domain.Aggregates.UserAggregate;
+﻿namespace Network.Domain.Aggregates.UserAggregate;
 
 public class Address : ValueObject<Address>
 {

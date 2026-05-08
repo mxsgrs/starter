@@ -26,8 +26,15 @@ dotnet test tests/UserService.Application.UnitTests/UserService.Application.Unit
 # Run a single test by name
 dotnet test --filter "FullyQualifiedName~Handle_ShouldCreateUser_WhenValidInput"
 
-# Add an EF Core migration (run from repo root)
-dotnet ef migrations add <MigrationName> --project src/UserService.Infrastructure --startup-project src/UserService.WebApi
+# Add an EF Core migration for Network service (run from repo root)
+# Use Network.Infrastructure as both --project and --startup-project.
+# Do NOT add Microsoft.EntityFrameworkCore.Design to Network.WebApi — that would violate Clean Architecture
+# (the Presentation layer must not depend on EF Core tooling).
+# Network.Infrastructure contains IDesignTimeDbContextFactory<UserDbContext> which provides the design-time context.
+ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations add <MigrationName> --project src/Network.Infrastructure --startup-project src/Network.Infrastructure --output-dir Persistance/Migrations
+
+# Add an EF Core migration for Sales service (run from repo root)
+ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations add <MigrationName> --project src/Sales.WebApi --startup-project src/Sales.WebApi
 ```
 
 ## Architecture

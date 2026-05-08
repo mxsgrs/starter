@@ -1,5 +1,4 @@
 ﻿using Network.Application.Authentication.Dtos;
-using Network.Application.Authentication.UseCases;
 
 namespace Network.WebApi.Controllers;
 

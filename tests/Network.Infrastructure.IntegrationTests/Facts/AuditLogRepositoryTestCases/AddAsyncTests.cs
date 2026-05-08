@@ -13,14 +13,14 @@ public class AddAsyncTests(SharedFixture fixture) : IDisposable
         await dbContext.SaveChangesAsync();
 
         AuditLogRepository repository = new(dbContext);
-        UserAuditLog auditLog = UserAuditLog.Create(user.Id, "UserCreated");
+        AuditLog auditLog = AuditLog.Create(user.Id, "UserCreated");
 
         // Act
         await repository.AddAsync(auditLog);
         await dbContext.SaveChangesAsync();
 
         // Assert
-        UserAuditLog? stored = await dbContext.AuditLogs.FindAsync(auditLog.Id);
+        AuditLog? stored = await dbContext.AuditLogs.FindAsync(auditLog.Id);
         Assert.NotNull(stored);
         Assert.Equal(user.Id, stored.UserId);
         Assert.Equal("UserCreated", stored.EventType);

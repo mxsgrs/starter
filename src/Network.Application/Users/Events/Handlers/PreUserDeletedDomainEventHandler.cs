@@ -12,7 +12,7 @@ public class PreUserDeletedDomainEventHandler(
     /// </summary>
     public async Task HandleAsync(UserDeletedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        UserAuditLog auditLog = UserAuditLog.Create(domainEvent.UserId, nameof(UserDeletedDomainEvent));
+        AuditLog auditLog = AuditLog.Create(domainEvent.UserId, nameof(UserDeletedDomainEvent));
         await auditLogRepository.AddAsync(auditLog);
 
         SecurityNote? note = await userRepository.FindSecurityNoteByUserIdAsync(domainEvent.UserId);

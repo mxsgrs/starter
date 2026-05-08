@@ -1,9 +1,9 @@
-namespace Network.Domain.Aggregates.UserAuditLogAggregate;
+namespace Network.Domain.Aggregates.AuditLogAggregate;
 
 public interface IAuditLogRepository
 {
     /// <summary>
     /// Stage a new audit log entry to be committed as part of the current transaction
     /// </summary>
-    Task AddAsync(UserAuditLog auditLog);
+    Task AddAsync(AuditLog auditLog);
 }

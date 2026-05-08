@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Network.Application.Authentication.UseCases;
 using Network.Application.Shared.Events;
-using Network.Application.Users.Dtos;
 using Network.Application.Users.Events.Handlers;
 using Network.Application.Users.UseCases;
 

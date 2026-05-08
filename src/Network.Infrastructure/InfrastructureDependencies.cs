@@ -6,7 +6,6 @@ using Microsoft.Extensions.Hosting;
 using Network.Application.Shared.Events;
 using Network.Application.Shared.Interfaces;
 using Network.Domain.Aggregates.UserAggregate;
-using Network.Domain.Aggregates.UserAuditLogAggregate;
 using Network.Infrastructure.Messaging;
 using Network.Infrastructure.Persistance;
 using Network.Infrastructure.Persistance.Repositories;

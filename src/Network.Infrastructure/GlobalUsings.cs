@@ -1,2 +1,2 @@
 ﻿global using FluentResults;
-global using Network.Domain.Aggregates.UserAuditLogAggregate;
+global using Network.Domain.Aggregates.AuditLogAggregate;

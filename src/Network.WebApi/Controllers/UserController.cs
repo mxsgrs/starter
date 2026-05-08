@@ -1,7 +1,4 @@
-﻿using Network.Application.Users.Dtos;
-using Network.Application.Users.UseCases;
-
-namespace Network.WebApi.Controllers;
+﻿namespace Network.WebApi.Controllers;
 
 public class UserController : NetworkControllerBase
 {

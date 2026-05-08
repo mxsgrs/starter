@@ -1,15 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Network.Domain.Aggregates.UserAuditLogAggregate;
 
 namespace Network.Infrastructure.Persistance.Configurations;
 
-public class UserAuditLogConfiguration : IEntityTypeConfiguration<UserAuditLog>
+public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
 {
     /// <summary>
-    /// Configure the UserAuditLog entity mapping
+    /// Configure the AuditLog entity mapping
     /// </summary>
-    public void Configure(EntityTypeBuilder<UserAuditLog> builder)
+    public void Configure(EntityTypeBuilder<AuditLog> builder)
     {
         builder.HasKey(e => e.Id);
 

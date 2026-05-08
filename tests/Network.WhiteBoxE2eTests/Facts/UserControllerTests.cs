@@ -35,7 +35,7 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
         response.EnsureSuccessStatusCode();
         Guid createdId = await response.Content.ReadFromJsonAsync<Guid>(JsonOptions.Default);
         Assert.NotEqual(Guid.Empty, createdId);
-        UserAuditLog? auditLog = await _dbContext.AuditLogs
+        AuditLog? auditLog = await _dbContext.AuditLogs
             .FirstOrDefaultAsync(a => a.UserId == createdId && a.EventType == nameof(UserCreatedDomainEvent));
         Assert.NotNull(auditLog);
     }
@@ -55,7 +55,7 @@ public class UserControllerTests(StarterWebApplicationFactory factory)
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         User? deleted = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == user.Id);
         Assert.Null(deleted);
-        UserAuditLog? auditLog = await _dbContext.AuditLogs
+        AuditLog? auditLog = await _dbContext.AuditLogs
             .FirstOrDefaultAsync(a => a.UserId == user.Id && a.EventType == nameof(UserDeletedDomainEvent));
         Assert.NotNull(auditLog);
     }

@@ -7,14 +7,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Network.Infrastructure.Persistance;
 
-
 #nullable disable
 
-namespace UserService.Infrastructure.Persistance.Migrations
+namespace Network.Infrastructure.Persistance.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20260425174955_AddUserAuditLog")]
-    partial class AddUserAuditLog
+    [Migration("20260508195122_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,7 +25,56 @@ namespace UserService.Infrastructure.Persistance.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("UserService.Domain.Aggregates.UserAggregate.User", b =>
+            modelBuilder.Entity("Network.Domain.Aggregates.AuditLogAggregate.AuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime>("OccurredOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AuditLogs");
+                });
+
+            modelBuilder.Entity("Network.Domain.Aggregates.UserAggregate.SecurityNote", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("SecurityNotes");
+                });
+
+            modelBuilder.Entity("Network.Domain.Aggregates.UserAggregate.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -74,33 +122,18 @@ namespace UserService.Infrastructure.Persistance.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("UserService.Domain.Aggregates.UserAggregate.UserAuditLog", b =>
+            modelBuilder.Entity("Network.Domain.Aggregates.UserAggregate.SecurityNote", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("EventType")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<DateTime>("OccurredOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AuditLogs");
+                    b.HasOne("Network.Domain.Aggregates.UserAggregate.User", null)
+                        .WithOne("SecurityNote")
+                        .HasForeignKey("Network.Domain.Aggregates.UserAggregate.SecurityNote", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("UserService.Domain.Aggregates.UserAggregate.User", b =>
+            modelBuilder.Entity("Network.Domain.Aggregates.UserAggregate.User", b =>
                 {
-                    b.OwnsOne("UserService.Domain.Aggregates.UserAggregate.Address", "Address", b1 =>
+                    b.OwnsOne("Network.Domain.Aggregates.UserAggregate.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("UserId")
                                 .HasColumnType("uniqueidentifier");
@@ -137,6 +170,11 @@ namespace UserService.Infrastructure.Persistance.Migrations
 
                     b.Navigation("Address")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Network.Domain.Aggregates.UserAggregate.User", b =>
+                {
+                    b.Navigation("SecurityNote");
                 });
 #pragma warning restore 612, 618
         }
