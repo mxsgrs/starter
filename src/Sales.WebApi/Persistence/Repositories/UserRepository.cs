@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Sales.WebApi.Domain;
 
-namespace Sales.WebApi.Persistence;
+namespace Sales.WebApi.Persistence.Repositories;
 
 public class UserRepository(SalesDbContext dbContext) : IUserRepository
 {

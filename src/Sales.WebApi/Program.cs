@@ -2,6 +2,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Network.Application.Users.Events;
 using Sales.WebApi.Persistence;
+using Sales.WebApi.Persistence.Repositories;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

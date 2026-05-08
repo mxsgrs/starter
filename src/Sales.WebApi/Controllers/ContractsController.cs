@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Sales.WebApi.Domain;
 using Sales.WebApi.Persistence;
 
 namespace Sales.WebApi.Controllers;

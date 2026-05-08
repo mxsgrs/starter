@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Sales.WebApi.Domain;
 
 namespace Sales.WebApi.Persistence.Configurations;
 

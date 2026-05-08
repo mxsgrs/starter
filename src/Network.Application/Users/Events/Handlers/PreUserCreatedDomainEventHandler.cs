@@ -18,8 +18,9 @@ public class PreUserCreatedDomainEventHandler(
         Result<User> userResult = await userRepository.FindByIdAsync(domainEvent.UserId);
         if (userResult.IsSuccess && userResult.Value.Age >= 30)
         {
-            SecurityNote note = SecurityNote.Create(domainEvent.UserId, "User age is 30 or above");
-            await userRepository.AddSecurityNoteAsync(note);
+            Result<SecurityNote> noteResult = SecurityNote.Create(domainEvent.UserId, "User age is 30 or above");
+            if (noteResult.IsSuccess)
+                await userRepository.AddSecurityNoteAsync(noteResult.Value);
         }
     }
 }

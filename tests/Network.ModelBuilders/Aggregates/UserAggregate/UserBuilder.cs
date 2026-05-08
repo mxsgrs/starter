@@ -4,7 +4,7 @@ using Network.ModelBuilders.Shared;
 
 namespace Network.ModelBuilders.Aggregates.UserAggregate;
 
-public class UserBuilder : IModelBuilder<User>
+public class UserBuilder : IEntityModelBuilder<User>
 {
     private Guid _id = Guid.NewGuid();
     private string _emailAddress = "test@example.com";

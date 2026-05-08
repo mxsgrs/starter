@@ -74,6 +74,7 @@ Test projects mirror the layer under test: `UserService.Domain.UnitTests`, `User
 - **Integration tests** (`Network.Infrastructure.IntegrationTests`) use Testcontainers with a real SQL Server container. `SharedFixture` starts one container and creates one database for the entire collection (`[CollectionDefinition("Database")]`), applies EF Core migrations once in `InitializeAsync`, and exposes `CreateDatabaseContext()` to return a fresh `UserDbContext` per test. Each test class implements `IDisposable` to delete only the rows it touched via `ExecuteDelete()`.
 - **E2E tests** (`WhiteBoxE2eTests`) spin up real SQL Server and RabbitMQ containers via Testcontainers. `StarterWebApplicationFactory` replaces `ICheckUserAddressService` with `AlwaysValidAddressService` and provides `CreateAuthorizedClient()` with a long-lived JWT.
 - The E2E factory exposes a `FakeDomainEventPublisher` on `factory.DomainEventPublisher` for asserting on published events.
+- **Model builders** — all tests must construct domain objects and DTOs via builders from `Network.ModelBuilders` (e.g. `new UserBuilder().Build()`). Never instantiate aggregates, entities, or DTOs directly in test code. Add a builder to `Network.ModelBuilders` whenever a new buildable type is introduced.
 
 ### Configuration
 

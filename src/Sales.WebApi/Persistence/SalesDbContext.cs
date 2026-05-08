@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Sales.WebApi.Domain;
 using System.Reflection;
 
 namespace Sales.WebApi.Persistence;

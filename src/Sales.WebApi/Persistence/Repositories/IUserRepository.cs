@@ -1,4 +1,4 @@
-namespace Sales.WebApi.Persistence;
+namespace Sales.WebApi.Persistence.Repositories;
 
 public interface IUserRepository
 {

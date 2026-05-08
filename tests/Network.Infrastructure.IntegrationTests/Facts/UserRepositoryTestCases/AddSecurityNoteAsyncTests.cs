@@ -15,7 +15,7 @@ public class AddSecurityNoteAsyncTests(SharedFixture fixture) : IDisposable
         await dbContext.SaveChangesAsync();
 
         UserRepository repository = new(_logger.Object, dbContext);
-        SecurityNote note = SecurityNote.Create(user.Id, "Suspicious activity");
+        SecurityNote note = SecurityNote.Create(user.Id, "Suspicious activity").Value;
 
         // Act
         await repository.AddSecurityNoteAsync(note);

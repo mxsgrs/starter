@@ -1,5 +1,5 @@
 using MassTransit;
-using Sales.WebApi.Persistence;
+using Sales.WebApi.Persistence.Repositories;
 
 // Duplicate of Network.Application.IntegrationEvents.UserCreatedIntegrationEvent.
 // Namespace must match the publisher's namespace for MassTransit routing.

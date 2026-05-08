@@ -14,7 +14,7 @@ public class FindSecurityNoteByUserIdAsyncTests(SharedFixture fixture) : IDispos
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
 
-        SecurityNote note = SecurityNote.Create(user.Id, "Suspicious activity");
+        SecurityNote note = SecurityNote.Create(user.Id, "Suspicious activity").Value;
         await dbContext.SecurityNotes.AddAsync(note);
         await dbContext.SaveChangesAsync();
 

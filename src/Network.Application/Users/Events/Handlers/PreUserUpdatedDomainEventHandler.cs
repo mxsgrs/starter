@@ -23,8 +23,9 @@ public class PreUserUpdatedDomainEventHandler(
 
         if (user.Age >= 30 && existingNote is null)
         {
-            SecurityNote note = SecurityNote.Create(domainEvent.UserId, "User age is 30 or above");
-            await userRepository.AddSecurityNoteAsync(note);
+            Result<SecurityNote> noteResult = SecurityNote.Create(domainEvent.UserId, "User age is 30 or above");
+            if (noteResult.IsSuccess)
+                await userRepository.AddSecurityNoteAsync(noteResult.Value);
         }
         else if (user.Age < 30 && existingNote is not null)
         {
