@@ -1,9 +1,10 @@
 using Network.Application.Users.Dtos;
 using Network.Domain.Aggregates.UserAggregate;
+using Network.ModelBuilders.Shared;
 
-namespace Network.ModelBuilders;
+namespace Network.ModelBuilders.Dtos.UserDtos;
 
-public class UserDtoBuilder
+public class UserDtoBuilder : IModelBuilder<UserDto>
 {
     private Guid _id = Guid.NewGuid();
     private string _emailAddress = "test@example.com";

@@ -1,9 +1,10 @@
 using FluentResults;
 using Network.Domain.Aggregates.UserAggregate;
+using Network.ModelBuilders.Shared;
 
-namespace Network.ModelBuilders;
+namespace Network.ModelBuilders.Aggregates.UserAggregate;
 
-public class UserBuilder
+public class UserBuilder : IModelBuilder<User>
 {
     private Guid _id = Guid.NewGuid();
     private string _emailAddress = "test@example.com";

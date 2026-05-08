@@ -1,9 +1,10 @@
 using Network.Application.Users.Dtos;
 using Network.Domain.Aggregates.UserAggregate;
+using Network.ModelBuilders.Shared;
 
-namespace Network.ModelBuilders;
+namespace Network.ModelBuilders.Dtos.UserDtos;
 
-public class UserWriteDtoBuilder
+public class UserWriteDtoBuilder : IModelBuilder<UserWriteDto>
 {
     private string _emailAddress = "test@example.com";
     private string _hashedPassword = "hashedPassword";

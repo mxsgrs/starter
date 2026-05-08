@@ -5,4 +5,5 @@ global using Microsoft.Extensions.Logging;
 global using Moq;
 global using Network.Domain.Aggregates.UserAggregate;
 global using Network.Domain.Authentication;
-global using Network.ModelBuilders;
+global using Network.ModelBuilders.Aggregates.UserAggregate;
+global using Network.ModelBuilders.Dtos.UserDtos;

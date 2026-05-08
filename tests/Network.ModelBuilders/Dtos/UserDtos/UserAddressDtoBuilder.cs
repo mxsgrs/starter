@@ -1,8 +1,9 @@
 using Network.Application.Users.Dtos;
+using Network.ModelBuilders.Shared;
 
-namespace Network.ModelBuilders;
+namespace Network.ModelBuilders.Dtos.UserDtos;
 
-public class UserAddressDtoBuilder
+public class UserAddressDtoBuilder : IModelBuilder<UserAddressDto>
 {
     private string _addressLine = "123 Main St";
     private string? _addressSupplement = null;

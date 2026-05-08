@@ -1,8 +1,9 @@
 using Network.Domain.Aggregates.UserAggregate;
+using Network.ModelBuilders.Shared;
 
-namespace Network.ModelBuilders;
+namespace Network.ModelBuilders.Aggregates.UserAggregate;
 
-public class AddressBuilder
+public class AddressBuilder : IModelBuilder<Address>
 {
     private string _addressLine = "123 Main St";
     private string _city = "City";
