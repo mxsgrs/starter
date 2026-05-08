@@ -47,7 +47,7 @@ public class GenerateTokenQueryHandler(
 
     private async Task<Result<User>> ValidateUser(string emailAddress, string hashedPassword)
     {
-        return await userService.ReadUserByCredentials(emailAddress, hashedPassword);
+        return await userService.FindByCredentialsAsync(emailAddress, hashedPassword);
     }
 
     private static string GenerateToken(Guid userId, string emailAddress, JsonWebTokenParameters jwtParameters)

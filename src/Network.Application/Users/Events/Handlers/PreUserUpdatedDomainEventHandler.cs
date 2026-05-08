@@ -16,7 +16,7 @@ public class PreUserUpdatedDomainEventHandler(
         UserAuditLog auditLog = UserAuditLog.Create(domainEvent.UserId, nameof(UserUpdatedDomainEvent));
         await auditLogRepository.AddAsync(auditLog, cancellationToken);
 
-        Result<User> userResult = await userRepository.ReadTrackedUser(domainEvent.UserId);
+        Result<User> userResult = await userRepository.FindByIdAsync(domainEvent.UserId);
         if (!userResult.IsSuccess) return;
 
         User user = userResult.Value;

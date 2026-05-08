@@ -6,7 +6,7 @@ namespace Network.Infrastructure.Persistance.Repositories;
 
 public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbContext) : IUserRepository
 {
-    public async Task<Result<User>> CreateUser(User user)
+    public async Task<Result<User>> AddAsync(User user)
     {
         logger.LogInformation("Creating user credentials {user}", user);
 
@@ -26,7 +26,7 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
         return user;
     }
 
-    public async Task<Result<User>> ReadTrackedUser(Guid id)
+    public async Task<Result<User>> FindByIdAsync(Guid id)
     {
         User? user = await dbContext.Users.FindAsync(id);
 
@@ -40,7 +40,7 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
         return Result.Ok(user);
     }
 
-    public async Task<Result<User>> ReadUserByCredentials(string emailAddress, string hashedPassword)
+    public async Task<Result<User>> FindByCredentialsAsync(string emailAddress, string hashedPassword)
     {
         User? user = await dbContext.Users
             .FirstOrDefaultAsync(item => item.EmailAddress == emailAddress
@@ -50,13 +50,13 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
         {
             logger.LogWarning("User with email {email} and password was not found", emailAddress);
 
-            return Result.Fail("User not found");   
+            return Result.Fail("User not found");
         }
 
         return Result.Ok(user);
     }
 
-    public async Task<Result> DeleteUser(Guid id)
+    public async Task<Result> RemoveAsync(Guid id)
     {
         User? user = await dbContext.Users.FindAsync(id);
 
@@ -78,7 +78,7 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
     /// Persists mutations already applied to the tracked User aggregate.
     /// FindAsync returns the same in-memory instance (identity map), so no extra DB round trip occurs.
     /// </summary>
-    public async Task<Result> UpdateUser(Guid id)
+    public async Task<Result> UpdateAsync(Guid id)
     {
         User? trackedUser = await dbContext.Users.FindAsync(id);
 

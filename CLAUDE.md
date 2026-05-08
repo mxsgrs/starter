@@ -79,6 +79,10 @@ Test projects mirror the layer under test: `UserService.Domain.UnitTests`, `User
 
 The app reads `appsettings.{ConfigurationName}.json` where `ConfigurationName` comes from an assembly-level attribute (not the standard `ASPNETCORE_ENVIRONMENT`). The `Debug` configuration includes local SQL Server and JWT parameters. In Aspire, connection strings are injected automatically.
 
+## CancellationToken
+
+Do not add `CancellationToken` parameters to methods unless explicitly asked.
+
 ## Microservice Independence Rules
 
 - **No project references between microservices.** Each microservice must be a standalone deployable unit. Never add a `ProjectReference` (or equivalent) from one microservice to another.

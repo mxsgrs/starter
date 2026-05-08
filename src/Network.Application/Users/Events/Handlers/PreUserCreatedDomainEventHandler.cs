@@ -16,7 +16,7 @@ public class PreUserCreatedDomainEventHandler(
         UserAuditLog auditLog = UserAuditLog.Create(domainEvent.UserId, nameof(UserCreatedDomainEvent));
         await auditLogRepository.AddAsync(auditLog, cancellationToken);
 
-        Result<User> userResult = await userRepository.ReadTrackedUser(domainEvent.UserId);
+        Result<User> userResult = await userRepository.FindByIdAsync(domainEvent.UserId);
         if (userResult.IsSuccess && userResult.Value.Age >= 30)
         {
             SecurityNote note = SecurityNote.Create(domainEvent.UserId, "User age is 30 or above");

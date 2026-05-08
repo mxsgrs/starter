@@ -22,10 +22,10 @@ public class UpdateUserCommandHandlerTests
         UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
         User user = new UserBuilder().Build();
 
-        _mockUserRepository.Setup(repo => repo.ReadTrackedUser(user.Id))
+        _mockUserRepository.Setup(repo => repo.FindByIdAsync(user.Id))
             .ReturnsAsync(Result.Ok(user));
 
-        _mockUserRepository.Setup(repo => repo.UpdateUser(user.Id))
+        _mockUserRepository.Setup(repo => repo.UpdateAsync(user.Id))
             .ReturnsAsync(Result.Ok());
 
         UpdateUserCommand command = new(user.Id, userWriteDto);
@@ -35,7 +35,7 @@ public class UpdateUserCommandHandlerTests
 
         // Assert
         Assert.True(result.IsSuccess);
-        _mockUserRepository.Verify(repo => repo.UpdateUser(user.Id), Times.Once);
+        _mockUserRepository.Verify(repo => repo.UpdateAsync(user.Id), Times.Once);
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class UpdateUserCommandHandlerTests
         UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
         Guid unknownId = Guid.NewGuid();
 
-        _mockUserRepository.Setup(repo => repo.ReadTrackedUser(unknownId))
+        _mockUserRepository.Setup(repo => repo.FindByIdAsync(unknownId))
             .ReturnsAsync(Result.Fail<User>("User not found"));
 
         UpdateUserCommand command = new(unknownId, userWriteDto);
@@ -55,7 +55,7 @@ public class UpdateUserCommandHandlerTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        _mockUserRepository.Verify(repo => repo.UpdateUser(It.IsAny<Guid>()), Times.Never);
+        _mockUserRepository.Verify(repo => repo.UpdateAsync(It.IsAny<Guid>()), Times.Never);
     }
 
     [Fact]
@@ -65,10 +65,10 @@ public class UpdateUserCommandHandlerTests
         UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
         User user = new UserBuilder().Build();
 
-        _mockUserRepository.Setup(repo => repo.ReadTrackedUser(user.Id))
+        _mockUserRepository.Setup(repo => repo.FindByIdAsync(user.Id))
             .ReturnsAsync(Result.Ok(user));
 
-        _mockUserRepository.Setup(repo => repo.UpdateUser(user.Id))
+        _mockUserRepository.Setup(repo => repo.UpdateAsync(user.Id))
             .ReturnsAsync(Result.Fail("Repository error"));
 
         UpdateUserCommand command = new(user.Id, userWriteDto);

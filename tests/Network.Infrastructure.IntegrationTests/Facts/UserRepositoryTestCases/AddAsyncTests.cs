@@ -1,12 +1,29 @@
 namespace Network.Infrastructure.IntegrationTests.Facts.UserRepositoryTestCases;
 
 [Collection("Database")]
-public class DeleteUserTests(SharedFixture fixture) : IDisposable
+public class AddAsyncTests(SharedFixture fixture) : IDisposable
 {
     private readonly Mock<ILogger<UserRepository>> _logger = new();
 
     [Fact]
-    public async Task DeleteUser_ShouldRemoveUserFromDatabase()
+    public async Task AddAsync_ShouldAddUserToDatabase()
+    {
+        // Arrange
+        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        UserRepository repository = new(_logger.Object, dbContext);
+        User user = new UserBuilder().Build();
+
+        // Act
+        _ = await repository.AddAsync(user);
+
+        // Assert
+        User? storedUser = await dbContext.Users.FindAsync(user.Id);
+        Assert.NotNull(storedUser);
+        Assert.Equal("test@example.com", storedUser.EmailAddress);
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldReturnFail_WhenUserAlreadyExists()
     {
         // Arrange
         UserDbContext dbContext = fixture.CreateDatabaseContext();
@@ -16,24 +33,10 @@ public class DeleteUserTests(SharedFixture fixture) : IDisposable
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
 
-        // Act
-        Result result = await repository.DeleteUser(user.Id);
-
-        // Assert
-        Assert.True(result.IsSuccess);
-        User? deleted = await dbContext.Users.FindAsync(user.Id);
-        Assert.Null(deleted);
-    }
-
-    [Fact]
-    public async Task DeleteUser_ShouldReturnFail_WhenUserDoesNotExist()
-    {
-        // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
-        UserRepository repository = new(_logger.Object, dbContext);
+        User duplicate = new UserBuilder().WithId(Guid.NewGuid()).Build();
 
         // Act
-        Result result = await repository.DeleteUser(Guid.NewGuid());
+        Result<User> result = await repository.AddAsync(duplicate);
 
         // Assert
         Assert.True(result.IsFailed);

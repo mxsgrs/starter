@@ -1,45 +1,43 @@
 namespace Network.Infrastructure.IntegrationTests.Facts.UserRepositoryTestCases;
 
 [Collection("Database")]
-public class CreateUserTests(SharedFixture fixture) : IDisposable
+public class FindByCredentialsAsyncTests(SharedFixture fixture) : IDisposable
 {
     private readonly Mock<ILogger<UserRepository>> _logger = new();
 
     [Fact]
-    public async Task CreateUser_ShouldAddUserToDatabase()
+    public async Task FindByCredentialsAsync_ShouldReturnUser_WhenUserExists()
     {
         // Arrange
         UserDbContext dbContext = fixture.CreateDatabaseContext();
-        UserRepository repository = new(_logger.Object, dbContext);
-        User user = new UserBuilder().Build();
-
-        // Act
-        _ = await repository.CreateUser(user);
-
-        // Assert
-        User? storedUser = await dbContext.Users.FindAsync(user.Id);
-        Assert.NotNull(storedUser);
-        Assert.Equal("test@example.com", storedUser.EmailAddress);
-    }
-
-    [Fact]
-    public async Task CreateUser_ShouldReturnFail_WhenUserAlreadyExists()
-    {
-        // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
-        UserRepository repository = new(_logger.Object, dbContext);
         User user = new UserBuilder().Build();
 
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
 
-        User duplicate = new UserBuilder().WithId(Guid.NewGuid()).Build();
+        UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        Result<User> result = await repository.CreateUser(duplicate);
+        Result<User> result = await repository.FindByCredentialsAsync("test@example.com", "hashedPassword");
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal(user.Id, result.Value.Id);
+    }
+
+    [Fact]
+    public async Task FindByCredentialsAsync_ShouldReturnFail_WhenUserDoesNotExist()
+    {
+        // Arrange
+        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        UserRepository repository = new(_logger.Object, dbContext);
+
+        // Act
+        Result<User> result = await repository.FindByCredentialsAsync("nonexistent@example.com", "wrongPassword");
 
         // Assert
         Assert.True(result.IsFailed);
+        Assert.Equal("User not found", result.Errors[0].Message);
     }
 
     public void Dispose()

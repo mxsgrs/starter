@@ -22,7 +22,7 @@ public class CreateUserCommandHandlerTests
         UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
         User user = new UserBuilder().Build();
 
-        _mockUserRepository.Setup(repo => repo.CreateUser(It.IsAny<User>()))
+        _mockUserRepository.Setup(repo => repo.AddAsync(It.IsAny<User>()))
             .ReturnsAsync(Result.Ok(user));
 
         CreateUserCommand command = new(userWriteDto);
@@ -33,7 +33,7 @@ public class CreateUserCommandHandlerTests
         // Assert
         Assert.True(result.IsSuccess);
         Assert.Equal(user.Id, result.Value);
-        _mockUserRepository.Verify(repo => repo.CreateUser(It.Is<User>(u => u.EmailAddress == userWriteDto.EmailAddress)), Times.Once);
+        _mockUserRepository.Verify(repo => repo.AddAsync(It.Is<User>(u => u.EmailAddress == userWriteDto.EmailAddress)), Times.Once);
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class CreateUserCommandHandlerTests
         // Arrange
         UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
 
-        _mockUserRepository.Setup(repo => repo.CreateUser(It.IsAny<User>()))
+        _mockUserRepository.Setup(repo => repo.AddAsync(It.IsAny<User>()))
             .ReturnsAsync(Result.Fail<User>("Repository error"));
 
         CreateUserCommand command = new(userWriteDto);

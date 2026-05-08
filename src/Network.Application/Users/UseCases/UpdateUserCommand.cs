@@ -15,7 +15,7 @@ public class UpdateUserCommandHandler(
 {
     public async Task<Result> HandleAsync(UpdateUserCommand request, CancellationToken cancellationToken = default)
     {
-        Result<User> trackedUser = await userRepository.ReadTrackedUser(request.Id);
+        Result<User> trackedUser = await userRepository.FindByIdAsync(request.Id);
 
         if (trackedUser.IsFailed) return Result.Fail(trackedUser.Errors);
 
@@ -23,7 +23,7 @@ public class UpdateUserCommandHandler(
 
         if (updateResult.IsFailed) return Result.Fail(updateResult.Errors);
 
-        Result savedUser = await userRepository.UpdateUser(request.Id);
+        Result savedUser = await userRepository.UpdateAsync(request.Id);
 
         if (savedUser.IsFailed) return Result.Fail(savedUser.Errors);
 

@@ -19,10 +19,10 @@ public class DeleteUserCommandHandlerTests
         // Arrange
         User user = new UserBuilder().Build();
 
-        _mockUserRepository.Setup(repo => repo.ReadTrackedUser(user.Id))
+        _mockUserRepository.Setup(repo => repo.FindByIdAsync(user.Id))
             .ReturnsAsync(Result.Ok(user));
 
-        _mockUserRepository.Setup(repo => repo.DeleteUser(user.Id))
+        _mockUserRepository.Setup(repo => repo.RemoveAsync(user.Id))
             .ReturnsAsync(Result.Ok());
 
         // Act
@@ -30,7 +30,7 @@ public class DeleteUserCommandHandlerTests
 
         // Assert
         Assert.True(result.IsSuccess);
-        _mockUserRepository.Verify(repo => repo.DeleteUser(user.Id), Times.Once);
+        _mockUserRepository.Verify(repo => repo.RemoveAsync(user.Id), Times.Once);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class DeleteUserCommandHandlerTests
         // Arrange
         Guid unknownId = Guid.NewGuid();
 
-        _mockUserRepository.Setup(repo => repo.ReadTrackedUser(unknownId))
+        _mockUserRepository.Setup(repo => repo.FindByIdAsync(unknownId))
             .ReturnsAsync(Result.Fail<User>("User not found"));
 
         // Act
@@ -47,7 +47,7 @@ public class DeleteUserCommandHandlerTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        _mockUserRepository.Verify(repo => repo.DeleteUser(It.IsAny<Guid>()), Times.Never);
+        _mockUserRepository.Verify(repo => repo.RemoveAsync(It.IsAny<Guid>()), Times.Never);
     }
 
     [Fact]
@@ -56,10 +56,10 @@ public class DeleteUserCommandHandlerTests
         // Arrange
         User user = new UserBuilder().Build();
 
-        _mockUserRepository.Setup(repo => repo.ReadTrackedUser(user.Id))
+        _mockUserRepository.Setup(repo => repo.FindByIdAsync(user.Id))
             .ReturnsAsync(Result.Ok(user));
 
-        _mockUserRepository.Setup(repo => repo.DeleteUser(user.Id))
+        _mockUserRepository.Setup(repo => repo.RemoveAsync(user.Id))
             .ReturnsAsync(Result.Fail("Repository error"));
 
         // Act

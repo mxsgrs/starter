@@ -19,7 +19,7 @@ public class CreateUserCommandHandler(
 
         if (user.IsFailed) return Result.Fail(user.Errors);
 
-        Result<User> createdUser = await userRepository.CreateUser(user.Value);
+        Result<User> createdUser = await userRepository.AddAsync(user.Value);
 
         if (createdUser.IsFailed) return Result.Fail(createdUser.Errors);
 
