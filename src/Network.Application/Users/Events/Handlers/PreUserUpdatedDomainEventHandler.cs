@@ -12,8 +12,9 @@ public class PreUserUpdatedDomainEventHandler(
     /// </summary>
     public async Task HandleAsync(UserUpdatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        AuditLog auditLog = AuditLog.Create(domainEvent.UserId, nameof(UserUpdatedDomainEvent));
-        await auditLogRepository.AddAsync(auditLog);
+        Result<AuditLog> auditLogResult = AuditLog.Create(domainEvent.UserId, nameof(UserUpdatedDomainEvent));
+        if (auditLogResult.IsSuccess)
+            await auditLogRepository.AddAsync(auditLogResult.Value);
 
         Result<User> userResult = await userRepository.FindByIdAsync(domainEvent.UserId);
         if (!userResult.IsSuccess) return;

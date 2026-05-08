@@ -12,8 +12,9 @@ public class PreUserCreatedDomainEventHandler(
     /// </summary>
     public async Task HandleAsync(UserCreatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        AuditLog auditLog = AuditLog.Create(domainEvent.UserId, nameof(UserCreatedDomainEvent));
-        await auditLogRepository.AddAsync(auditLog);
+        Result<AuditLog> auditLogResult = AuditLog.Create(domainEvent.UserId, nameof(UserCreatedDomainEvent));
+        if (auditLogResult.IsSuccess)
+            await auditLogRepository.AddAsync(auditLogResult.Value);
 
         Result<User> userResult = await userRepository.FindByIdAsync(domainEvent.UserId);
         if (userResult.IsSuccess && userResult.Value.Age >= 30)

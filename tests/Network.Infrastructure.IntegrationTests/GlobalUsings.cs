@@ -9,4 +9,5 @@ global using Network.Domain.Authentication;
 global using Network.Infrastructure.IntegrationTests.Fixtures;
 global using Network.Infrastructure.Persistance;
 global using Network.Infrastructure.Persistance.Repositories;
+global using Network.ModelBuilders.Aggregates.AuditLogAggregate;
 global using Network.ModelBuilders.Aggregates.UserAggregate;

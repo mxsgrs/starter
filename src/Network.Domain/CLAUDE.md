@@ -14,20 +14,27 @@ Do not add `CancellationToken` parameters to any method unless explicitly asked.
 
 ## Aggregate Roots
 
-Aggregates must have no public constructors and no public setters. All state changes go through domain methods (`Create`, `Update`, etc.) that return `Result` or `Result<T>`. Constructors are either `private` (for domain instantiation) or `private` with an EF Core comment (for ORM hydration).
+Every aggregate must inherit from `AggregateRoot`. Aggregates must have no public constructors and no public setters. All state changes go through domain methods (`Create`, `Update`, etc.) that return `Result<T>` (or `Result` for void mutations) — even when there is currently no validation logic. Returning `Result` from the start keeps the signature consistent and avoids breaking callers if validation is added later. Constructors are either `private` (for domain instantiation) or `private` with an EF Core comment (for ORM hydration).
 
 ```csharp
 // Correct
-public static Result<User> Create(...) { ... }
-public Result Update(...) { ... }
-private User() { } // EF Core
+public class Order : AggregateRoot
+{
+    public static Result<Order> Create(...) => Result.Ok(new Order { ... });
+    public Result Cancel() { ... return Result.Ok(); }
+    private Order() { } // EF Core
+}
 
-// Wrong — leaks construction and mutation outside the domain
-public User(...) { }
-public string FirstName { get; set; }
+// Wrong — missing base class, plain return type, public constructor/setter
+public class Order
+{
+    public static Order Create(...) => new Order { ... };
+    public Order(...) { }
+    public string Status { get; set; }
+}
 
 // Properties use private set
-public string FirstName { get; private set; } = "";
+public string Status { get; private set; } = "";
 ```
 
 ## Value Objects
