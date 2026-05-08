@@ -19,7 +19,9 @@
       "Read(//c/Users/mxsgr/.claude/plans/**)",
       "Bash(dotnet restore *)",
       "Bash(export PATH=\"$PATH:/Users/maximegros/.dotnet/tools\")",
-      "Bash(xargs cat *)"
+      "Bash(xargs cat *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\mxsgr\\\\source\\\\repos\\\\starter\\\\tests\" -Directory)",
+      "Bash(Select-Object Name)"
     ]
   }
 }

@@ -23,6 +23,10 @@ dotnet run --project src/Starter.AppHost/Starter.AppHost.csproj
 
 The Aspire dashboard will open automatically and display all running services with their logs and traces.
 
+## Postman
+
+A Postman collection is available at the root folder of this repository and contains all necessary requests to interact with this project.
+
 ## Architecture decisions
 
 ### Microservices size
