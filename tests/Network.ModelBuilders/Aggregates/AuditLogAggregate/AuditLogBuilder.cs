@@ -7,10 +7,10 @@ namespace Network.ModelBuilders.Aggregates.AuditLogAggregate;
 public class AuditLogBuilder : IEntityModelBuilder<AuditLog>
 {
     private Guid _userId = Guid.NewGuid();
-    private string _eventType = "UserCreated";
+    private AuditLogEventType _eventType = AuditLogEventType.UserCreated;
 
     public AuditLogBuilder WithUserId(Guid v) { _userId = v; return this; }
-    public AuditLogBuilder WithEventType(string v) { _eventType = v; return this; }
+    public AuditLogBuilder WithEventType(AuditLogEventType v) { _eventType = v; return this; }
 
     /// <summary>
     /// Build and return the Result produced by the factory method.

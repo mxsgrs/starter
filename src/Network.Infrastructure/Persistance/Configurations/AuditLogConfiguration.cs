@@ -13,6 +13,7 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.EventType)
+            .HasConversion<string>()
             .HasMaxLength(128)
             .IsRequired();
 

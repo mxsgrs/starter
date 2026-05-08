@@ -109,3 +109,16 @@ Do not add `CancellationToken` parameters to methods unless explicitly asked.
 /// Create a new user in the database
 /// </summary>
 ```
+
+- Model builder chains must be written with each method call on its own line, indented by 4 spaces:
+
+```csharp
+// Correct
+AuditLog auditLog = new AuditLogBuilder()
+    .WithUserId(user.Id)
+    .WithEventType(AuditLogEventType.UserCreated)
+    .Build();
+
+// Wrong — all on one line
+AuditLog auditLog = new AuditLogBuilder().WithUserId(user.Id).WithEventType(AuditLogEventType.UserCreated).Build();
+```

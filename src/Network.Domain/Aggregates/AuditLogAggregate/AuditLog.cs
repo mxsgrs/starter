@@ -5,7 +5,7 @@ public class AuditLog : AggregateRoot
     /// <summary>
     /// Create a new audit log entry for a user event.
     /// </summary>
-    public static Result<AuditLog> Create(Guid userId, string eventType) =>
+    public static Result<AuditLog> Create(Guid userId, AuditLogEventType eventType) =>
         Result.Ok(new AuditLog
         {
             Id = Guid.NewGuid(),
@@ -16,7 +16,7 @@ public class AuditLog : AggregateRoot
 
     public Guid Id { get; private set; }
     public Guid UserId { get; private set; }
-    public string EventType { get; private set; } = string.Empty;
+    public AuditLogEventType EventType { get; private set; }
     public DateTime OccurredOn { get; private set; }
 
     private AuditLog() { } // EF Core

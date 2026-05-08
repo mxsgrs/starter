@@ -13,7 +13,10 @@ public class AddAsyncTests(SharedFixture fixture) : IDisposable
         await dbContext.SaveChangesAsync();
 
         AuditLogRepository repository = new(dbContext);
-        AuditLog auditLog = new AuditLogBuilder().WithUserId(user.Id).WithEventType("UserCreated").Build();
+        AuditLog auditLog = new AuditLogBuilder()
+            .WithUserId(user.Id)
+            .WithEventType(AuditLogEventType.UserCreated)
+            .Build();
 
         // Act
         await repository.AddAsync(auditLog);
@@ -23,7 +26,7 @@ public class AddAsyncTests(SharedFixture fixture) : IDisposable
         AuditLog? stored = await dbContext.AuditLogs.FindAsync(auditLog.Id);
         Assert.NotNull(stored);
         Assert.Equal(user.Id, stored.UserId);
-        Assert.Equal("UserCreated", stored.EventType);
+        Assert.Equal(AuditLogEventType.UserCreated, stored.EventType);
     }
 
     public void Dispose()
