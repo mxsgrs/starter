@@ -1,4 +1,4 @@
-# DDD Principles
+# Domain Driven Design Principles
 
 Domain-Driven Design (DDD) was introduced by Eric Evans in his 2003 book *Domain-Driven Design: Tackling Complexity in the Heart of Software*. Its central idea is to structure code around the core business domain rather than technical concerns. The building blocks Evans defined — value objects, entities, aggregates, and repositories — enforce a consistent model where the domain layer owns all business rules, state changes are explicit, and cross-boundary effects are traceable.
 
