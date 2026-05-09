@@ -4,6 +4,49 @@ Domain-Driven Design (DDD) was introduced by Eric Evans in his 2003 book *Domain
 
 ---
 
+## Bounded Context
+
+Evans defines a bounded context as an explicit boundary within which a particular domain model applies. Inside the boundary, every term has a precise, agreed-upon meaning and the model is internally consistent. The same word can mean something entirely different in another bounded context — and that is intentional, not a problem to fix.
+
+> "A BOUNDED CONTEXT delimits the applicability of a particular model so that team members have a clear and shared understanding of what has to be consistent and how it relates to other contexts."
+> — Eric Evans, *Domain-Driven Design* (2003)
+
+A bounded context is a domain concept, not an infrastructure one. A microservice is a deployment unit and can host several bounded contexts. Mapping one bounded context to one microservice is not a valid choice as it create way too many microservices and hence latency.
+
+**In this repo**, the `Network` service hosts multiple bounded contexts, each one having only one aggregate because this is a small project.
+
+| Bounded Context | Aggregate Root | Key File |
+|---|---|---|
+| User | `User` | `src/Network.Domain/Aggregates/UserAggregate/User.cs` |
+| Financial Profile | `FinancialProfile` | `src/Network.Domain/Aggregates/FinancialProfileAggregate/FinancialProfile.cs` |
+| Audit Log | `AuditLog` | `src/Network.Domain/Aggregates/AuditLogAggregate/AuditLog.cs` |
+
+Each bounded context owns its language: `Asset` means a financial holding inside the Financial Profile context and has no meaning elsewhere. When a state change in one context must affect another, the originating aggregate root raises a domain event — the contexts never reach into each other's aggregates directly.
+
+---
+
+## Ubiquitous Language
+
+Evans defines ubiquitous language as a shared vocabulary co-developed by domain experts and engineers, used consistently in conversation, documentation, and — critically — in the code itself. When the language in the code drifts from the language the business uses, the model becomes a translation layer rather than a direct expression of the domain, and misunderstandings compound.
+
+> "Use the model as the backbone of a language. Commit the team to exercising that language relentlessly in all communication within the team and in the code. Use the same language in diagrams, writing, and especially speech."
+> — Eric Evans, *Domain-Driven Design* (2003)
+
+**In this repo**, class and method names are chosen to mirror the business vocabulary directly:
+
+| Business concept | Code expression |
+|---|---|
+| A user holds a financial profile | `FinancialProfile` aggregate, created on `UserCreatedDomainEvent` |
+| A profile is made up of assets | `Asset` entity inside `FinancialProfile` |
+| Each asset carries a risk weight | `RiskFactor` property on `Asset` |
+| The portfolio risk is re-evaluated after any asset change | `RecalculateRiskScore()` called in `AddAsset`, `UpdateAsset`, `RemoveAsset` |
+| Adding an asset to a profile | `FinancialProfile.AddAsset(...)` |
+| Something noteworthy happened to a user | `UserCreatedDomainEvent`, `UserUpdatedDomainEvent`, `UserDeletedDomainEvent` |
+
+The language is also consistent across layers: the command is `CreateUserCommand`, the event is `UserCreatedDomainEvent`, the integration event is `UserCreatedIntegrationEvent` — each name tells you exactly what happened and when in the lifecycle.
+
+---
+
 ## Core Concepts
 
 ### Value Object
@@ -156,6 +199,71 @@ public abstract class AggregateRoot : Entity
 | `User` | `src/Network.Domain/Aggregates/UserAggregate/User.cs` |
 | `FinancialProfile` | `src/Network.Domain/Aggregates/FinancialProfileAggregate/FinancialProfile.cs` |
 | `AuditLog` | `src/Network.Domain/Aggregates/AuditLogAggregate/AuditLog.cs` |
+
+---
+
+### Factory
+
+Evans defines a factory as any mechanism that encapsulates the construction of a complex object, ensuring it is always created in a valid, consistent state. Factories belong to the domain layer — they enforce invariants at birth so that a partially constructed or invalid aggregate can never exist.
+
+> "When creation of an object, or an entire AGGREGATE, becomes complicated or reveals too much of the internal structure, FACTORIES provide encapsulation."
+> — Eric Evans, *Domain-Driven Design* (2003)
+
+Evans distinguishes two common forms: a **factory method** on the aggregate root itself (creation is part of the aggregate's responsibility) and a separate **factory class** (used when the construction logic is complex enough to warrant its own type). In this repo the factory method form is used throughout.
+
+**Pattern in this repo — static `Create` methods**
+
+Every aggregate root and entity exposes a static `Create` factory method. It constructs the object, validates it, and returns `Result<T>` — never a bare constructor, never an exception for a validation failure.
+
+```csharp
+// User.cs — aggregate root factory
+public static Result<User> Create(string firstName, string lastName, string email, string password)
+{
+    User user = new()
+    {
+        Id = Guid.NewGuid(),
+        FirstName = firstName,
+        LastName = lastName,
+        Email = email,
+        Password = password
+    };
+
+    Result validationResult = Validate(user);
+    if (!validationResult.IsSuccess) return Result.Fail<User>(validationResult.Errors);
+
+    user.RaiseDomainEvent(new UserCreatedDomainEvent(user.Id));
+    return Result.Ok(user);
+}
+```
+
+```csharp
+// Asset.cs — child entity factory (internal: only the aggregate root may call it)
+internal static Result<Asset> Create(Guid financialProfileId, string name,
+    AssetType assetType, decimal value, decimal riskFactor)
+{
+    Asset asset = new()
+    {
+        Id = Guid.NewGuid(),
+        FinancialProfileId = financialProfileId,
+        Name = name,
+        AssetType = assetType,
+        Value = value,
+        RiskFactor = riskFactor
+    };
+
+    Result validationResult = Validate(asset);
+    if (!validationResult.IsSuccess) return Result.Fail<Asset>(validationResult.Errors);
+
+    return Result.Ok(asset);
+}
+```
+
+Key properties of all factories in this repo:
+
+- **Always valid** — validation runs inside `Create`; a successful `Result<T>` guarantees a fully consistent object.
+- **Identity assigned at birth** — `Id = Guid.NewGuid()` is set inside the factory, never by the caller.
+- **Domain events raised by the aggregate root** — child entity factories (e.g. `Asset.Create`) return a plain entity; the aggregate root raises any resulting domain event after adding it to the collection.
+- **Access controlled** — child entity factories are `internal` so only the owning aggregate root can invoke them.
 
 ---
 
@@ -318,3 +426,6 @@ Publishing before the commit would risk notifying consumers of a user that was n
 | Intra-aggregate side effect | Handled directly in domain methods | Risk score recalculation on asset mutation | `FinancialProfile.RecalculateRiskScore()` |
 | Cross-aggregate side effect (pre-save) | Domain event + pre-save handler, atomic with primary write | `AuditLog` + `FinancialProfile` created on user creation | `src/Network.Application/Users/Events/Handlers/PreUserCreatedDomainEventHandler.cs` |
 | Cross-aggregate side effect (post-save) | Domain event + post-save handler, after DB commit | Integration event published to message bus | `src/Network.Application/Users/Events/Handlers/PostUserCreatedDomainEventHandler.cs` |
+| Bounded Context | Explicit boundary where a domain model is consistent; services own their types and communicate via contracts | `Network`, `Sales` |
+| Ubiquitous Language | Shared business vocabulary used consistently in code, docs, and conversation | `AddAsset`, `RecalculateRiskScore`, `UserCreatedDomainEvent` | Throughout `src/Network.Domain/` |
+| Factory | Encapsulates construction of a valid aggregate or entity; always returns `Result<T>` | `User.Create(...)`, `Asset.Create(...)`, `FinancialProfile.Create(...)` | Static `Create` methods on each aggregate/entity |

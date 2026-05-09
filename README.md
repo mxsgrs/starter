@@ -57,6 +57,6 @@ The trade-off is increased operational complexity: a message broker must be runn
 
 A single entry point receives all incoming HTTP traffic and routes requests to the appropriate microservice based on URL path prefixes.
 Clients interact with one address regardless of how many services exist behind it, simplifying frontend integration.
-Path-based routing (e.g. `/users/*` → UserService, `/addresses/*` → AddressService) makes the routing rules explicit and easy to maintain.
+Path-based routing (e.g. `/network/*` → NetworkService, `/sales/*` → SalesService) makes the routing rules explicit and easy to maintain.
 The gateway is also the right place to enforce cross-cutting concerns such as authentication, rate limiting, and TLS termination.
 Internal service URLs remain hidden from clients, allowing the topology to evolve without breaking consumers.

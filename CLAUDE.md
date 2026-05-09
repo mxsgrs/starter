@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # Starter
 
-ASP.NET Core 10 clean-architecture microservices starter (UserService, AddressService) using .NET Aspire, Entity Framework Core, and SQL Server.
+ASP.NET Core 10 clean-architecture microservices starter (Network, Sales) using .NET Aspire, Entity Framework Core, and SQL Server.
 
 Run via .NET Aspire AppHost (`src/AppHost`); tests use Testcontainers for integration and xUnit for unit testing.
 
@@ -21,7 +21,7 @@ dotnet run --project src/Starter.AppHost/Starter.AppHost.csproj
 dotnet test Starter.sln
 
 # Run a specific test project
-dotnet test tests/UserService.Application.UnitTests/UserService.Application.UnitTests.csproj
+dotnet test tests/Network.Application.UnitTests/Network.Application.UnitTests.csproj
 
 # Run a single test by name
 dotnet test --filter "FullyQualifiedName~Handle_ShouldCreateUser_WhenValidInput"
@@ -43,20 +43,21 @@ ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations add <MigrationName> --pro
 
 | Project | Layer | Role |
 |---|---|---|
-| `UserService.Domain` | Domain | Aggregates, domain events, repository interfaces, value objects |
-| `UserService.Application` | Application | CQRS command/query handlers, DTOs, DI registration |
-| `UserService.Infrastructure` | Infrastructure | EF Core DbContext, repositories, MassTransit, external service clients |
-| `UserService.WebApi` | Presentation | ASP.NET Core controllers, JWT auth, DI composition root |
-| `AddressService.WebApi` | Microservice | Address validation HTTP API + MassTransit consumers |
+| `Network.Domain` | Domain | Aggregates, domain events, repository interfaces, value objects |
+| `Network.Application` | Application | CQRS command/query handlers, DTOs, DI registration |
+| `Network.Infrastructure` | Infrastructure | EF Core DbContext, repositories, MassTransit, event dispatching |
+| `Network.WebApi` | Presentation | ASP.NET Core controllers, JWT auth, DI composition root |
+| `Sales.WebApi` | Microservice | Contracts and financial products API + MassTransit consumers |
+| `Gateway.WebApi` | Gateway | API Gateway routing to downstream services |
 | `Starter.AppHost` | Orchestration | .NET Aspire host — wires SQL Server, RabbitMQ, and services |
 | `Starter.ServiceDefaults` | Cross-cutting | Shared Aspire observability/health extensions |
 
-Test projects mirror the layer under test: `UserService.Domain.UnitTests`, `UserService.Application.UnitTests`, `UserService.Infrastructure.UnitTests`, `UserService.WhiteBoxE2eTests`.  
-`UserService.ModelBuilders` is a shared test library with fluent builders (e.g., `new UserBuilder().WithFirstName("Jane").Build()`).
+Test projects mirror the layer under test: `Network.Domain.UnitTests`, `Network.Application.UnitTests`, `Network.Infrastructure.IntegrationTests`, `Network.WhiteBoxE2eTests`.  
+`Network.ModelBuilders` is a shared test library with fluent builders (e.g., `new UserBuilder().WithFirstName("Jane").Build()`).
 
 ### Key patterns
 
-**CQRS** — Commands and queries live in `UserService.Application/Commands/` and `Queries/`. Each operation is a record implementing `ICommand` or `IQuery<TResult>` with a corresponding handler interface and class in the same file. Handlers are registered manually in `ApplicationDependencies.cs`.
+**CQRS** — Commands and queries live in `Network.Application/Commands/` and `Queries/`. Each operation is a record implementing `ICommand` or `IQuery<TResult>` with a corresponding handler interface and class in the same file. Handlers are registered manually in `ApplicationDependencies.cs`.
 
 **Result pattern** — All operations return `Result` or `Result<T>` (FluentResults). Never throw exceptions for business logic; propagate failures via `Result.Fail(...)`.
 
@@ -66,7 +67,7 @@ Test projects mirror the layer under test: `UserService.Domain.UnitTests`, `User
 
 **Mapping** — Mapster is used for DTO mapping. Type configurations are registered in `UserMapping.cs` and applied in `ApplicationDependencies.cs`.
 
-**Messaging** — MassTransit with RabbitMQ handles cross-service integration events. `AddressService` consumes `UserCreatedDomainEvent` via `IConsumer<T>`. MassTransit is configured in `InfrastructureDependencies.cs`.
+**Messaging** — MassTransit with RabbitMQ handles cross-service integration events. `Sales.WebApi` consumes `UserCreatedDomainEvent` via `IConsumer<T>`. MassTransit is configured in `InfrastructureDependencies.cs`.
 
 ### DI composition
 
@@ -79,7 +80,7 @@ Test projects mirror the layer under test: `UserService.Domain.UnitTests`, `User
 
 - **Unit tests** use in-memory EF Core (`SharedFixture` creates a uniquely named in-memory DB per test class) and Moq for dependencies.
 - **Integration tests** (`Network.Infrastructure.IntegrationTests`) use Testcontainers with a real SQL Server container. `SharedFixture` starts one container and creates one database for the entire collection (`[CollectionDefinition("Database")]`), applies EF Core migrations once in `InitializeAsync`, and exposes `CreateDatabaseContext()` to return a fresh `NetworkDbContext` per test. Each test class implements `IDisposable` to delete only the rows it touched via `ExecuteDelete()`.
-- **E2E tests** (`WhiteBoxE2eTests`) spin up real SQL Server and RabbitMQ containers via Testcontainers. `StarterWebApplicationFactory` replaces `ICheckUserAddressService` with `AlwaysValidAddressService` and provides `CreateAuthorizedClient()` with a long-lived JWT.
+- **E2E tests** (`Network.WhiteBoxE2eTests`) spin up real SQL Server and RabbitMQ containers via Testcontainers. `StarterWebApplicationFactory` provides `CreateAuthorizedClient()` with a long-lived JWT.
 - The E2E factory exposes a `FakeDomainEventPublisher` on `factory.DomainEventPublisher` for asserting on published events.
 - **Model builders** — all tests must construct domain objects and DTOs via builders from `Network.ModelBuilders` (e.g. `new UserBuilder().Build()`). Never instantiate aggregates, entities, or DTOs directly in test code. Add a builder to `Network.ModelBuilders` whenever a new buildable type is introduced.
 

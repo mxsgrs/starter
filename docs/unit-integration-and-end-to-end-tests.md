@@ -234,10 +234,10 @@ E2E tests exercise the full HTTP stack of the Network service: a real ASP.NET Co
 
 | Test | HTTP call | Asserts |
 |---|---|---|
-| Create user | `POST /api/network/user` | `200 OK`; response body is a valid Guid; `UserAuditLog` row with `EventType = "UserCreatedDomainEvent"` exists in the database |
-| Read user | `GET /api/network/user/{id}` | `200 OK`; all `UserDto` properties (including nested `Address`) match what was inserted |
-| Update user | `PUT /api/network/user/{id}` | `204 No Content` |
-| Delete user | `DELETE /api/network/user/{id}` | `204 No Content`; user row absent from database; `UserAuditLog` row with `EventType = "UserDeletedDomainEvent"` exists |
+| Create user | `POST /api/network/users` | `200 OK`; response body is a valid Guid; `UserAuditLog` row with `EventType = "UserCreatedDomainEvent"` exists in the database |
+| Read user | `GET /api/network/users/{id}` | `200 OK`; all `UserDto` properties (including nested `Address`) match what was inserted |
+| Update user | `PUT /api/network/users/{id}` | `204 No Content` |
+| Delete user | `DELETE /api/network/users/{id}` | `204 No Content`; user row absent from database; `UserAuditLog` row with `EventType = "UserDeletedDomainEvent"` exists |
 
 **`AuthenticationControllerTests`**
 
