@@ -1,4 +1,5 @@
 using Microsoft.Data.SqlClient;
+using Network.Application.Authentication.Services;
 using Testcontainers.MsSql;
 
 namespace Network.Infrastructure.IntegrationTests.Fixtures;

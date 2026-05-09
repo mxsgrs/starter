@@ -1,4 +1,4 @@
-namespace Network.Application.Shared.Interfaces;
+namespace Network.Application.Shared.Events;
 
 public interface IIntegrationEventPublisher
 {

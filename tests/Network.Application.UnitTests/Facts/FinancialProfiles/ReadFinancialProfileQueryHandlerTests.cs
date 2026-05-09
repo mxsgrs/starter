@@ -1,4 +1,3 @@
-using Network.Application.FinancialProfiles.Dtos;
 using Network.Application.FinancialProfiles.UseCases;
 
 namespace Network.Application.UnitTests.Facts.FinancialProfiles;

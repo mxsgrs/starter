@@ -9,5 +9,4 @@ global using Network.Domain.Aggregates.UserAggregate;
 global using Network.Domain.Authentication;
 global using Network.ModelBuilders.Aggregates.FinancialProfileAggregate;
 global using Network.ModelBuilders.Aggregates.UserAggregate;
-global using Network.ModelBuilders.Dtos.FinancialProfileDtos;
 global using Network.ModelBuilders.Dtos.UserDtos;

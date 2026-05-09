@@ -1,4 +1,10 @@
-namespace Network.Domain.Events;
+namespace Network.Domain.Shared.Abstractions;
+
+public interface IDomainEvent
+{
+    Guid Id { get; }
+    DateTime CreatedOn { get; }
+}
 
 public abstract record DomainEvent : IDomainEvent
 {

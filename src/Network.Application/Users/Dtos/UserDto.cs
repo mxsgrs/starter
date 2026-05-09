@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Network.Application.Users.Dtos;
+﻿namespace Network.Application.Users.Dtos;
 
 public record UserDto
 {

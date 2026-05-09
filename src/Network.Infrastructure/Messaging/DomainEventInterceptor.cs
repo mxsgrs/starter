@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Network.Application.Shared.Events;
-using Network.Domain;
-using Network.Domain.Events;
+using Network.Domain.Shared.Abstractions;
 
 namespace Network.Infrastructure.Messaging;
 

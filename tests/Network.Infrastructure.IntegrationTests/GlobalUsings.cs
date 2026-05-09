@@ -2,7 +2,7 @@ global using FluentResults;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Logging;
 global using Moq;
-global using Network.Application.Shared.Interfaces;
+global using Network.Application.Authentication.Services;
 global using Network.Domain.Aggregates.AuditLogAggregate;
 global using Network.Domain.Aggregates.FinancialProfileAggregate;
 global using Network.Domain.Aggregates.UserAggregate;

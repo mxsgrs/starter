@@ -1,7 +1,4 @@
-﻿using Network.Domain.Validations;
-using System.ComponentModel.DataAnnotations;
-
-namespace Network.Domain.Aggregates.UserAggregate;
+﻿namespace Network.Domain.Aggregates.UserAggregate;
 
 public class User : AggregateRoot
 {

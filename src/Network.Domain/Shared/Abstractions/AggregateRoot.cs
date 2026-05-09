@@ -1,6 +1,4 @@
-﻿using Network.Domain.Events;
-
-namespace Network.Domain;
+﻿namespace Network.Domain.Shared.Abstractions;
 
 public abstract class AggregateRoot : Entity
 {

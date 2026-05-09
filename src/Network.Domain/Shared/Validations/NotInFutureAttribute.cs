@@ -1,7 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
+﻿using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 
-namespace Network.Domain.Validations;
+namespace Network.Domain.Shared.Validations;
 
 public class NotInFutureAttribute : ValidationAttribute
 {

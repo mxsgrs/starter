@@ -1,5 +1,4 @@
 using Network.Application.Shared.Events;
-using Network.Application.Shared.Interfaces;
 
 namespace Network.Application.Users.Events.Handlers;
 

@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Network.Domain.Aggregates.FinancialProfileAggregate;
 
 public class Asset : Entity

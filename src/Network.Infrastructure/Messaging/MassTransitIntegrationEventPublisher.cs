@@ -1,5 +1,5 @@
 using MassTransit;
-using Network.Application.Shared.Interfaces;
+using Network.Application.Shared.Events;
 
 namespace Network.Infrastructure.Messaging;
 

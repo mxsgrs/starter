@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Network.Application.Shared.Events;
-using Network.Domain.Events;
+using Network.Domain.Shared.Abstractions;
 using System.Reflection;
 
 namespace Network.Infrastructure.Messaging;

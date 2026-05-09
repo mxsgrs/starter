@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Network.Domain;
+﻿namespace Network.Domain.Shared.Abstractions;
 
 public abstract class ValueObject<T> where T : ValueObject<T>
 {

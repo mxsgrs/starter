@@ -1,12 +1,12 @@
 ﻿global using FluentResults;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
-global using Network.Application.Users.UseCases;
+global using Network.Application.Authentication.Services;
 global using Network.Application.Authentication.UseCases;
-global using Network.Application.Users.Dtos;
-global using Network.Application.FinancialProfiles.UseCases;
 global using Network.Application.FinancialProfiles.Dtos;
-global using Network.Application.Shared.Interfaces;
+global using Network.Application.FinancialProfiles.UseCases;
+global using Network.Application.Users.Dtos;
+global using Network.Application.Users.UseCases;
 global using Network.Domain.Authentication;
 global using Network.Infrastructure;
 global using Network.WebApi.Controllers.Abstracts;

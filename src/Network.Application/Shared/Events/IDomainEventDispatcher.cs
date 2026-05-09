@@ -1,4 +1,4 @@
-using Network.Domain.Events;
+using Network.Domain.Shared.Abstractions;
 
 namespace Network.Application.Shared.Events;
 

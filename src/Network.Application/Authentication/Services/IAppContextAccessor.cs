@@ -1,6 +1,6 @@
 ﻿using Network.Domain.Authentication;
 
-namespace Network.Application.Shared.Interfaces;
+namespace Network.Application.Authentication.Services;
 
 public interface IAppContextAccessor
 {

@@ -1,4 +1,4 @@
-﻿using Network.Application.Shared.Interfaces;
+﻿using Network.Application.Authentication.Services;
 
 namespace Network.Application.UnitTests.Fixtures;
 
