@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "4f162d65-8deb-4290-a4e1-036706646a6a",
+    "_postman_id": "f210563e-d9e6-408b-aaba-e43e046ea6dd",
     "name": "Starter",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "24266264"
@@ -200,7 +200,7 @@
       "name": "Network",
       "item": [
         {
-          "name": "User",
+          "name": "Users",
           "item": [
             {
               "name": "Register new user",
@@ -317,7 +317,7 @@
                   "path": [
                     "api",
                     "network",
-                    "user",
+                    "users",
                     "{{UserId}}"
                   ]
                 }
@@ -355,7 +355,7 @@
                   "path": [
                     "api",
                     "network",
-                    "user",
+                    "users",
                     "{{UserId}}"
                   ]
                 }
@@ -380,7 +380,7 @@
                   "path": [
                     "api",
                     "network",
-                    "user",
+                    "users",
                     "{{UserId}}"
                   ]
                 }
