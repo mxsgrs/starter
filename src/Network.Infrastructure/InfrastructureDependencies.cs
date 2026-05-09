@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Network.Application.Shared.Events;
 using Network.Application.Shared.Interfaces;
+using Network.Domain.Aggregates.FinancialProfileAggregate;
 using Network.Domain.Aggregates.UserAggregate;
 using Network.Infrastructure.Messaging;
 using Network.Infrastructure.Persistance;
@@ -25,6 +26,7 @@ public static class InfrastructureDependencies
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        services.AddScoped<IFinancialProfileRepository, FinancialProfileRepository>();
         services.AddScoped<IIntegrationEventPublisher, MassTransitIntegrationEventPublisher>();
     }
 

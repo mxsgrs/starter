@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "5456c06f-ea99-4606-944a-47ced33ff14b",
+    "_postman_id": "4f162d65-8deb-4290-a4e1-036706646a6a",
     "name": "Starter",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "24266264"
@@ -10,179 +10,189 @@
       "name": "Sales",
       "item": [
         {
-          "name": "Read all financial products",
-          "event": [
+          "name": "FinancialProducts",
+          "item": [
             {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var json = pm.response.json();",
-                  "if (json.length > 0) pm.collectionVariables.set('FinancialProductId', json[0].id);"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{HostAddress}}/api/sales/financial-products",
-              "host": [
-                "{{HostAddress}}"
+              "name": "Read all financial products",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "if (json.length > 0) pm.collectionVariables.set('FinancialProductId', json[0].id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
               ],
-              "path": [
-                "api",
-                "sales",
-                "financial-products"
-              ]
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{HostAddress}}/api/sales/financial-products",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sales",
+                    "financial-products"
+                  ]
+                }
+              },
+              "response": []
             }
-          },
-          "response": []
+          ]
         },
         {
-          "name": "Create contract",
-          "event": [
+          "name": "Contracts",
+          "item": [
             {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var json = pm.response.json();",
-                  "if (json.id) {",
-                  "  pm.collectionVariables.set('ContractId', json.id);",
-                  "}"
+              "name": "Create contract",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "if (json.id) {",
+                      "  pm.collectionVariables.set('ContractId', json.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"userId\": \"{{UserId}}\",\n  \"financialProductId\": \"{{FinancialProductId}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": \"{{UserId}}\",\n  \"financialProductId\": \"{{FinancialProductId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{HostAddress}}/api/sales/contracts",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sales",
+                    "contracts"
+                  ]
                 }
-              }
+              },
+              "response": []
             },
-            "url": {
-              "raw": "{{HostAddress}}/api/sales/contracts",
-              "host": [
-                "{{HostAddress}}"
-              ],
-              "path": [
-                "api",
-                "sales",
-                "contracts"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Read all contracts",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{HostAddress}}/api/sales/contracts",
-              "host": [
-                "{{HostAddress}}"
-              ],
-              "path": [
-                "api",
-                "sales",
-                "contracts"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Read contract by id",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{HostAddress}}/api/sales/contracts/{{ContractId}}",
-              "host": [
-                "{{HostAddress}}"
-              ],
-              "path": [
-                "api",
-                "sales",
-                "contracts",
-                "{{ContractId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update contract",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"financialProductId\": \"{{FinancialProductId}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+            {
+              "name": "Read all contracts",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{HostAddress}}/api/sales/contracts",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sales",
+                    "contracts"
+                  ]
                 }
-              }
+              },
+              "response": []
             },
-            "url": {
-              "raw": "{{HostAddress}}/api/sales/contracts/{{ContractId}}",
-              "host": [
-                "{{HostAddress}}"
-              ],
-              "path": [
-                "api",
-                "sales",
-                "contracts",
-                "{{ContractId}}"
-              ]
+            {
+              "name": "Read contract by id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{HostAddress}}/api/sales/contracts/{{ContractId}}",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sales",
+                    "contracts",
+                    "{{ContractId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update contract",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"financialProductId\": \"{{FinancialProductId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{HostAddress}}/api/sales/contracts/{{ContractId}}",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sales",
+                    "contracts",
+                    "{{ContractId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete contract",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{HostAddress}}/api/sales/contracts/{{ContractId}}",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sales",
+                    "contracts",
+                    "{{ContractId}}"
+                  ]
+                }
+              },
+              "response": []
             }
-          },
-          "response": []
-        },
-        {
-          "name": "Delete contract",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{HostAddress}}/api/sales/contracts/{{ContractId}}",
-              "host": [
-                "{{HostAddress}}"
-              ],
-              "path": [
-                "api",
-                "sales",
-                "contracts",
-                "{{ContractId}}"
-              ]
-            }
-          },
-          "response": []
+          ]
         }
       ]
     },
@@ -190,189 +200,344 @@
       "name": "Network",
       "item": [
         {
-          "name": "Register new user",
-          "event": [
+          "name": "User",
+          "item": [
             {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var id = pm.response.text().replace(/\"/g, '').trim();",
-                  "if (id) pm.collectionVariables.set('UserId', id);"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"emailAddress\": \"john.doe@example.com\",\n  \"hashedPassword\": \"TWF0cml4UmVsb2FkZWQh\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"birthday\": \"1990-05-15\",\n  \"gender\": \"Male\",\n  \"role\": \"Admin\",\n  \"phone\": \"+1234567890\",\n  \"address\": {\n    \"addressLine\": \"123 Main St\",\n    \"addressSupplement\": \"Apt 4B\",\n    \"city\": \"New York\",\n    \"zipCode\": \"12345\",\n    \"stateProvince\": \"CA\",\n    \"country\": \"USA\"\n  }\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+              "name": "Register new user",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var id = pm.response.text().replace(/\"/g, '').trim();",
+                      "if (id) pm.collectionVariables.set('UserId', id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
                 }
-              }
-            },
-            "url": {
-              "raw": "{{HostAddress}}/api/network/user",
-              "host": [
-                "{{HostAddress}}"
               ],
-              "path": [
-                "api",
-                "network",
-                "user"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Generate access token",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var json = pm.response.json();",
-                  "if (json.accessToken) {",
-                  "  pm.collectionVariables.set('Jwt', json.accessToken);",
-                  "}"
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"emailAddress\": \"john.doe@example.com\",\n  \"hashedPassword\": \"TWF0cml4UmVsb2FkZWQh\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"emailAddress\": \"john.doe@example.com\",\n  \"hashedPassword\": \"TWF0cml4UmVsb2FkZWQh\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"birthday\": \"1990-05-15\",\n  \"gender\": \"Male\",\n  \"role\": \"Admin\",\n  \"phone\": \"+1234567890\",\n  \"address\": {\n    \"addressLine\": \"123 Main St\",\n    \"addressSupplement\": \"Apt 4B\",\n    \"city\": \"New York\",\n    \"zipCode\": \"12345\",\n    \"stateProvince\": \"CA\",\n    \"country\": \"USA\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{HostAddress}}/api/network/user",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "network",
+                    "user"
+                  ]
                 }
-              }
-            },
-            "url": {
-              "raw": "{{HostAddress}}/api/network/authentication/token",
-              "host": [
-                "{{HostAddress}}"
-              ],
-              "path": [
-                "api",
-                "network",
-                "authentication",
-                "token"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Read user information",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{Jwt}}"
-              }
-            ],
-            "url": {
-              "raw": "{{HostAddress}}/api/network/user/{{UserId}}",
-              "host": [
-                "{{HostAddress}}"
-              ],
-              "path": [
-                "api",
-                "network",
-                "user",
-                "{{UserId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update user information",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
               },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{Jwt}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"emailAddress\": \"john.doe@example.com\",\n  \"hashedPassword\": \"TWF0cml4UmVsb2FkZWQh\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Dudule\",\n  \"birthday\": \"1990-05-15\",\n  \"gender\": \"Male\",\n  \"role\": \"Admin\",\n  \"phone\": \"+1234567890\",\n  \"address\": {\n    \"addressLine\": \"456 New St\",\n    \"addressSupplement\": \"Apt 4B\",\n    \"city\": \"New York\",\n    \"zipCode\": \"12345\",\n    \"stateProvince\": \"CA\",\n    \"country\": \"USA\"\n  }\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "response": []
             },
-            "url": {
-              "raw": "{{HostAddress}}/api/network/user/{{UserId}}",
-              "host": [
-                "{{HostAddress}}"
+            {
+              "name": "Generate access token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "if (json.accessToken) {",
+                      "  pm.collectionVariables.set('Jwt', json.accessToken);",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
               ],
-              "path": [
-                "api",
-                "network",
-                "user",
-                "{{UserId}}"
-              ]
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"emailAddress\": \"john.doe@example.com\",\n  \"hashedPassword\": \"TWF0cml4UmVsb2FkZWQh\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{HostAddress}}/api/network/authentication/token",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "network",
+                    "authentication",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Read user information",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{Jwt}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{HostAddress}}/api/network/user/{{UserId}}",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "network",
+                    "user",
+                    "{{UserId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update user information",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{Jwt}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"emailAddress\": \"john.doe@example.com\",\n  \"hashedPassword\": \"TWF0cml4UmVsb2FkZWQh\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Dudule\",\n  \"birthday\": \"1990-05-15\",\n  \"gender\": \"Male\",\n  \"role\": \"Admin\",\n  \"phone\": \"+1234567890\",\n  \"address\": {\n    \"addressLine\": \"456 New St\",\n    \"addressSupplement\": \"Apt 4B\",\n    \"city\": \"New York\",\n    \"zipCode\": \"12345\",\n    \"stateProvince\": \"CA\",\n    \"country\": \"USA\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{HostAddress}}/api/network/user/{{UserId}}",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "network",
+                    "user",
+                    "{{UserId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete user information",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{Jwt}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{HostAddress}}/api/network/user/{{UserId}}",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "network",
+                    "user",
+                    "{{UserId}}"
+                  ]
+                }
+              },
+              "response": []
             }
-          },
-          "response": []
+          ]
         },
         {
-          "name": "Delete user information",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{Jwt}}"
-              }
-            ],
-            "url": {
-              "raw": "{{HostAddress}}/api/network/user/{{UserId}}",
-              "host": [
-                "{{HostAddress}}"
+          "name": "FinancialProfile",
+          "item": [
+            {
+              "name": "Create asset",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{Jwt}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Portfolio Bond\",\n  \"assetType\": \"Bond\",\n  \"value\": 5000.00,\n  \"riskFactor\": 0.2\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{HostAddress}}/api/network/financial-profile/{{UserId}}/asset",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "network",
+                    "financial-profile",
+                    "{{UserId}}",
+                    "asset"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Read financial profile",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "if (json.assets && json.assets.length > 0) pm.collectionVariables.set('AssetId', json.assets[0].id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
               ],
-              "path": [
-                "api",
-                "network",
-                "user",
-                "{{UserId}}"
-              ]
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{Jwt}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{HostAddress}}/api/network/financial-profile/{{UserId}}",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "network",
+                    "financial-profile",
+                    "{{UserId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update asset",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{Jwt}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Portfolio Bond Updated\",\n  \"assetType\": \"Stock\",\n  \"value\": 7500.00,\n  \"riskFactor\": 0.4\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{HostAddress}}/api/network/financial-profile/{{UserId}}/asset/{{AssetId}}",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "network",
+                    "financial-profile",
+                    "{{UserId}}",
+                    "asset",
+                    "{{AssetId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete asset",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{Jwt}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{HostAddress}}/api/network/financial-profile/{{UserId}}/asset/{{AssetId}}",
+                  "host": [
+                    "{{HostAddress}}"
+                  ],
+                  "path": [
+                    "api",
+                    "network",
+                    "financial-profile",
+                    "{{UserId}}",
+                    "asset",
+                    "{{AssetId}}"
+                  ]
+                }
+              },
+              "response": []
             }
-          },
-          "response": []
+          ]
         }
       ]
     }
@@ -430,6 +595,10 @@
     },
     {
       "key": "ContractId",
+      "value": ""
+    },
+    {
+      "key": "AssetId",
       "value": ""
     }
   ]

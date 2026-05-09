@@ -4,7 +4,7 @@ public interface IReadUserQueryHandler : IQueryByIdHandler<Result<UserDto>> { }
 
 public class ReadUserQueryHandler(IUserRepository userRepository) : IReadUserQueryHandler
 {
-    public async Task<Result<UserDto>> HandleAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Result<UserDto>> HandleAsync(Guid id)
     {
         Result<User> user = await userRepository.FindByIdAsync(id);
 

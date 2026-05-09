@@ -14,7 +14,7 @@ public static class UserDtoHelper
         );
     }
     
-    public static Result<User> ToUser(Guid id, UserWriteDto dto)
+    public static Result<User> ToUser(UserWriteDto dto)
     {
         Result<Address> address = ToAddress(dto.Address!);
 
@@ -24,7 +24,6 @@ public static class UserDtoHelper
         }
 
         return User.Create(
-            id,
             dto.EmailAddress,
             dto.HashedPassword,
             dto.FirstName,

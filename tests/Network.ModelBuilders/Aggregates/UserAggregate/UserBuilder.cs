@@ -6,7 +6,6 @@ namespace Network.ModelBuilders.Aggregates.UserAggregate;
 
 public class UserBuilder : IEntityModelBuilder<User>
 {
-    private Guid _id = Guid.NewGuid();
     private string _emailAddress = "test@example.com";
     private string _hashedPassword = "hashedPassword";
     private string _firstName = "John";
@@ -17,7 +16,6 @@ public class UserBuilder : IEntityModelBuilder<User>
     private string _phone = "+1234567890";
     private Address _address = new AddressBuilder().Build();
 
-    public UserBuilder WithId(Guid v) { _id = v; return this; }
     public UserBuilder WithEmailAddress(string v) { _emailAddress = v; return this; }
     public UserBuilder WithHashedPassword(string v) { _hashedPassword = v; return this; }
     public UserBuilder WithFirstName(string v) { _firstName = v; return this; }
@@ -29,12 +27,12 @@ public class UserBuilder : IEntityModelBuilder<User>
     public UserBuilder WithAddress(Address v) { _address = v; return this; }
 
     public Result<User> BuildResult() =>
-        User.Create(_id, _emailAddress, _hashedPassword, _firstName, _lastName,
+        User.Create(_emailAddress, _hashedPassword, _firstName, _lastName,
             _birthday, _gender, _role, _phone, _address);
 
     public Result<User> BuildUpdateResult()
     {
-        Result<User> createResult = User.Create(_id, _emailAddress, _hashedPassword, _firstName, _lastName,
+        Result<User> createResult = User.Create(_emailAddress, _hashedPassword, _firstName, _lastName,
             _birthday, _gender, _role, _phone, _address);
         if (createResult.IsFailed) return createResult;
 
@@ -47,6 +45,6 @@ public class UserBuilder : IEntityModelBuilder<User>
     }
 
     public User Build() =>
-        User.Create(_id, _emailAddress, _hashedPassword, _firstName, _lastName,
+        User.Create(_emailAddress, _hashedPassword, _firstName, _lastName,
             _birthday, _gender, _role, _phone, _address).Value;
 }

@@ -13,9 +13,9 @@ public class CreateUserCommandHandler(
     IUserRepository userRepository
 ) : ICreateUserCommandHandler
 {
-    public async Task<Result<Guid>> HandleAsync(CreateUserCommand request, CancellationToken cancellationToken = default)
+    public async Task<Result<Guid>> HandleAsync(CreateUserCommand request)
     {
-        Result<User> user = UserDtoHelper.ToUser(Guid.NewGuid(), request.UserWriteDto);
+        Result<User> user = UserDtoHelper.ToUser(request.UserWriteDto);
 
         if (user.IsFailed) return Result.Fail(user.Errors);
 

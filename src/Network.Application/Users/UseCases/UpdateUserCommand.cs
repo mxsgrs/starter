@@ -13,7 +13,7 @@ public class UpdateUserCommandHandler(
     IUserRepository userRepository
 ) : IUpdateUserCommandHandler
 {
-    public async Task<Result> HandleAsync(UpdateUserCommand request, CancellationToken cancellationToken = default)
+    public async Task<Result> HandleAsync(UpdateUserCommand request)
     {
         Result<User> trackedUser = await userRepository.FindByIdAsync(request.Id);
 

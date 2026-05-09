@@ -33,7 +33,7 @@ public class AddAsyncTests(SharedFixture fixture) : IDisposable
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
 
-        User duplicate = new UserBuilder().WithId(Guid.NewGuid()).Build();
+        User duplicate = new UserBuilder().Build();
 
         // Act
         Result<User> result = await repository.AddAsync(duplicate);

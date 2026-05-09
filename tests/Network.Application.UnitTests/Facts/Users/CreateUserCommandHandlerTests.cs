@@ -28,7 +28,7 @@ public class CreateUserCommandHandlerTests
         CreateUserCommand command = new(userWriteDto);
 
         // Act
-        Result<Guid> result = await _handler.HandleAsync(command, default);
+        Result<Guid> result = await _handler.HandleAsync(command);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -48,7 +48,7 @@ public class CreateUserCommandHandlerTests
         CreateUserCommand command = new(userWriteDto);
 
         // Act
-        Result<Guid> result = await _handler.HandleAsync(command, default);
+        Result<Guid> result = await _handler.HandleAsync(command);
 
         // Assert
         Assert.False(result.IsSuccess);

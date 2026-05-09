@@ -19,21 +19,20 @@ public class ReadUserQueryHandlerTests
     public async Task HandleAsync_ShouldReturnUserDto_WhenUserExists()
     {
         // Arrange
-        Guid userId = Guid.NewGuid();
-        User user = new UserBuilder().WithId(userId).Build();
+        User user = new UserBuilder().Build();
 
-        _mockUserRepository.Setup(repo => repo.FindByIdAsync(userId)).ReturnsAsync(user);
+        _mockUserRepository.Setup(repo => repo.FindByIdAsync(user.Id)).ReturnsAsync(user);
 
         // Act
-        Result<UserDto> result = await _handler.HandleAsync(userId, default);
+        Result<UserDto> result = await _handler.HandleAsync(user.Id);
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal(userId, result.Value.Id);
+        Assert.Equal(user.Id, result.Value.Id);
         Assert.Equal(user.EmailAddress, result.Value.EmailAddress);
         Assert.Equal(user.FirstName, result.Value.FirstName);
 
-        _mockUserRepository.Verify(repo => repo.FindByIdAsync(userId), Times.Once);
+        _mockUserRepository.Verify(repo => repo.FindByIdAsync(user.Id), Times.Once);
     }
 
     [Fact]
@@ -46,7 +45,7 @@ public class ReadUserQueryHandlerTests
             .ReturnsAsync(Result.Fail<User>("User not found"));
 
         // Act
-        Result<UserDto> result = await _handler.HandleAsync(userId, default);
+        Result<UserDto> result = await _handler.HandleAsync(userId);
 
         // Assert
         Assert.True(result.IsFailed);

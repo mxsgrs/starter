@@ -6,12 +6,10 @@ public class UserTests
     public void Create_ShouldReturnOk_WhenInputsAreValid()
     {
         // Arrange
-        Guid id = Guid.NewGuid();
         Address address = new AddressBuilder().Build();
 
         // Act
         Result<User> result = new UserBuilder()
-            .WithId(id)
             .WithEmailAddress("valid@example.com")
             .WithHashedPassword("hashedPassword123")
             .WithFirstName("Jane")
@@ -25,7 +23,7 @@ public class UserTests
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal(id, result.Value.Id);
+        Assert.NotEqual(Guid.Empty, result.Value.Id);
         Assert.Equal("valid@example.com", result.Value.EmailAddress);
         Assert.Equal("Jane", result.Value.FirstName);
         Assert.Equal("Smith", result.Value.LastName);
@@ -87,16 +85,13 @@ public class UserTests
     [Fact]
     public void Create_ShouldRaiseUserCreatedDomainEvent_WhenInputsAreValid()
     {
-        // Arrange
-        Guid id = Guid.NewGuid();
-
         // Act
-        Result<User> result = new UserBuilder().WithId(id).BuildResult();
+        Result<User> result = new UserBuilder().BuildResult();
 
         // Assert
         Assert.True(result.IsSuccess);
         UserCreatedDomainEvent domainEvent = Assert.Single(result.Value.DomainEvents.OfType<UserCreatedDomainEvent>());
-        Assert.Equal(id, domainEvent.UserId);
+        Assert.Equal(result.Value.Id, domainEvent.UserId);
         Assert.NotEqual(Guid.Empty, domainEvent.Id);
         Assert.True(domainEvent.CreatedOn <= DateTime.UtcNow);
     }

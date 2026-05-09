@@ -7,7 +7,7 @@ public interface IDeleteUserCommandHandler : ICommandByIdHandler { }
 
 public class DeleteUserCommandHandler(IUserRepository userRepository) : IDeleteUserCommandHandler
 {
-    public async Task<Result> HandleAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Result> HandleAsync(Guid id)
     {
         Result<User> trackedUser = await userRepository.FindByIdAsync(id);
 

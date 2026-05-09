@@ -31,7 +31,7 @@ public class UpdateUserCommandHandlerTests
         UpdateUserCommand command = new(user.Id, userWriteDto);
 
         // Act
-        Result result = await _handler.HandleAsync(command, default);
+        Result result = await _handler.HandleAsync(command);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -51,7 +51,7 @@ public class UpdateUserCommandHandlerTests
         UpdateUserCommand command = new(unknownId, userWriteDto);
 
         // Act
-        Result result = await _handler.HandleAsync(command, default);
+        Result result = await _handler.HandleAsync(command);
 
         // Assert
         Assert.False(result.IsSuccess);
@@ -74,7 +74,7 @@ public class UpdateUserCommandHandlerTests
         UpdateUserCommand command = new(user.Id, userWriteDto);
 
         // Act
-        Result result = await _handler.HandleAsync(command, default);
+        Result result = await _handler.HandleAsync(command);
 
         // Assert
         Assert.False(result.IsSuccess);

@@ -19,7 +19,7 @@ public class GenerateTokenQueryHandler(
     IUserRepository userService
 ) : IGenerateTokenQueryHandler
 {
-    public async Task<Result<LoginResponseDto>> HandleAsync(GenerateTokenQuery query, CancellationToken cancellationToken = default)
+    public async Task<Result<LoginResponseDto>> HandleAsync(GenerateTokenQuery query)
     {
         logger.LogDebug("Processing login request for {emailAddress}", query.EmailAddress);
 

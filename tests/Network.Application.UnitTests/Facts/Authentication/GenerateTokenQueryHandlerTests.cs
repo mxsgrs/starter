@@ -36,7 +36,7 @@ public class GenerateTokenQueryHandlerTests : IClassFixture<SharedFixture>
         GenerateTokenQuery command = new(emailAddress, hashedPassword);
 
         // Act
-        Result<LoginResponseDto> result = await _handler.HandleAsync(command, CancellationToken.None);
+        Result<LoginResponseDto> result = await _handler.HandleAsync(command);
 
         // Assert
         Assert.True(result.IsFailed);
@@ -48,10 +48,8 @@ public class GenerateTokenQueryHandlerTests : IClassFixture<SharedFixture>
         // Arrange
         string emailAddress = "test@example.com";
         string hashedPassword = "hashedPassword123";
-        Guid userId = Guid.NewGuid();
 
         User user = new UserBuilder()
-            .WithId(userId)
             .WithHashedPassword(hashedPassword)
             .WithFirstName("Test")
             .WithLastName("User")
@@ -64,7 +62,7 @@ public class GenerateTokenQueryHandlerTests : IClassFixture<SharedFixture>
         GenerateTokenQuery command = new(emailAddress, hashedPassword);
 
         // Act
-        Result<LoginResponseDto> result = await _handler.HandleAsync(command, CancellationToken.None);
+        Result<LoginResponseDto> result = await _handler.HandleAsync(command);
 
         // Assert
         Assert.True(result.IsSuccess);

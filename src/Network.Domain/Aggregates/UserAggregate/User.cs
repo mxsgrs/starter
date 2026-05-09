@@ -52,7 +52,6 @@ public class User : AggregateRoot
     /// Method for creating an instance under business rules
     /// </summary>
     public static Result<User> Create(
-        Guid id,
         string emailAddress,
         string hashedPassword,
         string firstName,
@@ -66,7 +65,7 @@ public class User : AggregateRoot
     {
         User user = new()
         {
-            Id = id,
+            Id = Guid.NewGuid(),
             EmailAddress = emailAddress,
             HashedPassword = hashedPassword,
             FirstName = firstName,

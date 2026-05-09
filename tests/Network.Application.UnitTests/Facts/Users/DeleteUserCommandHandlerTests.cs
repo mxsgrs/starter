@@ -26,7 +26,7 @@ public class DeleteUserCommandHandlerTests
             .ReturnsAsync(Result.Ok());
 
         // Act
-        Result result = await _handler.HandleAsync(user.Id, default);
+        Result result = await _handler.HandleAsync(user.Id);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -43,7 +43,7 @@ public class DeleteUserCommandHandlerTests
             .ReturnsAsync(Result.Fail<User>("User not found"));
 
         // Act
-        Result result = await _handler.HandleAsync(unknownId, default);
+        Result result = await _handler.HandleAsync(unknownId);
 
         // Assert
         Assert.False(result.IsSuccess);
@@ -63,7 +63,7 @@ public class DeleteUserCommandHandlerTests
             .ReturnsAsync(Result.Fail("Repository error"));
 
         // Act
-        Result result = await _handler.HandleAsync(user.Id, default);
+        Result result = await _handler.HandleAsync(user.Id);
 
         // Assert
         Assert.False(result.IsSuccess);
