@@ -36,6 +36,8 @@ public class FinancialProfileConfiguration : IEntityTypeConfiguration<FinancialP
 
             assetBuilder.HasKey(a => a.Id);
 
+            assetBuilder.Property(a => a.Id).ValueGeneratedNever();
+
             assetBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
             assetBuilder.Property(a => a.Name)
