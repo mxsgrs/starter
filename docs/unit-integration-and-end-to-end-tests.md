@@ -1,4 +1,4 @@
-# Network Service — Tests
+# Unit, integration & E2E Tests
 
 This document describes the test strategy for the Network service, the role of each test project, and how the shared infrastructure is organised.
 

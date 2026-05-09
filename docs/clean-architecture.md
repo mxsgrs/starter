@@ -1,4 +1,4 @@
-# Network Service — Clean Architecture
+# Clean Architecture
 
 This document describes how the Network service is structured around Clean Architecture principles, what each of the four layers is responsible for, and how they interact.
 
@@ -37,22 +37,7 @@ Dependencies flow strictly inward: WebApi depends on Application and Infrastruct
 
 The Domain layer encodes pure business logic. It has no dependency on EF Core, ASP.NET, or any other framework. Every rule enforced here is a domain rule, not a persistence or transport rule.
 
-### Aggregates
-
-`User` is the only aggregate root. It inherits `AggregateRoot`, which gives it a private event list and the `RaiseDomainEvent` method. All state changes go through factory methods or mutating methods on the aggregate — never direct property assignment from outside.
-
-```csharp
-// Three methods, each enforcing invariants before changing state:
-User.Create(id, emailAddress, hashedPassword, firstName, ...)  // raises UserCreatedDomainEvent
-user.Update(emailAddress, hashedPassword, firstName, ...)      // raises UserUpdatedDomainEvent
-user.Delete()                                                  // raises UserDeletedDomainEvent
-```
-
-Creating a `User` with an invalid email, a birthday in the future, or a malformed phone number returns a failed `Result<User>` — no exception is thrown, and no event is raised.
-
-### Value Objects
-
-`Address` is a value object that lives inside the `User` aggregate. It inherits `ValueObject<Address>`, which implements structural equality based on `GetEqualityComponents()`. Two `Address` instances with identical fields are equal; identity is irrelevant. Value objects are immutable and carry their own `Create()` factory with validation.
+For aggregate roots, entities, value objects, and the rules that govern them, see [ddd-concepts.md](ddd-concepts.md).
 
 ### Domain Events
 
@@ -68,16 +53,13 @@ All three implement `IDomainEvent` via the `DomainEvent` abstract record base, w
 
 Events are held in memory on the aggregate and never leave the Domain layer directly — dispatch is handled by the Infrastructure layer's interceptor.
 
-### Entities
-
-`AuditLog` is an entity that belongs to the `User` aggregate but is not an aggregate root itself. It is created by domain event handlers rather than by application code directly, keeping its lifecycle coupled to meaningful domain facts.
-
 ### Repository Interfaces
 
 Interfaces for all repositories are declared in the Domain layer so that the Application layer can depend on abstractions without touching Infrastructure:
 
 - `IUserRepository` — CRUD operations returning `Result<T>`
 - `IAuditLogRepository` — append-only audit log staging
+- `IFinancialProfileRepository` — CRUD operations for financial profiles returning `Result<T>`
 
 The implementations live in Infrastructure; only the contracts live here.
 
@@ -99,11 +81,15 @@ Every use case is either a command (mutation) or a query (read), expressed as a 
 
 | Operation | Type | Handler interface |
 |---|---|---|
-| Create user | `CreateUserCommand` | `ICommandHandlerResultingGuid<CreateUserCommand>` |
-| Update user | `UpdateUserCommand` | `ICommandHandler<UpdateUserCommand>` |
-| Delete user | `DeleteUserCommand` | `ICommandByIdHandler` |
-| Read user | `ReadUserQuery` | `IQueryByIdHandler<Result<UserDto>>` |
-| Generate token | `GenerateTokenQuery` | `IQueryHandler<GenerateTokenQuery, Result<LoginResponseDto>>` |
+| Create user | `CreateUserCommand` | `ICreateUserCommandHandler` |
+| Update user | `UpdateUserCommand` | `IUpdateUserCommandHandler` |
+| Delete user | `DeleteUserCommand` | `IDeleteUserCommandHandler` |
+| Read user | `ReadUserQuery` | `IReadUserQueryHandler` |
+| Generate token | `GenerateTokenQuery` | `IGenerateTokenQueryHandler` |
+| Read financial profile | `ReadFinancialProfileQuery` | `IReadFinancialProfileQueryHandler` |
+| Create asset | `CreateAssetCommand` | `ICreateAssetCommandHandler` |
+| Update asset | `UpdateAssetCommand` | `IUpdateAssetCommandHandler` |
+| Delete asset | `DeleteAssetCommand` | `IDeleteAssetCommandHandler` |
 
 Each handler is in the same file as its command or query record. Handlers are registered manually in `ApplicationDependencies.cs` — no reflection-based auto-discovery.
 
@@ -114,8 +100,11 @@ The Application layer defines the shapes of data that cross the boundary between
 - `UserDto` — the read representation returned to callers
 - `UserWriteDto` — the write representation accepted from callers
 - `LoginResponseDto` — the token response after successful authentication
+- `FinancialProfileDto` — the read representation of a financial profile
+- `AssetDto` — the read representation of a single asset
+- `AssetWriteDto` — the write representation accepted from callers for asset operations
 
-Mapping between domain aggregates and DTOs is handled by Mapster. Type configurations are declared in `UserMapping.cs` and registered in `ApplicationDependencies.cs`.
+Mapping between domain aggregates and DTOs is handled by Mapster. Type configurations are declared in `UserMapping.cs` and `FinancialProfileMapping.cs` and registered in `ApplicationDependencies.cs`.
 
 `UserDtoHelper` encapsulates the non-trivial conversions: it calls `User.Create()` or `user.Update()` with the data from a `UserWriteDto`, so handlers never need to know the signature of the aggregate factory.
 
@@ -127,7 +116,7 @@ The Application layer defines what should happen in response to each domain even
 
 | Handler | Triggered by | Effect |
 |---|---|---|
-| `PreUserCreatedDomainEventHandler` | `UserCreatedDomainEvent` | Inserts `AuditLog` |
+| `PreUserCreatedDomainEventHandler` | `UserCreatedDomainEvent` | Inserts `AuditLog`; inserts `FinancialProfile` |
 | `PreUserUpdatedDomainEventHandler` | `UserUpdatedDomainEvent` | Inserts `AuditLog` |
 | `PreUserDeletedDomainEventHandler` | `UserDeletedDomainEvent` | Inserts `AuditLog` |
 
@@ -160,14 +149,15 @@ The Infrastructure layer implements everything that touches external systems: th
 
 ### Persistence
 
-`NetworkDbContext` is an EF Core `DbContext` with two `DbSet` properties: `Users` and `AuditLogs`. Entity configurations are defined in separate `IEntityTypeConfiguration<T>` classes:
+`NetworkDbContext` is an EF Core `DbContext` with three `DbSet` properties: `Users`, `AuditLogs`, and `FinancialProfiles`. Entity configurations are defined in separate `IEntityTypeConfiguration<T>` classes:
 
 - `UserConfiguration` — sets the primary key, a unique index on `EmailAddress`, stores `Role` and `Gender` enums as strings, and maps `Address` as an owned entity in a separate `UserAddresses` table.
 - `AuditLogConfiguration` — sets the primary key, a length constraint on `EventType`, and an index on `UserId`.
+- `FinancialProfileConfiguration` — sets the primary key, a unique index on `UserId`, a cascade-delete relationship to `Users`, and maps `Asset` as an owned entity collection in a separate `FinancialProfileAssets` table.
 
 ### Repositories
 
-`UserRepository` and `AuditLogRepository` implement the interfaces declared in the Domain layer. Repositories return `Result<T>` rather than throwing exceptions, and they delegate all actual persistence to `NetworkDbContext`. `SaveChangesAsync` is called by the repository — never directly by application handlers — so the domain event interceptor fires at the right time.
+`UserRepository`, `AuditLogRepository`, and `FinancialProfileRepository` implement the interfaces declared in the Domain layer. Repositories return `Result<T>` rather than throwing exceptions, and they delegate all actual persistence to `NetworkDbContext`. `SaveChangesAsync` is called by the repository — never directly by application handlers — so the domain event interceptor fires at the right time.
 
 ### Domain Event Dispatch Pipeline
 
@@ -180,7 +170,7 @@ UserRepository.SaveChanges()
 DomainEventInterceptor.SavingChangesAsync()
   ├─ Snapshot events from all tracked AggregateRoot instances
   ├─ Dispatch to pre-save handlers (IPreSavedDomainEventHandler<T>)
-  │     → Same DB transaction; audit logs staged here
+  │     → Same DB transaction; audit logs and financial profile staged here
   └─ Clear events from aggregates
         │
         ▼
@@ -217,14 +207,23 @@ All controllers inherit `NetworkControllerBase`, which sets the route prefix to 
 - `CorrespondingStatus<T>(Result<T>)` → `200 OK` with the value, or `400 Bad Request` with the error message
 - `CorrespondingStatus(Result)` → `204 No Content`, or `400 Bad Request` with the error message
 
-`UserController` exposes four endpoints:
+`UsersController` exposes four endpoints:
 
 | Method | Route | Auth | Description |
 |---|---|---|---|
-| `POST` | `/api/network/user` | Anonymous | Create a new user |
-| `GET` | `/api/network/user/{id}` | Required | Read a user by id |
-| `PUT` | `/api/network/user/{id}` | Required | Update a user |
-| `DELETE` | `/api/network/user/{id}` | Required | Delete a user |
+| `POST` | `/api/network/users` | Anonymous | Create a new user |
+| `GET` | `/api/network/users/{id}` | Required | Read a user by id |
+| `PUT` | `/api/network/users/{id}` | Required | Update a user |
+| `DELETE` | `/api/network/users/{id}` | Required | Delete a user |
+
+`FinancialProfileController` exposes four endpoints:
+
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/network/financial-profile/{userId}` | Required | Read a user's financial profile |
+| `POST` | `/api/network/financial-profile/{userId}/asset` | Required | Add an asset to the profile |
+| `PUT` | `/api/network/financial-profile/{userId}/asset/{assetId}` | Required | Update an asset |
+| `DELETE` | `/api/network/financial-profile/{userId}/asset/{assetId}` | Required | Remove an asset |
 
 `AuthenticationController` exposes one endpoint at `/api/network/authentication/token` (anonymous) that accepts hashed credentials and returns a JWT.
 
@@ -232,7 +231,7 @@ All controllers inherit `NetworkControllerBase`, which sets the route prefix to 
 
 `AppContextAccessor` implements `IAppContextAccessor` by reading the `sub` claim from `HttpContext.User`. It is registered as scoped so that each request gets its own instance tied to the current `HttpContext`.
 
-`ToKebabParameterTransformer` converts route template tokens to kebab-case so that, for example, a controller named `UserController` routes to `user` rather than `User`.
+`ToKebabParameterTransformer` converts route template tokens to kebab-case so that, for example, a controller named `UsersController` routes to `users` rather than `Users`.
 
 ### Program.cs
 
@@ -246,13 +245,13 @@ All controllers inherit `NetworkControllerBase`, which sets the route prefix to 
 
 ## 6. Layer Interaction
 
-The following shows the full path of a `POST /api/network/user` request through all four layers:
+The following shows the full path of a `POST /api/network/users` request through all four layers:
 
 ```
-POST /api/network/user { UserWriteDto }
+POST /api/network/users { UserWriteDto }
         │
         ▼ Network.WebApi
-UserController.CreateUser()
+UsersController.CreateUser()
   └─ Dispatches CreateUserCommand to ICreateUserCommandHandler
         │
         ▼ Network.Application
@@ -267,9 +266,10 @@ UserRepository.SaveChangesAsync()
         │
         ├─ SavingChangesAsync (pre-save, inside transaction)
         │    └─ PreUserCreatedDomainEventHandler
-        │         └─ INSERT AuditLog
+        │         ├─ INSERT AuditLog
+        │         └─ INSERT FinancialProfile
         │
-        ├─ EF Core commits (User + AuditLog in one transaction)
+        ├─ EF Core commits (User + AuditLog + FinancialProfile in one transaction)
         │
         └─ SavedChangesAsync (post-save, after commit)
              └─ PostUserCreatedDomainEventHandler
@@ -277,7 +277,7 @@ UserRepository.SaveChangesAsync()
                        └─ RabbitMQ ← UserCreatedIntegrationEvent
         │
         ▼ Network.WebApi
-UserController returns 200 OK { userId }
+UsersController returns 200 OK { userId }
 ```
 
 ---
@@ -297,7 +297,7 @@ Network.Infrastructure
 ```
 
 - **Domain** knows nothing about Application, Infrastructure, or WebApi.
-- **Application** knows Domain, and declares interfaces for what it needs from Infrastructure (`IUserRepository`, `IIntegrationEventPublisher`, `IAppContextAccessor`). It never references Infrastructure types directly.
+- **Application** knows Domain, and declares interfaces for what it needs from Infrastructure (`IUserRepository`, `IFinancialProfileRepository`, `IIntegrationEventPublisher`, `IAppContextAccessor`). It never references Infrastructure types directly.
 - **Infrastructure** implements the interfaces declared in Application and Domain. It is the only layer allowed to reference EF Core, MassTransit, and SQL Server.
 - **WebApi** wires the DI container by referencing both Application and Infrastructure, so that the concrete implementations registered in Infrastructure satisfy the interfaces expected by Application. It also owns the HTTP-specific configuration (authentication, routing, OpenAPI).
 
