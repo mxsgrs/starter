@@ -4,7 +4,9 @@ Domain-Driven Design (DDD) was introduced by Eric Evans in his 2003 book *Domain
 
 ---
 
-## Bounded Context
+## Core Concepts
+
+### Bounded Context
 
 Evans defines a bounded context as an explicit boundary within which a particular domain model applies. Inside the boundary, every term has a precise, agreed-upon meaning and the model is internally consistent. The same word can mean something entirely different in another bounded context — and that is intentional, not a problem to fix.
 
@@ -25,7 +27,7 @@ Each bounded context owns its language: `Asset` means a financial holding inside
 
 ---
 
-## Ubiquitous Language
+### Ubiquitous Language
 
 Evans defines ubiquitous language as a shared vocabulary co-developed by domain experts and engineers, used consistently in conversation, documentation, and — critically — in the code itself. When the language in the code drifts from the language the business uses, the model becomes a translation layer rather than a direct expression of the domain, and misunderstandings compound.
 
@@ -46,8 +48,6 @@ Evans defines ubiquitous language as a shared vocabulary co-developed by domain 
 The language is also consistent across layers: the command is `CreateUserCommand`, the event is `UserCreatedDomainEvent`, the integration event is `UserCreatedIntegrationEvent` — each name tells you exactly what happened and when in the lifecycle.
 
 ---
-
-## Core Concepts
 
 ### Value Object
 
