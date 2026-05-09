@@ -1,6 +1,6 @@
 namespace Network.Infrastructure.Persistance.Repositories;
 
-public class AuditLogRepository(UserDbContext dbContext) : IAuditLogRepository
+public class AuditLogRepository(NetworkDbContext dbContext) : IAuditLogRepository
 {
     /// <summary>
     /// Stage a new audit log entry to be committed as part of the current transaction

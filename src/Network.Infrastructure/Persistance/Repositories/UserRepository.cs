@@ -4,7 +4,7 @@ using Network.Domain.Aggregates.UserAggregate;
 
 namespace Network.Infrastructure.Persistance.Repositories;
 
-public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbContext) : IUserRepository
+public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbContext) : IUserRepository
 {
     #region User
 

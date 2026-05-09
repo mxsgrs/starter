@@ -9,7 +9,7 @@ public class RemoveAsyncTests(SharedFixture fixture) : IDisposable
     public async Task RemoveAsync_ShouldRemoveUserFromDatabase()
     {
         // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
         User user = new UserBuilder().Build();
 
@@ -29,7 +29,7 @@ public class RemoveAsyncTests(SharedFixture fixture) : IDisposable
     public async Task RemoveAsync_ShouldReturnFail_WhenUserDoesNotExist()
     {
         // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
@@ -41,7 +41,7 @@ public class RemoveAsyncTests(SharedFixture fixture) : IDisposable
 
     public void Dispose()
     {
-        using UserDbContext context = fixture.CreateDatabaseContext();
+        using NetworkDbContext context = fixture.CreateDatabaseContext();
         context.Users.ExecuteDelete();
         GC.SuppressFinalize(this);
     }

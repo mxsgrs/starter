@@ -9,7 +9,7 @@ public class FindByCredentialsAsyncTests(SharedFixture fixture) : IDisposable
     public async Task FindByCredentialsAsync_ShouldReturnUser_WhenUserExists()
     {
         // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         User user = new UserBuilder().Build();
 
         await dbContext.Users.AddAsync(user);
@@ -29,7 +29,7 @@ public class FindByCredentialsAsyncTests(SharedFixture fixture) : IDisposable
     public async Task FindByCredentialsAsync_ShouldReturnFail_WhenUserDoesNotExist()
     {
         // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
@@ -42,7 +42,7 @@ public class FindByCredentialsAsyncTests(SharedFixture fixture) : IDisposable
 
     public void Dispose()
     {
-        using UserDbContext context = fixture.CreateDatabaseContext();
+        using NetworkDbContext context = fixture.CreateDatabaseContext();
         context.Users.ExecuteDelete();
         GC.SuppressFinalize(this);
     }

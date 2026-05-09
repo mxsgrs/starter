@@ -9,7 +9,7 @@ public class AddAsyncTests(SharedFixture fixture) : IDisposable
     public async Task AddAsync_ShouldAddUserToDatabase()
     {
         // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
         User user = new UserBuilder().Build();
 
@@ -26,7 +26,7 @@ public class AddAsyncTests(SharedFixture fixture) : IDisposable
     public async Task AddAsync_ShouldReturnFail_WhenUserAlreadyExists()
     {
         // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
         User user = new UserBuilder().Build();
 
@@ -44,7 +44,7 @@ public class AddAsyncTests(SharedFixture fixture) : IDisposable
 
     public void Dispose()
     {
-        using UserDbContext context = fixture.CreateDatabaseContext();
+        using NetworkDbContext context = fixture.CreateDatabaseContext();
         context.Users.ExecuteDelete();
         GC.SuppressFinalize(this);
     }

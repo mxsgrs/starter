@@ -62,7 +62,7 @@ public static class InfrastructureDependencies
             string connectionString = configuration.GetConnectionString(environment.IsProduction() ? "SqlServer" : "NetworkDb")
                 ?? throw new Exception("Connection string for SQL Server is missing");
 
-            services.AddDbContext<UserDbContext>((sp, options) =>
+            services.AddDbContext<NetworkDbContext>((sp, options) =>
             {
                 options.UseSqlServer(connectionString);
                 options.AddInterceptors(sp.GetRequiredService<DomainEventInterceptor>());

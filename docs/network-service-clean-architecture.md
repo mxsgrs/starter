@@ -160,14 +160,14 @@ The Infrastructure layer implements everything that touches external systems: th
 
 ### Persistence
 
-`UserDbContext` is an EF Core `DbContext` with two `DbSet` properties: `Users` and `AuditLogs`. Entity configurations are defined in separate `IEntityTypeConfiguration<T>` classes:
+`NetworkDbContext` is an EF Core `DbContext` with two `DbSet` properties: `Users` and `AuditLogs`. Entity configurations are defined in separate `IEntityTypeConfiguration<T>` classes:
 
 - `UserConfiguration` — sets the primary key, a unique index on `EmailAddress`, stores `Role` and `Gender` enums as strings, and maps `Address` as an owned entity in a separate `UserAddresses` table.
 - `AuditLogConfiguration` — sets the primary key, a length constraint on `EventType`, and an index on `UserId`.
 
 ### Repositories
 
-`UserRepository` and `AuditLogRepository` implement the interfaces declared in the Domain layer. Repositories return `Result<T>` rather than throwing exceptions, and they delegate all actual persistence to `UserDbContext`. `SaveChangesAsync` is called by the repository — never directly by application handlers — so the domain event interceptor fires at the right time.
+`UserRepository` and `AuditLogRepository` implement the interfaces declared in the Domain layer. Repositories return `Result<T>` rather than throwing exceptions, and they delegate all actual persistence to `NetworkDbContext`. `SaveChangesAsync` is called by the repository — never directly by application handlers — so the domain event interceptor fires at the right time.
 
 ### Domain Event Dispatch Pipeline
 
@@ -200,7 +200,7 @@ DomainEventInterceptor.SavedChangesAsync()
 
 ### DI Registration
 
-`InfrastructureDependencies.cs` registers everything in this layer: `UserDbContext` with the SQL Server provider and the `DomainEventInterceptor`, repositories, `DomainEventDispatcher`, `MassTransitIntegrationEventPublisher`, and MassTransit configured with the RabbitMQ transport.
+`InfrastructureDependencies.cs` registers everything in this layer: `NetworkDbContext` with the SQL Server provider and the `DomainEventInterceptor`, repositories, `DomainEventDispatcher`, `MassTransitIntegrationEventPublisher`, and MassTransit configured with the RabbitMQ transport.
 
 ---
 

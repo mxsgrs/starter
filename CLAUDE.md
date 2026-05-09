@@ -30,7 +30,7 @@ dotnet test --filter "FullyQualifiedName~Handle_ShouldCreateUser_WhenValidInput"
 # Use Network.Infrastructure as both --project and --startup-project.
 # Do NOT add Microsoft.EntityFrameworkCore.Design to Network.WebApi — that would violate Clean Architecture
 # (the Presentation layer must not depend on EF Core tooling).
-# Network.Infrastructure contains IDesignTimeDbContextFactory<UserDbContext> which provides the design-time context.
+# Network.Infrastructure contains IDesignTimeDbContextFactory<NetworkDbContext> which provides the design-time context.
 ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations add <MigrationName> --project src/Network.Infrastructure --startup-project src/Network.Infrastructure --output-dir Persistance/Migrations
 
 # Add an EF Core migration for Sales service (run from repo root)
@@ -60,7 +60,7 @@ Test projects mirror the layer under test: `UserService.Domain.UnitTests`, `User
 
 **Result pattern** — All operations return `Result` or `Result<T>` (FluentResults). Never throw exceptions for business logic; propagate failures via `Result.Fail(...)`.
 
-**Domain events** — Aggregates inherit `AggregateRoot` which holds a private `List<IDomainEvent>`. Entities call `RaiseDomainEvent(...)` to append events. `UserDbContext.SaveChangesAsync` automatically snapshots events from all tracked `AggregateRoot` instances, clears them, then dispatches after a successful save.
+**Domain events** — Aggregates inherit `AggregateRoot` which holds a private `List<IDomainEvent>`. Entities call `RaiseDomainEvent(...)` to append events. `NetworkDbContext.SaveChangesAsync` automatically snapshots events from all tracked `AggregateRoot` instances, clears them, then dispatches after a successful save.
 
 **Repository pattern** — Interfaces live in the Domain layer (`IUserRepository`); implementations in Infrastructure. Repositories return `Result<T>` rather than throwing. `SaveChanges()` on the repository delegates to `DbContext.SaveChangesAsync`.
 
@@ -72,13 +72,13 @@ Test projects mirror the layer under test: `UserService.Domain.UnitTests`, `User
 
 - `Program.cs` calls `AddApplicationServices()` and `AddInfrastructureServices()`.
 - `ApplicationDependencies.cs` registers command handlers, query handlers, and Mapster config.
-- `InfrastructureDependencies.cs` registers `UserDbContext`, MassTransit, repositories, and external service clients.
-- `UserDbContext` is only registered in Production; in Development the Aspire host wires the connection string and the context is resolved via the standard `AddDbContext` call from `Program.cs`.
+- `InfrastructureDependencies.cs` registers `NetworkDbContext`, MassTransit, repositories, and external service clients.
+- `NetworkDbContext` is only registered in Production; in Development the Aspire host wires the connection string and the context is resolved via the standard `AddDbContext` call from `Program.cs`.
 
 ### Testing
 
 - **Unit tests** use in-memory EF Core (`SharedFixture` creates a uniquely named in-memory DB per test class) and Moq for dependencies.
-- **Integration tests** (`Network.Infrastructure.IntegrationTests`) use Testcontainers with a real SQL Server container. `SharedFixture` starts one container and creates one database for the entire collection (`[CollectionDefinition("Database")]`), applies EF Core migrations once in `InitializeAsync`, and exposes `CreateDatabaseContext()` to return a fresh `UserDbContext` per test. Each test class implements `IDisposable` to delete only the rows it touched via `ExecuteDelete()`.
+- **Integration tests** (`Network.Infrastructure.IntegrationTests`) use Testcontainers with a real SQL Server container. `SharedFixture` starts one container and creates one database for the entire collection (`[CollectionDefinition("Database")]`), applies EF Core migrations once in `InitializeAsync`, and exposes `CreateDatabaseContext()` to return a fresh `NetworkDbContext` per test. Each test class implements `IDisposable` to delete only the rows it touched via `ExecuteDelete()`.
 - **E2E tests** (`WhiteBoxE2eTests`) spin up real SQL Server and RabbitMQ containers via Testcontainers. `StarterWebApplicationFactory` replaces `ICheckUserAddressService` with `AlwaysValidAddressService` and provides `CreateAuthorizedClient()` with a long-lived JWT.
 - The E2E factory exposes a `FakeDomainEventPublisher` on `factory.DomainEventPublisher` for asserting on published events.
 - **Model builders** — all tests must construct domain objects and DTOs via builders from `Network.ModelBuilders` (e.g. `new UserBuilder().Build()`). Never instantiate aggregates, entities, or DTOs directly in test code. Add a builder to `Network.ModelBuilders` whenever a new buildable type is introduced.

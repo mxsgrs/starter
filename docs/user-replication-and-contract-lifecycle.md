@@ -99,7 +99,7 @@ sequenceDiagram
 
 1. A client calls `POST /api/network/user` with the user's profile.
 2. `CreateUserCommandHandler` creates the `User` aggregate, which raises a `UserCreatedDomainEvent`.
-3. `UserDbContext.SaveChangesAsync` persists the user to Network DB, then dispatches collected domain events.
+3. `NetworkDbContext.SaveChangesAsync` persists the user to Network DB, then dispatches collected domain events.
 4. `PostUserCreatedDomainEventHandler` translates the domain event into a `UserCreatedIntegrationEvent(UserId)` and publishes it via `MassTransitIntegrationEventPublisher`.
 5. RabbitMQ delivers the message to the Sales service's consumer queue.
 6. `UserCreatedEventConsumer` calls `UserRepository.AddAsync(UserId)`, inserting a single-column row into the Sales `Users` table.

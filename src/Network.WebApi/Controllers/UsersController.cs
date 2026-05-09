@@ -1,6 +1,6 @@
-﻿namespace Network.WebApi.Controllers;
+namespace Network.WebApi.Controllers;
 
-public class UserController : NetworkControllerBase
+public class UsersController : NetworkControllerBase
 {
     [AllowAnonymous]
     [HttpPost]

@@ -9,7 +9,7 @@ public class UpdateAsyncTests(SharedFixture fixture) : IDisposable
     public async Task UpdateAsync_ShouldPersistAssetAddition_WhenProfileExists()
     {
         // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         User user = new UserBuilder().Build();
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
@@ -30,7 +30,7 @@ public class UpdateAsyncTests(SharedFixture fixture) : IDisposable
         // Assert
         Assert.True(result.IsSuccess);
 
-        UserDbContext verifyContext = fixture.CreateDatabaseContext();
+        NetworkDbContext verifyContext = fixture.CreateDatabaseContext();
         FinancialProfile? stored = await verifyContext.FinancialProfiles
             .Include(fp => fp.Assets)
             .FirstOrDefaultAsync(fp => fp.Id == profile.Id);
@@ -43,7 +43,7 @@ public class UpdateAsyncTests(SharedFixture fixture) : IDisposable
     public async Task UpdateAsync_ShouldReturnFail_WhenProfileNotFound()
     {
         // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         FinancialProfileRepository repository = new(_logger.Object, dbContext);
 
         // Act
@@ -56,7 +56,7 @@ public class UpdateAsyncTests(SharedFixture fixture) : IDisposable
 
     public void Dispose()
     {
-        using UserDbContext context = fixture.CreateDatabaseContext();
+        using NetworkDbContext context = fixture.CreateDatabaseContext();
         context.FinancialProfiles.ExecuteDelete();
         context.Users.ExecuteDelete();
         GC.SuppressFinalize(this);

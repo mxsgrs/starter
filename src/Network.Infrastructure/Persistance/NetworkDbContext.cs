@@ -5,9 +5,9 @@ using System.Reflection;
 
 namespace Network.Infrastructure.Persistance;
 
-public partial class UserDbContext : DbContext
+public partial class NetworkDbContext : DbContext
 {
-    public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
+    public NetworkDbContext(DbContextOptions<NetworkDbContext> options) : base(options)
     {
         string? env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         if (env == "Development") Database.Migrate();

@@ -4,7 +4,7 @@ using Network.Domain.Aggregates.FinancialProfileAggregate;
 
 namespace Network.Infrastructure.Persistance.Repositories;
 
-public class FinancialProfileRepository(ILogger<FinancialProfileRepository> logger, UserDbContext dbContext) : IFinancialProfileRepository
+public class FinancialProfileRepository(ILogger<FinancialProfileRepository> logger, NetworkDbContext dbContext) : IFinancialProfileRepository
 {
     #region FinancialProfile
 

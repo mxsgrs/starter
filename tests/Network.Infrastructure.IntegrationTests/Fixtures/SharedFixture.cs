@@ -27,20 +27,20 @@ public class SharedFixture : IAsyncLifetime
             InitialCatalog = "testdb"
         }.ConnectionString;
 
-        using UserDbContext context = CreateDatabaseContext();
+        using NetworkDbContext context = CreateDatabaseContext();
         await context.Database.MigrateAsync();
     }
 
     /// <summary>
     /// Returns a new DbContext instance per call so each test starts with a clean identity cache.
     /// </summary>
-    public UserDbContext CreateDatabaseContext()
+    public NetworkDbContext CreateDatabaseContext()
     {
-        DbContextOptions<UserDbContext> options = new DbContextOptionsBuilder<UserDbContext>()
+        DbContextOptions<NetworkDbContext> options = new DbContextOptionsBuilder<NetworkDbContext>()
             .UseSqlServer(_connectionString)
             .Options;
 
-        return new UserDbContext(options);
+        return new NetworkDbContext(options);
     }
 
     /// <summary>

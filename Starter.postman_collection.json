@@ -236,14 +236,14 @@
                   }
                 },
                 "url": {
-                  "raw": "{{HostAddress}}/api/network/user",
+                  "raw": "{{HostAddress}}/api/network/users",
                   "host": [
                     "{{HostAddress}}"
                   ],
                   "path": [
                     "api",
                     "network",
-                    "user"
+                    "users"
                   ]
                 }
               },
@@ -310,7 +310,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{HostAddress}}/api/network/user/{{UserId}}",
+                  "raw": "{{HostAddress}}/api/network/users/{{UserId}}",
                   "host": [
                     "{{HostAddress}}"
                   ],
@@ -348,7 +348,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{HostAddress}}/api/network/user/{{UserId}}",
+                  "raw": "{{HostAddress}}/api/network/users/{{UserId}}",
                   "host": [
                     "{{HostAddress}}"
                   ],
@@ -373,7 +373,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{HostAddress}}/api/network/user/{{UserId}}",
+                  "raw": "{{HostAddress}}/api/network/users/{{UserId}}",
                   "host": [
                     "{{HostAddress}}"
                   ],

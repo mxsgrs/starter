@@ -166,7 +166,7 @@ Integration tests verify repository implementations against a real SQL Server in
 
 ### Setup
 
-**`SharedFixture`** starts a single Testcontainers SQL Server 2022 container for the entire test collection and applies EF Core migrations once in `InitializeAsync`. It exposes `CreateDatabaseContext()`, which returns a fresh `UserDbContext` per call to avoid EF Core identity-map interference between tests.
+**`SharedFixture`** starts a single Testcontainers SQL Server 2022 container for the entire test collection and applies EF Core migrations once in `InitializeAsync`. It exposes `CreateDatabaseContext()`, which returns a fresh `NetworkDbContext` per call to avoid EF Core identity-map interference between tests.
 
 All test classes carry `[Collection("Database")]` so xUnit assigns them to the same collection fixture and shares the container:
 
@@ -179,7 +179,7 @@ public class AddAsyncTests(SharedFixture fixture) : IDisposable
 {
     public void Dispose()
     {
-        using UserDbContext context = fixture.CreateDatabaseContext();
+        using NetworkDbContext context = fixture.CreateDatabaseContext();
         context.Users.ExecuteDelete();  // bulk-delete only the rows this test touched
     }
 }
@@ -207,7 +207,7 @@ Each test class implements `IDisposable` and bulk-deletes only the rows it inser
 ### Patterns
 
 - One test class per repository method keeps each file small and focused.
-- Assertions read directly from a second `UserDbContext` instance rather than relying on the same context used to write, avoiding EF Core cache false positives.
+- Assertions read directly from a second `NetworkDbContext` instance rather than relying on the same context used to write, avoiding EF Core cache false positives.
 - `ExecuteDelete()` (EF Core bulk delete) is used in `Dispose` to avoid slow row-by-row cleanup.
 
 ---
@@ -223,7 +223,7 @@ E2E tests exercise the full HTTP stack of the Network service: a real ASP.NET Co
 **`StarterWebApplicationFactory`** extends `WebApplicationFactory<Program>` and implements `IAsyncLifetime`:
 
 - Starts a SQL Server 2022 container and a RabbitMQ container in parallel in `InitializeAsync`.
-- Replaces the production `UserDbContext` registration with one that points at the test SQL Server container.
+- Replaces the production `NetworkDbContext` registration with one that points at the test SQL Server container.
 - Overrides the `ConnectionStrings:RabbitMq` configuration key to point at the test RabbitMQ container.
 - Runs EF Core migrations once via `MigrateDbContext()` before any test runs.
 - Exposes `CreateAuthorizedClient()`, which returns an `HttpClient` with a pre-configured `Authorization: Bearer <token>` header so tests do not need to authenticate manually.
@@ -248,6 +248,6 @@ E2E tests exercise the full HTTP stack of the Network service: a real ASP.NET Co
 
 ### Patterns
 
-- Database state is asserted after every mutating request by querying through a fresh `UserDbContext`, not just by reading the HTTP response. This catches cases where the handler returns a success code but fails to write.
+- Database state is asserted after every mutating request by querying through a fresh `NetworkDbContext`, not just by reading the HTTP response. This catches cases where the handler returns a success code but fails to write.
 - Audit log assertions verify that the domain event pipeline fired correctly end-to-end, not just that the aggregate raised an event in memory.
 - Each test class implements `IAsyncLifetime` and calls `ExecuteDeleteAsync()` in `DisposeAsync` to clean up rows between test runs without restarting the containers.

@@ -20,7 +20,7 @@ No XML doc comments above `[Fact]` methods.
 ```csharp
     public void Dispose()
     {
-        using UserDbContext context = fixture.CreateDatabaseContext();
+        using NetworkDbContext context = fixture.CreateDatabaseContext();
         context.Users.ExecuteDelete();
         GC.SuppressFinalize(this);
     }

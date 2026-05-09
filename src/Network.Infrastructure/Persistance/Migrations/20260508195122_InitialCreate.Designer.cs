@@ -11,7 +11,7 @@ using Network.Infrastructure.Persistance;
 
 namespace Network.Infrastructure.Persistance.Migrations
 {
-    [DbContext(typeof(UserDbContext))]
+    [DbContext(typeof(NetworkDbContext))]
     [Migration("20260508195122_InitialCreate")]
     partial class InitialCreate
     {

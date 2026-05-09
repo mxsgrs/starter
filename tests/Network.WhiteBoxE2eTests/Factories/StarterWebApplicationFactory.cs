@@ -29,10 +29,10 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     {
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveAll<DbContextOptions<UserDbContext>>();
+            services.RemoveAll<DbContextOptions<NetworkDbContext>>();
 
             string connectionString = _dbContainer.GetConnectionString();
-            services.AddDbContext<UserDbContext>((sp, options) =>
+            services.AddDbContext<NetworkDbContext>((sp, options) =>
             {
                 options.UseSqlServer(connectionString);
                 options.AddInterceptors(sp.GetRequiredService<DomainEventInterceptor>());
@@ -64,10 +64,10 @@ public class StarterWebApplicationFactory : WebApplicationFactory<Program>, IAsy
         return httpClient;
     }
 
-    public UserDbContext MigrateDbContext()
+    public NetworkDbContext MigrateDbContext()
     {
         IServiceScope scope = Services.CreateScope();
-        UserDbContext dbContext = scope.ServiceProvider.GetRequiredService<UserDbContext>();
+        NetworkDbContext dbContext = scope.ServiceProvider.GetRequiredService<NetworkDbContext>();
         dbContext.Database.Migrate();
 
         return dbContext;

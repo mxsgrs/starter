@@ -7,7 +7,7 @@ public class AuthenticationControllerTests(StarterWebApplicationFactory factory)
     : IClassFixture<StarterWebApplicationFactory>
 {
     private readonly HttpClient _client = factory.CreateAuthorizedClient();
-    private readonly UserDbContext _dbContext = factory.MigrateDbContext();
+    private readonly NetworkDbContext _dbContext = factory.MigrateDbContext();
 
     [Fact]
     public async Task Token_ShouldReturnOk_WhenLoginIsSuccessful()

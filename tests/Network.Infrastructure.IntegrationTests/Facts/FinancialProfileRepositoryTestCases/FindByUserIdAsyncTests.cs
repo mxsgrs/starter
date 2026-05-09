@@ -9,7 +9,7 @@ public class FindByUserIdAsyncTests(SharedFixture fixture) : IDisposable
     public async Task FindByUserIdAsync_ShouldReturnProfile_WhenProfileExists()
     {
         // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         User user = new UserBuilder().Build();
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
@@ -35,7 +35,7 @@ public class FindByUserIdAsyncTests(SharedFixture fixture) : IDisposable
     public async Task FindByUserIdAsync_ShouldReturnFail_WhenProfileNotFound()
     {
         // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         FinancialProfileRepository repository = new(_logger.Object, dbContext);
 
         // Act
@@ -48,7 +48,7 @@ public class FindByUserIdAsyncTests(SharedFixture fixture) : IDisposable
 
     public void Dispose()
     {
-        using UserDbContext context = fixture.CreateDatabaseContext();
+        using NetworkDbContext context = fixture.CreateDatabaseContext();
         context.FinancialProfiles.ExecuteDelete();
         context.Users.ExecuteDelete();
         GC.SuppressFinalize(this);

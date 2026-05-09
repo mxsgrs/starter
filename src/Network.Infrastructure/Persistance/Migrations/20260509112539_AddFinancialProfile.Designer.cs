@@ -11,7 +11,7 @@ using Network.Infrastructure.Persistance;
 
 namespace Network.Infrastructure.Persistance.Migrations
 {
-    [DbContext(typeof(UserDbContext))]
+    [DbContext(typeof(NetworkDbContext))]
     [Migration("20260509112539_AddFinancialProfile")]
     partial class AddFinancialProfile
     {

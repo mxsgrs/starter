@@ -7,7 +7,7 @@ public class AddAsyncTests(SharedFixture fixture) : IDisposable
     public async Task AddAsync_ShouldStageAuditLog_WhenCalled()
     {
         // Arrange
-        UserDbContext dbContext = fixture.CreateDatabaseContext();
+        NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         User user = new UserBuilder().Build();
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
@@ -31,7 +31,7 @@ public class AddAsyncTests(SharedFixture fixture) : IDisposable
 
     public void Dispose()
     {
-        using UserDbContext context = fixture.CreateDatabaseContext();
+        using NetworkDbContext context = fixture.CreateDatabaseContext();
         context.AuditLogs.ExecuteDelete();
         context.Users.ExecuteDelete();
         GC.SuppressFinalize(this);
