@@ -33,8 +33,6 @@ public class User : AggregateRoot
 
     public Address Address { get; private set; } = null!;
 
-    public SecurityNote? SecurityNote { get; private set; }
-
     public int Age
     {
         get

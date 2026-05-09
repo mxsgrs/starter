@@ -46,31 +46,6 @@ namespace Network.Infrastructure.Persistance.Migrations
                     b.ToTable("AuditLogs");
                 });
 
-            modelBuilder.Entity("Network.Domain.Aggregates.UserAggregate.SecurityNote", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("SecurityNotes");
-                });
-
             modelBuilder.Entity("Network.Domain.Aggregates.UserAggregate.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -119,15 +94,6 @@ namespace Network.Infrastructure.Persistance.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Network.Domain.Aggregates.UserAggregate.SecurityNote", b =>
-                {
-                    b.HasOne("Network.Domain.Aggregates.UserAggregate.User", null)
-                        .WithOne("SecurityNote")
-                        .HasForeignKey("Network.Domain.Aggregates.UserAggregate.SecurityNote", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Network.Domain.Aggregates.UserAggregate.User", b =>
                 {
                     b.OwnsOne("Network.Domain.Aggregates.UserAggregate.Address", "Address", b1 =>
@@ -169,10 +135,6 @@ namespace Network.Infrastructure.Persistance.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Network.Domain.Aggregates.UserAggregate.User", b =>
-                {
-                    b.Navigation("SecurityNote");
-                });
 #pragma warning restore 612, 618
         }
     }

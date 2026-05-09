@@ -204,14 +204,6 @@ Each test class implements `IDisposable` and bulk-deletes only the rows it inser
 |---|---|
 | `AddAsyncTests` | Stages an audit log entry, saves, and verifies the row is in the database with the correct `UserId` and `EventType` |
 
-**`SecurityNoteRepository`**
-
-| Class | Tests |
-|---|---|
-| `AddAsyncTests` | Stages a security note and verifies `Reason` is persisted correctly |
-| `FindByUserIdAsyncTests` | Returns the note when found; returns `null` when not found |
-| `RemoveTests` | Removes the note and verifies absence |
-
 ### Patterns
 
 - One test class per repository method keeps each file small and focused.

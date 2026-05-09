@@ -109,26 +109,4 @@ public class UserRepository(ILogger<UserRepository> logger, UserDbContext dbCont
 
     #endregion
 
-    #region Security Note
-
-    /// <summary>
-    /// Stage a new security note to be committed as part of the current transaction
-    /// </summary>
-    public async Task AddSecurityNoteAsync(SecurityNote note)
-        => await dbContext.SecurityNotes.AddAsync(note);
-
-    /// <summary>
-    /// Find the security note for a given user, or null if none exists
-    /// </summary>
-    public async Task<SecurityNote?> FindSecurityNoteByUserIdAsync(Guid userId)
-        => await dbContext.SecurityNotes.FirstOrDefaultAsync(n => n.UserId == userId);
-
-    /// <summary>
-    /// Stage the removal of a security note to be committed as part of the current transaction
-    /// </summary>
-    public void RemoveSecurityNote(SecurityNote note)
-        => dbContext.SecurityNotes.Remove(note);
-
-    #endregion
-
 }

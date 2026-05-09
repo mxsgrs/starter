@@ -31,22 +31,4 @@ public interface IUserRepository
 
     #endregion
 
-    #region Security Note
-
-    /// <summary>
-    /// Stage a new security note to be committed as part of the current transaction
-    /// </summary>
-    Task AddSecurityNoteAsync(SecurityNote note);
-
-    /// <summary>
-    /// Find the security note for a given user, or null if none exists
-    /// </summary>
-    Task<SecurityNote?> FindSecurityNoteByUserIdAsync(Guid userId);
-
-    /// <summary>
-    /// Stage the removal of a security note to be committed as part of the current transaction
-    /// </summary>
-    void RemoveSecurityNote(SecurityNote note);
-
-    #endregion
 }

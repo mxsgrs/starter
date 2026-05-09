@@ -70,7 +70,7 @@ Events are held in memory on the aggregate and never leave the Domain layer dire
 
 ### Entities
 
-`UserAuditLog` and `SecurityNote` are entities that belong to the `User` aggregate but are not aggregate roots themselves. They are created by domain event handlers rather than by application code directly, keeping their lifecycle coupled to meaningful domain facts.
+`AuditLog` is an entity that belongs to the `User` aggregate but is not an aggregate root itself. It is created by domain event handlers rather than by application code directly, keeping its lifecycle coupled to meaningful domain facts.
 
 ### Repository Interfaces
 
@@ -78,7 +78,6 @@ Interfaces for all repositories are declared in the Domain layer so that the App
 
 - `IUserRepository` — CRUD operations returning `Result<T>`
 - `IAuditLogRepository` — append-only audit log staging
-- `ISecurityNoteRepository` — lifecycle management for security notes
 
 The implementations live in Infrastructure; only the contracts live here.
 
@@ -128,9 +127,9 @@ The Application layer defines what should happen in response to each domain even
 
 | Handler | Triggered by | Effect |
 |---|---|---|
-| `PreUserCreatedDomainEventHandler` | `UserCreatedDomainEvent` | Inserts `UserAuditLog`; inserts `SecurityNote` if age ≥ 30 |
-| `PreUserUpdatedDomainEventHandler` | `UserUpdatedDomainEvent` | Inserts `UserAuditLog`; adds or removes `SecurityNote` based on age |
-| `PreUserDeletedDomainEventHandler` | `UserDeletedDomainEvent` | Inserts `UserAuditLog`; removes `SecurityNote` if present |
+| `PreUserCreatedDomainEventHandler` | `UserCreatedDomainEvent` | Inserts `AuditLog` |
+| `PreUserUpdatedDomainEventHandler` | `UserUpdatedDomainEvent` | Inserts `AuditLog` |
+| `PreUserDeletedDomainEventHandler` | `UserDeletedDomainEvent` | Inserts `AuditLog` |
 
 **Post-save handlers** (`IPostSavedDomainEventHandler<T>`) run after the transaction commits. They are used for cross-service communication, where the action must only happen once the data is durably written:
 
@@ -161,15 +160,14 @@ The Infrastructure layer implements everything that touches external systems: th
 
 ### Persistence
 
-`UserDbContext` is an EF Core `DbContext` with three `DbSet` properties: `Users`, `UserAuditLogs`, and `SecurityNotes`. Entity configurations are defined in separate `IEntityTypeConfiguration<T>` classes:
+`UserDbContext` is an EF Core `DbContext` with two `DbSet` properties: `Users` and `AuditLogs`. Entity configurations are defined in separate `IEntityTypeConfiguration<T>` classes:
 
 - `UserConfiguration` — sets the primary key, a unique index on `EmailAddress`, stores `Role` and `Gender` enums as strings, and maps `Address` as an owned entity in a separate `UserAddresses` table.
-- `UserAuditLogConfiguration` — sets the primary key, a length constraint on `EventType`, and an index on `UserId`.
-- `SecurityNoteConfiguration` — sets the primary key and the foreign key to `User`.
+- `AuditLogConfiguration` — sets the primary key, a length constraint on `EventType`, and an index on `UserId`.
 
 ### Repositories
 
-`UserRepository`, `AuditLogRepository`, and `SecurityNoteRepository` implement the interfaces declared in the Domain layer. Repositories return `Result<T>` rather than throwing exceptions, and they delegate all actual persistence to `UserDbContext`. `SaveChangesAsync` is called by the repository — never directly by application handlers — so the domain event interceptor fires at the right time.
+`UserRepository` and `AuditLogRepository` implement the interfaces declared in the Domain layer. Repositories return `Result<T>` rather than throwing exceptions, and they delegate all actual persistence to `UserDbContext`. `SaveChangesAsync` is called by the repository — never directly by application handlers — so the domain event interceptor fires at the right time.
 
 ### Domain Event Dispatch Pipeline
 
@@ -182,7 +180,7 @@ UserRepository.SaveChanges()
 DomainEventInterceptor.SavingChangesAsync()
   ├─ Snapshot events from all tracked AggregateRoot instances
   ├─ Dispatch to pre-save handlers (IPreSavedDomainEventHandler<T>)
-  │     → Same DB transaction; audit logs and security notes staged here
+  │     → Same DB transaction; audit logs staged here
   └─ Clear events from aggregates
         │
         ▼
@@ -269,10 +267,9 @@ UserRepository.SaveChangesAsync()
         │
         ├─ SavingChangesAsync (pre-save, inside transaction)
         │    └─ PreUserCreatedDomainEventHandler
-        │         ├─ INSERT UserAuditLog
-        │         └─ INSERT SecurityNote (if age ≥ 30)
+        │         └─ INSERT AuditLog
         │
-        ├─ EF Core commits (User + AuditLog + SecurityNote in one transaction)
+        ├─ EF Core commits (User + AuditLog in one transaction)
         │
         └─ SavedChangesAsync (post-save, after commit)
              └─ PostUserCreatedDomainEventHandler

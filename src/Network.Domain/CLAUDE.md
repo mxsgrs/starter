@@ -2,7 +2,7 @@
 
 ## Regions in Repository Interfaces
 
-Repository interfaces that cover multiple entity concerns must use `#region` blocks to group methods by entity. Each region is named after the entity it covers (e.g. `#region User`, `#region Security Note`).
+Repository interfaces that cover multiple entity concerns must use `#region` blocks to group methods by entity. Each region is named after the entity it covers (e.g. `#region User`).
 
 ## Aggregate Folder Naming
 

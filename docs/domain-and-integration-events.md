@@ -95,28 +95,20 @@ Pre-save handlers run inside the same database transaction as the originating wr
 
 **Use it when:** the side-effect belongs to the same consistency boundary. Examples:
 - Audit logs (you never want a user created without a log entry)
-- Derived entities computed from the new state (e.g. `SecurityNote` based on user age)
 
 **Example — `PreUserCreatedDomainEventHandler`:**
 
 ```csharp
-// Runs before the INSERT. Both the audit log and security note
-// are committed in the same transaction as the new User row.
+// Runs before the INSERT. The audit log is committed in the same transaction as the new User row.
 public async Task HandleAsync(UserCreatedDomainEvent domainEvent, CancellationToken cancellationToken)
 {
-    UserAuditLog auditLog = UserAuditLog.Create(domainEvent.UserId, nameof(UserCreatedDomainEvent));
-    await auditLogRepository.AddAsync(auditLog, cancellationToken);
-
-    Result<User> userResult = await userRepository.ReadTrackedUser(domainEvent.UserId);
-    if (userResult.IsSuccess && userResult.Value.Age >= 30)
-    {
-        SecurityNote note = SecurityNote.Create(domainEvent.UserId, "User age is 30 or above");
-        await securityNoteRepository.AddAsync(note, cancellationToken);
-    }
+    Result<AuditLog> auditLogResult = AuditLog.Create(domainEvent.UserId, AuditLogEventType.UserCreated);
+    if (auditLogResult.IsSuccess)
+        await auditLogRepository.AddAsync(auditLogResult.Value);
 }
 ```
 
-If the user save rolls back (e.g. a unique constraint violation), neither the audit log nor the security note is written. No cleanup code needed.
+If the user save rolls back (e.g. a unique constraint violation), the audit log is not written either. No cleanup code needed.
 
 ### Post-save handlers (`IPostSavedDomainEventHandler<T>`)
 
@@ -189,13 +181,12 @@ userRepository.SaveChanges()   ← triggers DomainEventInterceptor
   │  SavingChangesAsync (pre-save, inside transaction)  │
   │  ├─ snapshot [UserCreatedDomainEvent]                │
   │  └─ PreUserCreatedDomainEventHandler.HandleAsync()  │
-  │       ├─ INSERT UserAuditLog                        │
-  │       └─ INSERT SecurityNote (if age ≥ 30)          │
+  │       └─ INSERT AuditLog                            │
   └─────┬──────────────────────────────────────────────┘
         │
         ▼
 EF Core commits transaction
-  → User row, AuditLog row, SecurityNote row all written atomically
+  → User row and AuditLog row written atomically
         │
   ┌─────┴──────────────────────────────────────────────┐
   │  SavedChangesAsync (post-save, after commit)        │
