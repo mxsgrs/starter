@@ -8,22 +8,31 @@ Domain-Driven Design (DDD) was introduced by Eric Evans in his 2003 book *Domain
 
 ### Bounded Context
 
-Evans defines a bounded context as an explicit boundary within which a particular domain model applies. Inside the boundary, every term has a precise, agreed-upon meaning and the model is internally consistent. The same word can mean something entirely different in another bounded context — and that is intentional, not a problem to fix.
+Evans defines a bounded context as an explicit boundary within which a single domain model applies consistently. Inside that boundary every term has one precise meaning; outside it, the same word may refer to something entirely different. The bounded context is the primary unit of strategic DDD — it defines what a team owns end-to-end.
 
 > "A BOUNDED CONTEXT delimits the applicability of a particular model so that team members have a clear and shared understanding of what has to be consistent and how it relates to other contexts."
 > — Eric Evans, *Domain-Driven Design* (2003)
 
-A bounded context is a domain concept, not an infrastructure one. A microservice is a deployment unit and can host several bounded contexts. Mapping one bounded context to one microservice is not a valid choice as it create way too many microservices and hence latency.
+**Sizing a bounded context**
 
-**In this repo**, the `Network` service hosts multiple bounded contexts, each one having only one aggregate because this is a small project.
+A bounded context should map to one team. At a team size of six to seven engineers a context is large enough to own a complete business capability — identity, financial management, sales — while remaining small enough for every member to hold the full model in their head. Splitting contexts below this threshold produces chatty services, distributed-transaction problems, and artificial seams. Merging multiple capabilities into one context above this threshold makes the model unwieldy and turns cross-team coordination into a bottleneck.
 
-| Bounded Context | Aggregate Root | Key File |
+**Bounded contexts in this repo**
+
+| Bounded Context | Service | Owns |
 |---|---|---|
-| User | `User` | `src/Network.Domain/Aggregates/UserAggregate/User.cs` |
-| Financial Profile | `FinancialProfile` | `src/Network.Domain/Aggregates/FinancialProfileAggregate/FinancialProfile.cs` |
-| Audit Log | `AuditLog` | `src/Network.Domain/Aggregates/AuditLogAggregate/AuditLog.cs` |
+| Identity & Networking | `Network.WebApi` | Users, financial profiles, audit logs |
+| Sales | `Sales.WebApi` | Financial products, contracts |
+| Gateway | `Gateway.WebApi` | Routing, authentication edge |
 
-Each bounded context owns its language: `Asset` means a financial holding inside the Financial Profile context and has no meaning elsewhere. When a state change in one context must affect another, the originating aggregate root raises a domain event — the contexts never reach into each other's aggregates directly.
+**Cross-context communication**
+
+Bounded contexts may not share code, types, or databases. They communicate exclusively through:
+
+- **Integration events** over RabbitMQ (e.g. `UserCreatedIntegrationEvent` published by `Network`, consumed by `Sales`).
+- **HTTP/gRPC APIs** routed through the gateway.
+
+Each context defines its own representation of shared concepts. `Sales` maintains its own local view of a user derived from the integration event — it does not reference `Network`'s `User` type. This is intentional: the two contexts model the same real-world person differently because their responsibilities differ.
 
 ---
 
@@ -426,6 +435,6 @@ Publishing before the commit would risk notifying consumers of a user that was n
 | Intra-aggregate side effect | Handled directly in domain methods | Risk score recalculation on asset mutation | `FinancialProfile.RecalculateRiskScore()` |
 | Cross-aggregate side effect (pre-save) | Domain event + pre-save handler, atomic with primary write | `AuditLog` + `FinancialProfile` created on user creation | `src/Network.Application/Users/Events/Handlers/PreUserCreatedDomainEventHandler.cs` |
 | Cross-aggregate side effect (post-save) | Domain event + post-save handler, after DB commit | Integration event published to message bus | `src/Network.Application/Users/Events/Handlers/PostUserCreatedDomainEventHandler.cs` |
-| Bounded Context | Explicit boundary where a domain model is consistent; services own their types and communicate via contracts | `Network`, `Sales` |
+| Bounded Context | Explicit boundary where a domain model is consistent; one context per team (~6–7 engineers); communicate via integration events or HTTP only | `Network` (identity), `Sales` (financial products) |
 | Ubiquitous Language | Shared business vocabulary used consistently in code, docs, and conversation | `AddAsset`, `RecalculateRiskScore`, `UserCreatedDomainEvent` | Throughout `src/Network.Domain/` |
 | Factory | Encapsulates construction of a valid aggregate or entity; always returns `Result<T>` | `User.Create(...)`, `Asset.Create(...)`, `FinancialProfile.Create(...)` | Static `Create` methods on each aggregate/entity |
