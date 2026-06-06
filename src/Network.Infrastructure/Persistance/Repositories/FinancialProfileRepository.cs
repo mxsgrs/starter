@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using Network.Domain.Aggregates.FinancialProfileAggregate;
 
@@ -37,11 +38,13 @@ public class FinancialProfileRepository(ILogger<FinancialProfileRepository> logg
     /// </summary>
     public async Task<Result> UpdateAsync(Guid id)
     {
-        FinancialProfile? profile = await dbContext.FinancialProfiles.FindAsync(id);
+        EntityEntry<FinancialProfile>? entry = dbContext.ChangeTracker
+            .Entries<FinancialProfile>()
+            .FirstOrDefault(e => e.Entity.Id == id);
 
-        if (profile is null)
+        if (entry is null || entry.State == EntityState.Unchanged)
         {
-            logger.LogWarning("Financial profile with id {id} was not found", id);
+            logger.LogWarning("Financial profile with id {id} was not tracked with modifications", id);
             return Result.Fail("Financial profile not found");
         }
 

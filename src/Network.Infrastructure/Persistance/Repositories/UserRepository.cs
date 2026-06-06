@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using Network.Domain.Aggregates.UserAggregate;
 
@@ -90,15 +91,16 @@ public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbC
 
     /// <summary>
     /// Persists mutations already applied to the tracked User aggregate.
-    /// FindAsync returns the same in-memory instance (identity map), so no extra DB round trip occurs.
     /// </summary>
     public async Task<Result> UpdateAsync(Guid id)
     {
-        User? trackedUser = await dbContext.Users.FindAsync(id);
+        EntityEntry<User>? entry = dbContext.ChangeTracker
+            .Entries<User>()
+            .FirstOrDefault(e => e.Entity.Id == id);
 
-        if (trackedUser is null)
+        if (entry is null || entry.State == EntityState.Unchanged)
         {
-            logger.LogWarning("User with id {id} was not found", id);
+            logger.LogWarning("User with id {id} was not tracked with modifications", id);
             return Result.Fail("User not found");
         }
 
