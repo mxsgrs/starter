@@ -21,6 +21,6 @@ public class CreateAssetCommandHandler(
         Result addResult = profileResult.Value.AddAsset(request.Name, request.AssetType, request.Value, request.RiskFactor);
         if (addResult.IsFailed) return addResult;
 
-        return await financialProfileRepository.UpdateAsync(profileResult.Value.Id);
+        return await financialProfileRepository.Save();
     }
 }

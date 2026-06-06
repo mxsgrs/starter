@@ -21,7 +21,7 @@ public class CreateAssetCommandHandlerTests
         CreateAssetCommand command = new(profile.UserId, "Test Bond", AssetType.Bond, 5000m, 0.2m);
 
         _mockRepository.Setup(r => r.FindByUserIdAsync(profile.UserId)).ReturnsAsync(profile);
-        _mockRepository.Setup(r => r.UpdateAsync(profile.Id)).ReturnsAsync(Result.Ok());
+        _mockRepository.Setup(r => r.Save()).ReturnsAsync(Result.Ok());
 
         // Act
         Result result = await _handler.HandleAsync(command);
@@ -30,7 +30,7 @@ public class CreateAssetCommandHandlerTests
         Assert.True(result.IsSuccess);
 
         _mockRepository.Verify(r => r.FindByUserIdAsync(profile.UserId), Times.Once);
-        _mockRepository.Verify(r => r.UpdateAsync(profile.Id), Times.Once);
+        _mockRepository.Verify(r => r.Save(), Times.Once);
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class CreateAssetCommandHandlerTests
         Assert.True(result.IsFailed);
 
         _mockRepository.Verify(r => r.FindByUserIdAsync(userId), Times.Once);
-        _mockRepository.Verify(r => r.UpdateAsync(It.IsAny<Guid>()), Times.Never);
+        _mockRepository.Verify(r => r.Save(), Times.Never);
     }
 
     [Fact]
@@ -61,8 +61,7 @@ public class CreateAssetCommandHandlerTests
         CreateAssetCommand command = new(profile.UserId, "Test Bond", AssetType.Bond, 5000m, 0.2m);
 
         _mockRepository.Setup(r => r.FindByUserIdAsync(profile.UserId)).ReturnsAsync(profile);
-        _mockRepository.Setup(r => r.UpdateAsync(profile.Id))
-            .ReturnsAsync(Result.Fail("Database error"));
+        _mockRepository.Setup(r => r.Save()).ReturnsAsync(Result.Fail("Database error"));
 
         // Act
         Result result = await _handler.HandleAsync(command);
@@ -70,6 +69,6 @@ public class CreateAssetCommandHandlerTests
         // Assert
         Assert.True(result.IsFailed);
 
-        _mockRepository.Verify(r => r.UpdateAsync(profile.Id), Times.Once);
+        _mockRepository.Verify(r => r.Save(), Times.Once);
     }
 }

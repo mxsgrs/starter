@@ -23,10 +23,6 @@ public class UpdateUserCommandHandler(
 
         if (updateResult.IsFailed) return Result.Fail(updateResult.Errors);
 
-        Result savedUser = await userRepository.UpdateAsync(request.Id);
-
-        if (savedUser.IsFailed) return Result.Fail(savedUser.Errors);
-
-        return Result.Ok();
+        return await userRepository.Save();
     }
 }

@@ -21,6 +21,6 @@ public class DeleteAssetCommandHandler(
         Result removeResult = profileResult.Value.RemoveAsset(request.AssetId);
         if (removeResult.IsFailed) return removeResult;
 
-        return await financialProfileRepository.UpdateAsync(profileResult.Value.Id);
+        return await financialProfileRepository.Save();
     }
 }

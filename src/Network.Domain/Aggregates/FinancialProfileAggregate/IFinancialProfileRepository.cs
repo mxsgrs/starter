@@ -15,9 +15,9 @@ public interface IFinancialProfileRepository
     Task<Result<FinancialProfile>> FindByUserIdAsync(Guid userId);
 
     /// <summary>
-    /// Persist tracked changes for the financial profile with the given id.
+    /// Persist all tracked changes to the database
     /// </summary>
-    Task<Result> UpdateAsync(Guid id);
+    Task<Result> Save();
 
     #endregion
 }

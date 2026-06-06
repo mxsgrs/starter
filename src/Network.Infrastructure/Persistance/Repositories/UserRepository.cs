@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using Network.Domain.Aggregates.UserAggregate;
 
 namespace Network.Infrastructure.Persistance.Repositories;
 
-public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbContext) : IUserRepository
+public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbContext) : RepositoryBase(logger, dbContext), IUserRepository
 {
     #region User
 
@@ -16,7 +15,7 @@ public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbC
     {
         logger.LogInformation("Creating user credentials {user}", user);
 
-        bool userExists = await dbContext.Users.AnyAsync(item => item.EmailAddress == user.EmailAddress);
+        bool userExists = await DbContext.Users.AnyAsync(item => item.EmailAddress == user.EmailAddress);
 
         if (userExists)
         {
@@ -25,9 +24,9 @@ public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbC
             return Result.Fail<User>($"User with email {user.EmailAddress} already exists");
         }
 
-        dbContext.Users.Add(user);
+        DbContext.Users.Add(user);
 
-        await dbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync();
 
         return user;
     }
@@ -37,7 +36,7 @@ public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbC
     /// </summary>
     public async Task<Result<User>> FindByIdAsync(Guid id)
     {
-        User? user = await dbContext.Users.FindAsync(id);
+        User? user = await DbContext.Users.FindAsync(id);
 
         if (user is null)
         {
@@ -54,7 +53,7 @@ public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbC
     /// </summary>
     public async Task<Result<User>> FindByCredentialsAsync(string emailAddress, string hashedPassword)
     {
-        User? user = await dbContext.Users
+        User? user = await DbContext.Users
             .FirstOrDefaultAsync(item => item.EmailAddress == emailAddress
                 && item.HashedPassword == hashedPassword);
 
@@ -73,7 +72,7 @@ public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbC
     /// </summary>
     public async Task<Result> RemoveAsync(Guid id)
     {
-        User? user = await dbContext.Users.FindAsync(id);
+        User? user = await DbContext.Users.FindAsync(id);
 
         if (user is null)
         {
@@ -82,32 +81,17 @@ public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbC
             return Result.Fail("User not found");
         }
 
-        dbContext.Users.Remove(user);
+        DbContext.Users.Remove(user);
 
-        await dbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync();
 
         return Result.Ok();
     }
 
     /// <summary>
-    /// Persists mutations already applied to the tracked User aggregate.
+    /// Persist all tracked changes to the database
     /// </summary>
-    public async Task<Result> UpdateAsync(Guid id)
-    {
-        EntityEntry<User>? entry = dbContext.ChangeTracker
-            .Entries<User>()
-            .FirstOrDefault(e => e.Entity.Id == id);
-
-        if (entry is null || entry.State == EntityState.Unchanged)
-        {
-            logger.LogWarning("User with id {id} was not tracked with modifications", id);
-            return Result.Fail("User not found");
-        }
-
-        await dbContext.SaveChangesAsync();
-
-        return Result.Ok();
-    }
+    public Task<Result> Save() => SaveChanges();
 
     #endregion
 

@@ -6,7 +6,7 @@ public class UpdateAsyncTests(SharedFixture fixture) : IDisposable
     private readonly Mock<ILogger<FinancialProfileRepository>> _logger = new();
 
     [Fact]
-    public async Task UpdateAsync_ShouldPersistAssetAddition_WhenProfileExists()
+    public async Task Save_ShouldPersistAssetAddition_WhenProfileExists()
     {
         // Arrange
         NetworkDbContext dbContext = fixture.CreateDatabaseContext();
@@ -25,7 +25,7 @@ public class UpdateAsyncTests(SharedFixture fixture) : IDisposable
         loadResult.Value.AddAsset("Bond A", AssetType.Bond, 3000m, 0.2m);
 
         // Act
-        Result result = await repository.UpdateAsync(loadResult.Value.Id);
+        Result result = await repository.Save();
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -37,21 +37,6 @@ public class UpdateAsyncTests(SharedFixture fixture) : IDisposable
         Assert.NotNull(stored);
         Assert.Single(stored.Assets);
         Assert.Equal("Bond A", stored.Assets[0].Name);
-    }
-
-    [Fact]
-    public async Task UpdateAsync_ShouldReturnFail_WhenProfileNotFound()
-    {
-        // Arrange
-        NetworkDbContext dbContext = fixture.CreateDatabaseContext();
-        FinancialProfileRepository repository = new(_logger.Object, dbContext);
-
-        // Act
-        Result result = await repository.UpdateAsync(Guid.NewGuid());
-
-        // Assert
-        Assert.True(result.IsFailed);
-        Assert.Equal("Financial profile not found", result.Errors[0].Message);
     }
 
     public void Dispose()

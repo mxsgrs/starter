@@ -25,9 +25,9 @@ public interface IUserRepository
     Task<Result> RemoveAsync(Guid id);
 
     /// <summary>
-    /// Persist mutations already applied to the tracked user aggregate
+    /// Persist all tracked changes to the database
     /// </summary>
-    Task<Result> UpdateAsync(Guid id);
+    Task<Result> Save();
 
     #endregion
 

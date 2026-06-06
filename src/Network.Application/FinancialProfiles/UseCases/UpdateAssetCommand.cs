@@ -21,6 +21,6 @@ public class UpdateAssetCommandHandler(
         Result updateResult = profileResult.Value.UpdateAsset(request.AssetId, request.Name, request.AssetType, request.Value, request.RiskFactor);
         if (updateResult.IsFailed) return updateResult;
 
-        return await financialProfileRepository.UpdateAsync(profileResult.Value.Id);
+        return await financialProfileRepository.Save();
     }
 }

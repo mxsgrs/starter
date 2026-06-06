@@ -24,7 +24,7 @@ public class UpdateAssetCommandHandlerTests
         UpdateAssetCommand command = new(profile.UserId, assetId, "New Name", AssetType.Bond, 2000m, 0.5m);
 
         _mockRepository.Setup(r => r.FindByUserIdAsync(profile.UserId)).ReturnsAsync(profile);
-        _mockRepository.Setup(r => r.UpdateAsync(profile.Id)).ReturnsAsync(Result.Ok());
+        _mockRepository.Setup(r => r.Save()).ReturnsAsync(Result.Ok());
 
         // Act
         Result result = await _handler.HandleAsync(command);
@@ -33,7 +33,7 @@ public class UpdateAssetCommandHandlerTests
         Assert.True(result.IsSuccess);
 
         _mockRepository.Verify(r => r.FindByUserIdAsync(profile.UserId), Times.Once);
-        _mockRepository.Verify(r => r.UpdateAsync(profile.Id), Times.Once);
+        _mockRepository.Verify(r => r.Save(), Times.Once);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class UpdateAssetCommandHandlerTests
         Assert.True(result.IsFailed);
 
         _mockRepository.Verify(r => r.FindByUserIdAsync(userId), Times.Once);
-        _mockRepository.Verify(r => r.UpdateAsync(It.IsAny<Guid>()), Times.Never);
+        _mockRepository.Verify(r => r.Save(), Times.Never);
     }
 
     [Fact]
@@ -72,6 +72,6 @@ public class UpdateAssetCommandHandlerTests
         Assert.True(result.IsFailed);
 
         _mockRepository.Verify(r => r.FindByUserIdAsync(profile.UserId), Times.Once);
-        _mockRepository.Verify(r => r.UpdateAsync(It.IsAny<Guid>()), Times.Never);
+        _mockRepository.Verify(r => r.Save(), Times.Never);
     }
 }
