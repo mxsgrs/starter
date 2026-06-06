@@ -5,10 +5,10 @@ public interface IUserRepository
     /// <summary>
     /// Add a user to the Sales database
     /// </summary>
-    Task AddAsync(Guid userId);
+    Task Add(Guid userId);
 
     /// <summary>
     /// Remove a user from the Sales database
     /// </summary>
-    Task DeleteAsync(Guid userId);
+    Task Delete(Guid userId);
 }

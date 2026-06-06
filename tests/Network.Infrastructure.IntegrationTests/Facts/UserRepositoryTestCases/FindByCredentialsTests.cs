@@ -1,12 +1,12 @@
 namespace Network.Infrastructure.IntegrationTests.Facts.UserRepositoryTestCases;
 
 [Collection("Database")]
-public class FindByIdAsyncTests(SharedFixture fixture) : IDisposable
+public class FindByCredentialsTests(SharedFixture fixture) : IDisposable
 {
     private readonly Mock<ILogger<UserRepository>> _logger = new();
 
     [Fact]
-    public async Task FindByIdAsync_ShouldReturnUser_WhenUserExists()
+    public async Task FindByCredentials_ShouldReturnUser_WhenUserExists()
     {
         // Arrange
         NetworkDbContext dbContext = fixture.CreateDatabaseContext();
@@ -18,22 +18,22 @@ public class FindByIdAsyncTests(SharedFixture fixture) : IDisposable
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        Result<User> result = await repository.FindByIdAsync(user.Id);
+        Result<User> result = await repository.FindByCredentials("test@example.com", "hashedPassword");
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal(user.EmailAddress, result.Value.EmailAddress);
+        Assert.Equal(user.Id, result.Value.Id);
     }
 
     [Fact]
-    public async Task FindByIdAsync_ShouldReturnFail_WhenUserDoesNotExist()
+    public async Task FindByCredentials_ShouldReturnFail_WhenUserDoesNotExist()
     {
         // Arrange
         NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        Result<User> result = await repository.FindByIdAsync(Guid.NewGuid());
+        Result<User> result = await repository.FindByCredentials("nonexistent@example.com", "wrongPassword");
 
         // Assert
         Assert.True(result.IsFailed);

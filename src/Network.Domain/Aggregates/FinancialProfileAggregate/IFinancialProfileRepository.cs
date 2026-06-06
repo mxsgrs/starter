@@ -7,12 +7,12 @@ public interface IFinancialProfileRepository
     /// <summary>
     /// Stage a new financial profile for insertion — does not call SaveChangesAsync.
     /// </summary>
-    Task AddAsync(FinancialProfile financialProfile);
+    Task Add(FinancialProfile financialProfile);
 
     /// <summary>
     /// Return the tracked financial profile for the given user.
     /// </summary>
-    Task<Result<FinancialProfile>> FindByUserIdAsync(Guid userId);
+    Task<Result<FinancialProfile>> FindByUserId(Guid userId);
 
     /// <summary>
     /// Persist all tracked changes to the database

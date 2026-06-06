@@ -20,6 +20,6 @@ public class UserDeletedEventConsumer(ILogger<UserDeletedEventConsumer> logger, 
             logger.LogInformation("Received the user deleted event {UserDeletedIntegrationEvent}", context.Message);
         }
 
-        await userRepository.DeleteAsync(context.Message.UserId);
+        await userRepository.Delete(context.Message.UserId);
     }
 }

@@ -101,6 +101,10 @@ Do not add `CancellationToken` parameters to methods unless explicitly asked.
 - **Independent data.** No shared databases, schemas, or direct DB access across microservices.
 - **Enforcement:** Reject any PR that introduces a cross-microservice `ProjectReference`, a `Shared`/`Common` project referenced by multiple services, or a NuGet/package dependency built from another microservice's code.
 
+## Repository Method Naming
+
+Do not add an `Async` suffix to repository method names. All repository methods are async by convention — the suffix adds no information. Use plain names: `Add`, `FindById`, `FindByCredentials`, `Remove`, `Save`.
+
 ## Code Style
 
 - Always add a XML doc comment on each method:

@@ -20,7 +20,7 @@ public class CreateAssetCommandHandlerTests
         FinancialProfile profile = new FinancialProfileBuilder().Build();
         CreateAssetCommand command = new(profile.UserId, "Test Bond", AssetType.Bond, 5000m, 0.2m);
 
-        _mockRepository.Setup(r => r.FindByUserIdAsync(profile.UserId)).ReturnsAsync(profile);
+        _mockRepository.Setup(r => r.FindByUserId(profile.UserId)).ReturnsAsync(profile);
         _mockRepository.Setup(r => r.Save()).ReturnsAsync(Result.Ok());
 
         // Act
@@ -29,7 +29,7 @@ public class CreateAssetCommandHandlerTests
         // Assert
         Assert.True(result.IsSuccess);
 
-        _mockRepository.Verify(r => r.FindByUserIdAsync(profile.UserId), Times.Once);
+        _mockRepository.Verify(r => r.FindByUserId(profile.UserId), Times.Once);
         _mockRepository.Verify(r => r.Save(), Times.Once);
     }
 
@@ -40,7 +40,7 @@ public class CreateAssetCommandHandlerTests
         Guid userId = Guid.NewGuid();
         CreateAssetCommand command = new(userId, "Test Bond", AssetType.Bond, 5000m, 0.2m);
 
-        _mockRepository.Setup(r => r.FindByUserIdAsync(userId))
+        _mockRepository.Setup(r => r.FindByUserId(userId))
             .ReturnsAsync(Result.Fail<FinancialProfile>("Financial profile not found"));
 
         // Act
@@ -49,7 +49,7 @@ public class CreateAssetCommandHandlerTests
         // Assert
         Assert.True(result.IsFailed);
 
-        _mockRepository.Verify(r => r.FindByUserIdAsync(userId), Times.Once);
+        _mockRepository.Verify(r => r.FindByUserId(userId), Times.Once);
         _mockRepository.Verify(r => r.Save(), Times.Never);
     }
 
@@ -60,7 +60,7 @@ public class CreateAssetCommandHandlerTests
         FinancialProfile profile = new FinancialProfileBuilder().Build();
         CreateAssetCommand command = new(profile.UserId, "Test Bond", AssetType.Bond, 5000m, 0.2m);
 
-        _mockRepository.Setup(r => r.FindByUserIdAsync(profile.UserId)).ReturnsAsync(profile);
+        _mockRepository.Setup(r => r.FindByUserId(profile.UserId)).ReturnsAsync(profile);
         _mockRepository.Setup(r => r.Save()).ReturnsAsync(Result.Fail("Database error"));
 
         // Act

@@ -9,12 +9,12 @@ public class DeleteUserCommandHandler(IUserRepository userRepository) : IDeleteU
 {
     public async Task<Result> HandleAsync(Guid id)
     {
-        Result<User> trackedUser = await userRepository.FindByIdAsync(id);
+        Result<User> trackedUser = await userRepository.FindById(id);
 
         if (trackedUser.IsFailed) return Result.Fail(trackedUser.Errors);
 
         trackedUser.Value.Delete();
 
-        return await userRepository.RemoveAsync(id);
+        return await userRepository.Remove(id);
     }
 }

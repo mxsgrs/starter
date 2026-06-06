@@ -13,6 +13,6 @@ public class PreUserDeletedDomainEventHandler(
     {
         Result<AuditLog> auditLogResult = AuditLog.Create(domainEvent.UserId, AuditLogEventType.UserDeleted);
         if (auditLogResult.IsSuccess)
-            await auditLogRepository.AddAsync(auditLogResult.Value);
+            await auditLogRepository.Add(auditLogResult.Value);
     }
 }

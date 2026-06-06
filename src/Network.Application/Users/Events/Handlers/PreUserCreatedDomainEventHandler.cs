@@ -15,10 +15,10 @@ public class PreUserCreatedDomainEventHandler(
     {
         Result<AuditLog> auditLogResult = AuditLog.Create(domainEvent.UserId, AuditLogEventType.UserCreated);
         if (auditLogResult.IsSuccess)
-            await auditLogRepository.AddAsync(auditLogResult.Value);
+            await auditLogRepository.Add(auditLogResult.Value);
 
         Result<FinancialProfile> profileResult = FinancialProfile.Create(domainEvent.UserId);
         if (profileResult.IsSuccess)
-            await financialProfileRepository.AddAsync(profileResult.Value);
+            await financialProfileRepository.Add(profileResult.Value);
     }
 }

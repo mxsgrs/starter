@@ -15,7 +15,7 @@ public class DeleteAssetCommandHandler(
 {
     public async Task<Result> HandleAsync(DeleteAssetCommand request)
     {
-        Result<FinancialProfile> profileResult = await financialProfileRepository.FindByUserIdAsync(request.UserId);
+        Result<FinancialProfile> profileResult = await financialProfileRepository.FindByUserId(request.UserId);
         if (profileResult.IsFailed) return Result.Fail(profileResult.Errors);
 
         Result removeResult = profileResult.Value.RemoveAsset(request.AssetId);

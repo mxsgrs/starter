@@ -14,7 +14,7 @@ public class ReadFinancialProfileQueryHandler(
     /// </summary>
     public async Task<Result<FinancialProfileDto>> HandleAsync(Guid userId)
     {
-        Result<FinancialProfile> profileResult = await financialProfileRepository.FindByUserIdAsync(userId);
+        Result<FinancialProfile> profileResult = await financialProfileRepository.FindByUserId(userId);
         if (profileResult.IsFailed) return Result.Fail<FinancialProfileDto>(profileResult.Errors);
 
         FinancialProfileDto dto = profileResult.Value.Adapt<FinancialProfileDto>();

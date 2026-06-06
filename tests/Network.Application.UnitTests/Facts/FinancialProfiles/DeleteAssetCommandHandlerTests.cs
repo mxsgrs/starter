@@ -23,7 +23,7 @@ public class DeleteAssetCommandHandlerTests
         Guid assetId = profile.Assets[0].Id;
         DeleteAssetCommand command = new(profile.UserId, assetId);
 
-        _mockRepository.Setup(r => r.FindByUserIdAsync(profile.UserId)).ReturnsAsync(profile);
+        _mockRepository.Setup(r => r.FindByUserId(profile.UserId)).ReturnsAsync(profile);
         _mockRepository.Setup(r => r.Save()).ReturnsAsync(Result.Ok());
 
         // Act
@@ -32,7 +32,7 @@ public class DeleteAssetCommandHandlerTests
         // Assert
         Assert.True(result.IsSuccess);
 
-        _mockRepository.Verify(r => r.FindByUserIdAsync(profile.UserId), Times.Once);
+        _mockRepository.Verify(r => r.FindByUserId(profile.UserId), Times.Once);
         _mockRepository.Verify(r => r.Save(), Times.Once);
     }
 
@@ -43,7 +43,7 @@ public class DeleteAssetCommandHandlerTests
         Guid userId = Guid.NewGuid();
         DeleteAssetCommand command = new(userId, Guid.NewGuid());
 
-        _mockRepository.Setup(r => r.FindByUserIdAsync(userId))
+        _mockRepository.Setup(r => r.FindByUserId(userId))
             .ReturnsAsync(Result.Fail<FinancialProfile>("Financial profile not found"));
 
         // Act
@@ -52,7 +52,7 @@ public class DeleteAssetCommandHandlerTests
         // Assert
         Assert.True(result.IsFailed);
 
-        _mockRepository.Verify(r => r.FindByUserIdAsync(userId), Times.Once);
+        _mockRepository.Verify(r => r.FindByUserId(userId), Times.Once);
         _mockRepository.Verify(r => r.Save(), Times.Never);
     }
 
@@ -63,7 +63,7 @@ public class DeleteAssetCommandHandlerTests
         FinancialProfile profile = new FinancialProfileBuilder().Build();
         DeleteAssetCommand command = new(profile.UserId, Guid.NewGuid());
 
-        _mockRepository.Setup(r => r.FindByUserIdAsync(profile.UserId)).ReturnsAsync(profile);
+        _mockRepository.Setup(r => r.FindByUserId(profile.UserId)).ReturnsAsync(profile);
 
         // Act
         Result result = await _handler.HandleAsync(command);
@@ -71,7 +71,7 @@ public class DeleteAssetCommandHandlerTests
         // Assert
         Assert.True(result.IsFailed);
 
-        _mockRepository.Verify(r => r.FindByUserIdAsync(profile.UserId), Times.Once);
+        _mockRepository.Verify(r => r.FindByUserId(profile.UserId), Times.Once);
         _mockRepository.Verify(r => r.Save(), Times.Never);
     }
 }

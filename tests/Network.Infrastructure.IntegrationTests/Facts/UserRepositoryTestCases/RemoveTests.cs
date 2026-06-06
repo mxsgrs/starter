@@ -1,12 +1,12 @@
 namespace Network.Infrastructure.IntegrationTests.Facts.UserRepositoryTestCases;
 
 [Collection("Database")]
-public class RemoveAsyncTests(SharedFixture fixture) : IDisposable
+public class RemoveTests(SharedFixture fixture) : IDisposable
 {
     private readonly Mock<ILogger<UserRepository>> _logger = new();
 
     [Fact]
-    public async Task RemoveAsync_ShouldRemoveUserFromDatabase()
+    public async Task Remove_ShouldRemoveUserFromDatabase()
     {
         // Arrange
         NetworkDbContext dbContext = fixture.CreateDatabaseContext();
@@ -17,7 +17,7 @@ public class RemoveAsyncTests(SharedFixture fixture) : IDisposable
         await dbContext.SaveChangesAsync();
 
         // Act
-        Result result = await repository.RemoveAsync(user.Id);
+        Result result = await repository.Remove(user.Id);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -26,14 +26,14 @@ public class RemoveAsyncTests(SharedFixture fixture) : IDisposable
     }
 
     [Fact]
-    public async Task RemoveAsync_ShouldReturnFail_WhenUserDoesNotExist()
+    public async Task Remove_ShouldReturnFail_WhenUserDoesNotExist()
     {
         // Arrange
         NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         UserRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        Result result = await repository.RemoveAsync(Guid.NewGuid());
+        Result result = await repository.Remove(Guid.NewGuid());
 
         // Assert
         Assert.True(result.IsFailed);

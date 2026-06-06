@@ -1,7 +1,7 @@
 namespace Network.Infrastructure.IntegrationTests.Facts.FinancialProfileRepositoryTestCases;
 
 [Collection("Database")]
-public class UpdateAsyncTests(SharedFixture fixture) : IDisposable
+public class UpdateTests(SharedFixture fixture) : IDisposable
 {
     private readonly Mock<ILogger<FinancialProfileRepository>> _logger = new();
 
@@ -21,7 +21,7 @@ public class UpdateAsyncTests(SharedFixture fixture) : IDisposable
         await dbContext.SaveChangesAsync();
 
         FinancialProfileRepository repository = new(_logger.Object, dbContext);
-        Result<FinancialProfile> loadResult = await repository.FindByUserIdAsync(user.Id);
+        Result<FinancialProfile> loadResult = await repository.FindByUserId(user.Id);
         loadResult.Value.AddAsset("Bond A", AssetType.Bond, 3000m, 0.2m);
 
         // Act

@@ -12,10 +12,10 @@ All repository methods must follow the `Add` / `FindBy` / `Remove` / `Update` na
 
 | Operation | Method name pattern | Example |
 |---|---|---|
-| Create / insert | `AddAsync` | `AddAsync(User user)` |
-| Read by primary key | `FindByIdAsync` | `FindByIdAsync(Guid id)` |
-| Read by other criteria | `FindBy{Criteria}Async` | `FindByCredentialsAsync(string email, string password)` |
-| Delete | `RemoveAsync` | `RemoveAsync(Guid id)` |
-| Persist tracked changes | `UpdateAsync` | `UpdateAsync(Guid id)` |
+| Create / insert | `Add` | `Add(User user)` |
+| Read by primary key | `FindById` | `FindById(Guid id)` |
+| Read by other criteria | `FindBy{Criteria}` | `FindByCredentials(string email, string password)` |
+| Delete | `Remove` | `Remove(Guid id)` |
+| Persist tracked changes | `Save` | `Save()` |
 
-Do **not** use CRUD-prefixed names like `CreateUser`, `ReadTrackedUser`, `DeleteUser`, or `UpdateUser`.
+Do **not** use CRUD-prefixed names like `CreateUser`, `ReadTrackedUser`, `DeleteUser`, or `UpdateUser`. Do **not** add an `Async` suffix — all repository methods are async by convention.

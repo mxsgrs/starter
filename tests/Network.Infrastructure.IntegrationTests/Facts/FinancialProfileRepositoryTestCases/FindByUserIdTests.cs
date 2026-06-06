@@ -1,12 +1,12 @@
 namespace Network.Infrastructure.IntegrationTests.Facts.FinancialProfileRepositoryTestCases;
 
 [Collection("Database")]
-public class FindByUserIdAsyncTests(SharedFixture fixture) : IDisposable
+public class FindByUserIdTests(SharedFixture fixture) : IDisposable
 {
     private readonly Mock<ILogger<FinancialProfileRepository>> _logger = new();
 
     [Fact]
-    public async Task FindByUserIdAsync_ShouldReturnProfile_WhenProfileExists()
+    public async Task FindByUserId_ShouldReturnProfile_WhenProfileExists()
     {
         // Arrange
         NetworkDbContext dbContext = fixture.CreateDatabaseContext();
@@ -23,7 +23,7 @@ public class FindByUserIdAsyncTests(SharedFixture fixture) : IDisposable
         FinancialProfileRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        Result<FinancialProfile> result = await repository.FindByUserIdAsync(user.Id);
+        Result<FinancialProfile> result = await repository.FindByUserId(user.Id);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -32,14 +32,14 @@ public class FindByUserIdAsyncTests(SharedFixture fixture) : IDisposable
     }
 
     [Fact]
-    public async Task FindByUserIdAsync_ShouldReturnFail_WhenProfileNotFound()
+    public async Task FindByUserId_ShouldReturnFail_WhenProfileNotFound()
     {
         // Arrange
         NetworkDbContext dbContext = fixture.CreateDatabaseContext();
         FinancialProfileRepository repository = new(_logger.Object, dbContext);
 
         // Act
-        Result<FinancialProfile> result = await repository.FindByUserIdAsync(Guid.NewGuid());
+        Result<FinancialProfile> result = await repository.FindByUserId(Guid.NewGuid());
 
         // Assert
         Assert.True(result.IsFailed);

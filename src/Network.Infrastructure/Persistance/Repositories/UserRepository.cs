@@ -11,7 +11,7 @@ public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbC
     /// <summary>
     /// Add a new user to the database
     /// </summary>
-    public async Task<Result<User>> AddAsync(User user)
+    public async Task<Result<User>> Add(User user)
     {
         logger.LogInformation("Creating user credentials {user}", user);
 
@@ -34,7 +34,7 @@ public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbC
     /// <summary>
     /// Find a user by their unique identifier
     /// </summary>
-    public async Task<Result<User>> FindByIdAsync(Guid id)
+    public async Task<Result<User>> FindById(Guid id)
     {
         User? user = await DbContext.Users.FindAsync(id);
 
@@ -51,7 +51,7 @@ public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbC
     /// <summary>
     /// Find a user by their email address and hashed password
     /// </summary>
-    public async Task<Result<User>> FindByCredentialsAsync(string emailAddress, string hashedPassword)
+    public async Task<Result<User>> FindByCredentials(string emailAddress, string hashedPassword)
     {
         User? user = await DbContext.Users
             .FirstOrDefaultAsync(item => item.EmailAddress == emailAddress
@@ -70,7 +70,7 @@ public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbC
     /// <summary>
     /// Remove a user from the database
     /// </summary>
-    public async Task<Result> RemoveAsync(Guid id)
+    public async Task<Result> Remove(Guid id)
     {
         User? user = await DbContext.Users.FindAsync(id);
 
@@ -94,5 +94,4 @@ public class UserRepository(ILogger<UserRepository> logger, NetworkDbContext dbC
     public Task<Result> Save() => SaveChanges();
 
     #endregion
-
 }

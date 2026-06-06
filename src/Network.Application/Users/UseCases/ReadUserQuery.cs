@@ -6,7 +6,7 @@ public class ReadUserQueryHandler(IUserRepository userRepository) : IReadUserQue
 {
     public async Task<Result<UserDto>> HandleAsync(Guid id)
     {
-        Result<User> user = await userRepository.FindByIdAsync(id);
+        Result<User> user = await userRepository.FindById(id);
 
         if (user.IsFailed) return Result.Fail(user.Errors);
 

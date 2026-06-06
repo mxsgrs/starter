@@ -15,7 +15,7 @@ public class CreateAssetCommandHandler(
 {
     public async Task<Result> HandleAsync(CreateAssetCommand request)
     {
-        Result<FinancialProfile> profileResult = await financialProfileRepository.FindByUserIdAsync(request.UserId);
+        Result<FinancialProfile> profileResult = await financialProfileRepository.FindByUserId(request.UserId);
         if (profileResult.IsFailed) return Result.Fail(profileResult.Errors);
 
         Result addResult = profileResult.Value.AddAsset(request.Name, request.AssetType, request.Value, request.RiskFactor);

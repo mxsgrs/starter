@@ -11,13 +11,13 @@ public class FinancialProfileRepository(ILogger<FinancialProfileRepository> logg
     /// <summary>
     /// Stage a new financial profile for insertion — does not call SaveChangesAsync.
     /// </summary>
-    public async Task AddAsync(FinancialProfile financialProfile)
+    public async Task Add(FinancialProfile financialProfile)
         => await DbContext.FinancialProfiles.AddAsync(financialProfile);
 
     /// <summary>
     /// Return the tracked financial profile (with assets) for the given user.
     /// </summary>
-    public async Task<Result<FinancialProfile>> FindByUserIdAsync(Guid userId)
+    public async Task<Result<FinancialProfile>> FindByUserId(Guid userId)
     {
         FinancialProfile? profile = await DbContext.FinancialProfiles
             .Include(fp => fp.Assets)

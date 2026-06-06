@@ -15,7 +15,7 @@ public class UpdateUserCommandHandler(
 {
     public async Task<Result> HandleAsync(UpdateUserCommand request)
     {
-        Result<User> trackedUser = await userRepository.FindByIdAsync(request.Id);
+        Result<User> trackedUser = await userRepository.FindById(request.Id);
 
         if (trackedUser.IsFailed) return Result.Fail(trackedUser.Errors);
 

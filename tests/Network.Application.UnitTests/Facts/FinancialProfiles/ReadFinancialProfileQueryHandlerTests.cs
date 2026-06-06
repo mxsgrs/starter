@@ -20,7 +20,7 @@ public class ReadFinancialProfileQueryHandlerTests
         // Arrange
         FinancialProfile profile = new FinancialProfileBuilder().Build();
 
-        _mockRepository.Setup(r => r.FindByUserIdAsync(profile.UserId)).ReturnsAsync(profile);
+        _mockRepository.Setup(r => r.FindByUserId(profile.UserId)).ReturnsAsync(profile);
 
         // Act
         Result<FinancialProfileDto> result = await _handler.HandleAsync(profile.UserId);
@@ -31,7 +31,7 @@ public class ReadFinancialProfileQueryHandlerTests
         Assert.Equal(profile.UserId, result.Value.UserId);
         Assert.Equal(profile.RiskScore, result.Value.RiskScore);
 
-        _mockRepository.Verify(r => r.FindByUserIdAsync(profile.UserId), Times.Once);
+        _mockRepository.Verify(r => r.FindByUserId(profile.UserId), Times.Once);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class ReadFinancialProfileQueryHandlerTests
         // Arrange
         Guid userId = Guid.NewGuid();
 
-        _mockRepository.Setup(r => r.FindByUserIdAsync(userId))
+        _mockRepository.Setup(r => r.FindByUserId(userId))
             .ReturnsAsync(Result.Fail<FinancialProfile>("Financial profile not found"));
 
         // Act
@@ -49,6 +49,6 @@ public class ReadFinancialProfileQueryHandlerTests
         // Assert
         Assert.True(result.IsFailed);
 
-        _mockRepository.Verify(r => r.FindByUserIdAsync(userId), Times.Once);
+        _mockRepository.Verify(r => r.FindByUserId(userId), Times.Once);
     }
 }

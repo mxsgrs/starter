@@ -1,10 +1,10 @@
-namespace Network.Infrastructure.IntegrationTests.Facts.AuditLogRepositoryTestCases;
+namespace Network.Infrastructure.IntegrationTests.Facts.FinancialProfileRepositoryTestCases;
 
 [Collection("Database")]
-public class AddAsyncTests(SharedFixture fixture) : IDisposable
+public class AddTests(SharedFixture fixture) : IDisposable
 {
     [Fact]
-    public async Task AddAsync_ShouldStageAuditLog_WhenCalled()
+    public async Task Add_ShouldStageFinancialProfile_WhenCalled()
     {
         // Arrange
         NetworkDbContext dbContext = fixture.CreateDatabaseContext();
@@ -12,27 +12,25 @@ public class AddAsyncTests(SharedFixture fixture) : IDisposable
         await dbContext.Users.AddAsync(user);
         await dbContext.SaveChangesAsync();
 
-        AuditLogRepository repository = new(dbContext);
-        AuditLog auditLog = new AuditLogBuilder()
+        FinancialProfileRepository repository = new(new Mock<ILogger<FinancialProfileRepository>>().Object, dbContext);
+        FinancialProfile profile = new FinancialProfileBuilder()
             .WithUserId(user.Id)
-            .WithEventType(AuditLogEventType.UserCreated)
             .Build();
 
         // Act
-        await repository.AddAsync(auditLog);
+        await repository.Add(profile);
         await dbContext.SaveChangesAsync();
 
         // Assert
-        AuditLog? stored = await dbContext.AuditLogs.FindAsync(auditLog.Id);
+        FinancialProfile? stored = await dbContext.FinancialProfiles.FindAsync(profile.Id);
         Assert.NotNull(stored);
         Assert.Equal(user.Id, stored.UserId);
-        Assert.Equal(AuditLogEventType.UserCreated, stored.EventType);
     }
 
     public void Dispose()
     {
         using NetworkDbContext context = fixture.CreateDatabaseContext();
-        context.AuditLogs.ExecuteDelete();
+        context.FinancialProfiles.ExecuteDelete();
         context.Users.ExecuteDelete();
         GC.SuppressFinalize(this);
     }

@@ -5,6 +5,6 @@ public class AuditLogRepository(NetworkDbContext dbContext) : IAuditLogRepositor
     /// <summary>
     /// Stage a new audit log entry to be committed as part of the current transaction
     /// </summary>
-    public async Task AddAsync(AuditLog auditLog)
+    public async Task Add(AuditLog auditLog)
         => await dbContext.AuditLogs.AddAsync(auditLog);
 }

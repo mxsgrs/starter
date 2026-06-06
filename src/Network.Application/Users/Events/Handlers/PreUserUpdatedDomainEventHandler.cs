@@ -13,6 +13,6 @@ public class PreUserUpdatedDomainEventHandler(
     {
         Result<AuditLog> auditLogResult = AuditLog.Create(domainEvent.UserId, AuditLogEventType.UserUpdated);
         if (auditLogResult.IsSuccess)
-            await auditLogRepository.AddAsync(auditLogResult.Value);
+            await auditLogRepository.Add(auditLogResult.Value);
     }
 }

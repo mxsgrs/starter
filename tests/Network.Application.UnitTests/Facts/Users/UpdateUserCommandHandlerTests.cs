@@ -22,7 +22,7 @@ public class UpdateUserCommandHandlerTests
         UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
         User user = new UserBuilder().Build();
 
-        _mockUserRepository.Setup(repo => repo.FindByIdAsync(user.Id))
+        _mockUserRepository.Setup(repo => repo.FindById(user.Id))
             .ReturnsAsync(Result.Ok(user));
 
         _mockUserRepository.Setup(repo => repo.Save())
@@ -45,7 +45,7 @@ public class UpdateUserCommandHandlerTests
         UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
         Guid unknownId = Guid.NewGuid();
 
-        _mockUserRepository.Setup(repo => repo.FindByIdAsync(unknownId))
+        _mockUserRepository.Setup(repo => repo.FindById(unknownId))
             .ReturnsAsync(Result.Fail<User>("User not found"));
 
         UpdateUserCommand command = new(unknownId, userWriteDto);
@@ -65,7 +65,7 @@ public class UpdateUserCommandHandlerTests
         UserWriteDto userWriteDto = new UserWriteDtoBuilder().Build();
         User user = new UserBuilder().Build();
 
-        _mockUserRepository.Setup(repo => repo.FindByIdAsync(user.Id))
+        _mockUserRepository.Setup(repo => repo.FindById(user.Id))
             .ReturnsAsync(Result.Ok(user));
 
         _mockUserRepository.Setup(repo => repo.Save())

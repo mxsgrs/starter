@@ -15,7 +15,7 @@ public class UpdateAssetCommandHandler(
 {
     public async Task<Result> HandleAsync(UpdateAssetCommand request)
     {
-        Result<FinancialProfile> profileResult = await financialProfileRepository.FindByUserIdAsync(request.UserId);
+        Result<FinancialProfile> profileResult = await financialProfileRepository.FindByUserId(request.UserId);
         if (profileResult.IsFailed) return Result.Fail(profileResult.Errors);
 
         Result updateResult = profileResult.Value.UpdateAsset(request.AssetId, request.Name, request.AssetType, request.Value, request.RiskFactor);

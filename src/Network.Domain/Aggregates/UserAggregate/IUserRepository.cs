@@ -7,22 +7,22 @@ public interface IUserRepository
     /// <summary>
     /// Add a new user to the database
     /// </summary>
-    Task<Result<User>> AddAsync(User user);
+    Task<Result<User>> Add(User user);
 
     /// <summary>
     /// Find a user by their unique identifier
     /// </summary>
-    Task<Result<User>> FindByIdAsync(Guid id);
+    Task<Result<User>> FindById(Guid id);
 
     /// <summary>
     /// Find a user by their email address and hashed password
     /// </summary>
-    Task<Result<User>> FindByCredentialsAsync(string emailAddress, string hashedPassword);
+    Task<Result<User>> FindByCredentials(string emailAddress, string hashedPassword);
 
     /// <summary>
     /// Remove a user from the database
     /// </summary>
-    Task<Result> RemoveAsync(Guid id);
+    Task<Result> Remove(Guid id);
 
     /// <summary>
     /// Persist all tracked changes to the database
